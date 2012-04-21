@@ -8,7 +8,10 @@ It has the following major features:
 * Compatible with Zend Framework (integrates nicely into ZF applications)
 * Basic CRUD functionality for relational databases with only a few lines of code
 
-The following use cases
+Adapto is suitable for a number of use cases:
+
+* Micro CMS systems
+* Data management applications
 
 Adapto is essentially a Zend Framework port of the classic (and by now outdated) ATK framework (http://atk-framework.com). 
 
