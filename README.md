@@ -29,7 +29,4 @@ FAQ
 
 Adapto is short for ADvanced APlication TOolkit. It's also highly adaptable. 
 
-## Why are all the classes prefixed with Atk?
-
-The prefix 'Atk' used in classes is short for Adapto Tool Kit, but is also a reference to the origin of the framework, the 'Achievo ToolKit' or ATK, the framework that formed the basis of Adapto.
 
