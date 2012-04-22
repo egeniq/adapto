@@ -1,0 +1,11 @@
+<?php
+$en=array(
+  "menu_lesson7" => "7 - Trees/i18n",
+  "menu_modulesource" => "Module source",
+  "menu_category" => "Category",
+  "menu_translations" => "Translations",
+  "menu_translations_mr" => "Translations 2",
+  "menu_translations_mr2" => "Translations 2 (meta)",
+  "htmlnotes" => "HTML Notes"
+);
+?>
