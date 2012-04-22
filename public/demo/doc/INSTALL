@@ -1,0 +1,47 @@
+Installing the ATK5 demo
+------------------------
+
+1. Install this demo somewhere into the document root of your
+   PHP-enabled webserver.
+
+2. Run ./setup.sh with the username of the webserver as parameter.
+   This will make certain files writable by the webserver. If your
+   webserver is running as user 'www', run the script like this:
+
+   ./setup.sh www
+
+   If the script fails, you may not be allowed to chown the files
+   in the atktmp directory. In this case, you may have to run the
+   setup.sh script as root.
+
+   (Note to windows users: in general this step is not necessary if you run
+   the demo on a Windows server.)
+
+3. For MySQL databases, install the install_mysql.sql file from the
+   main directory, into a mysql database. For Oracle databases, use the
+   install_oracle.sql file. For postgresql databases, use install_pgsql.sql.
+   For all three, make sure that you use the correct user/schema to install
+   the file into!
+
+4. Enter the username/password/host/databasename for this database into
+   the config.inc.php file. Leave all other config options to their default
+   at first. After you viewed the demo, and want to experiment, you can
+   change the settings, but first try to get a running demo.
+
+   Note: for oracle, if you connect using a TNS name, you can leave the
+   $config_databasehost blank, and put the TNS name into $config_databasename
+
+5. Browse the directory where you installed the demo with a webbrowser.
+   You can login using 'administrator' as username and 'demo' as password.
+
+Hints
+-----
+Make use of the 'view source' links throughout the demo to find out how the
+features you see are accomplished.
+
+If you have any questions, join the ATK forums at http://www.achievo.org/forum
+
+Check http://www.achievo.org/atk/download on a regular basis. More
+lessons will continually be added to the demo. You can post requests
+for lessons on specific features to the forum.
+

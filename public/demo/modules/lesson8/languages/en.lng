@@ -1,0 +1,7 @@
+<?php
+$en=array(
+  "employee" =>  "Employee",
+  "menu_lesson8" => "8 - Openoffice",
+  "menu_employees" => "Employees",
+  "menu_modulesource" => "Module source",
+);?>

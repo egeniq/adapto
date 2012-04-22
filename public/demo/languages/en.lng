@@ -1,0 +1,12 @@
+<?php
+
+  $en = array(
+
+    'app_title' => 'ATK Demo Application',
+    'app_shorttitle' => 'ATK Demo',
+    'app_description' => 'Welcome to the ATK demo. Please select a lesson from the main menu.'
+
+  );
+
+
+?>
