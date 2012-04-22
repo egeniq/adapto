@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * This is an example translations file. It contains some basic strings to get you started.
+ */
+$en=array(
+  "employee" =>  "Employee",
+  "menu_lesson1" => "1 - Basic",
+  "menu_employees" => "Employees",
+  "menu_modulesource" => "Module source",
+);
