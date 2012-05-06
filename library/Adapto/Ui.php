@@ -36,7 +36,7 @@ class Adapto_Ui
      */
     public function __construct()
     {
-        $this->m_theme = &atkinstance("atk.ui.atktheme");
+        $this->m_theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
     }
 
     /**
@@ -50,7 +50,7 @@ class Adapto_Ui
 
         if ($s_instance==NULL)
         {
-            atkdebug("Creating a new Adapto_Ui instance");
+            Adapto_Util_Debugger::debug("Creating a new Adapto_Ui instance");
             $s_instance = new Adapto_Ui();
         }
 
@@ -154,37 +154,13 @@ class Adapto_Ui
     {
         $path = $this->templatePath($name, $module);
 
-        if (substr($path, -4) != '.php' && file_exists($path.'.php'))
-        {
-            $path .= '.php';
-        }
-
-        $result = $this->renderPhp($path, $vars);
-
-        if (Adapto_Config::getGlobal('debug') >= 3)
-        {
-            $result =
-          "\n<!-- START [{$path}] -->\n".
-            $result.
-          "\n<!-- END [{$path}] -->\n";
-        }
-
-        return $result;
-    }
-
-    /**
-     * Render PHP-based template.
-     *
-     * @param string $path template path
-     * @param array  $vars template variables
-     *
-     * @return string rendered template
-     */
-    private function renderPhp($path, $vars)
-    {
-
-        $view = new Adapto_PHPView($path, $vars);
-        return (string)$view;
+        $view = new Zend_View();
+        $view->assign($vars);  
+                
+        $view->setScriptPath($this->m_theme->getAttribute("basepath")."/templates");
+        $view->addHelperPath('Adapto/Ui/View/Helper', 'Adapto_Ui_View_Helper_'); //Change as per your path and class
+           
+        return $view->render($name);
     }
 
     /**

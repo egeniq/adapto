@@ -46,14 +46,14 @@ class Adapto_Util_Files
         if (is_null($orgdest))
             $orgdest = $dest;
 
-        atkdebug("Checking write permission for " . $orgdest);
+        Adapto_Util_Debugger::debug("Checking write permission for " . $orgdest);
 
         if (!Adapto_Util_Files::is_writable($orgdest)) {
-            atkdebug("Error no write permission!");
+            Adapto_Util_Debugger::debug("Error no write permission!");
             return false;
         }
 
-        atkdebug("Permission granted to write.");
+        Adapto_Util_Debugger::debug("Permission granted to write.");
 
         if ($dest == $orgdest && $dirname != '') {
             mkdir($orgdest . "/" . $dirname, $privileges);
@@ -129,7 +129,7 @@ class Adapto_Util_Files
             }
         }
 
-        atkdebug("Checking with: " . $testdest);
+        Adapto_Util_Debugger::debug("Checking with: " . $testdest);
 
         return is_writable($testdest);
     }
@@ -145,16 +145,16 @@ class Adapto_Util_Files
      * @param bool $recursive 
      * @return bool returns true if the destination is written.
      */
-    function mkdirRecursive($dir, $privileges = 0777, $recursive = true)
+    static function mkdirRecursive($dir, $privileges = 0777, $recursive = true)
     {
         $dir = preg_replace('/(\/){2,}|(\\\){1,}/', '/', $dir); //only forward-slash
 
         if (!Adapto_Util_Files::is_writable($dir)) {
-            atkdebug("Error no write permission!");
+            Adapto_Util_Debugger::debug("Error no write permission!");
             return false;
         }
 
-        atkdebug("Permission granted to write.");
+        Adapto_Util_Debugger::debug("Permission granted to write.");
 
         if (is_null($dir) || $dir === "") {
             return FALSE;
@@ -239,10 +239,10 @@ class Adapto_Util_Files
 
         $ext = trim(strtolower($ext));
         if (array_key_exists($ext, $mimetypes)) {
-            atkdebug("Filetype for $filename is {$mimetypes[$ext]}");
+            Adapto_Util_Debugger::debug("Filetype for $filename is {$mimetypes[$ext]}");
             return $mimetypes[$ext];
         } else {
-            atkdebug("Filetype for $filename could not be found. Returning application/octet-stream.");
+            Adapto_Util_Debugger::debug("Filetype for $filename could not be found. Returning application/octet-stream.");
             return "application/octet-stream";
         }
     }

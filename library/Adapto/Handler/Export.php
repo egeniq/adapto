@@ -184,7 +184,7 @@ class Adapto_Handler_Export extends Adapto_ActionHandler
     {
         $selected = array_key_exists('exportvalue', $this->m_postvars) ? $this->m_postvars['exportvalue'] : null;
 
-        $theme = atkinstance('atk.ui.atktheme');
+        $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
 
         $img_delete = $theme->iconPath('delete', 'recordlist');
         $url_delete = dispatch_url($this->m_entity->m_module . '.' . $this->m_entity->m_type, 'export', array('dodelete' => $selected));
@@ -216,7 +216,7 @@ class Adapto_Handler_Export extends Adapto_ActionHandler
         $params["content"] .= $this->_getOptions();
         $params["formend"] = '</form>';
 
-        return atkInstance("atk.ui.atkui")->renderAction("export", $params, $this->m_entity->m_module);
+        return Adapto_ClassLoader::getInstance("atk.ui.atkui")->renderAction("export", $params, $this->m_entity->m_module);
     }
 
     /**
@@ -542,7 +542,7 @@ class Adapto_Handler_Export extends Adapto_ActionHandler
         if (!is_array($actions)) {
             $actions = $entity->defaultActions("export");
         }
-        $rl = &atknew("atk.recordlist.atkcustomrecordlist");
+        $rl = &Adapto_ClassLoader::create("atk.recordlist.atkcustomrecordlist");
         $flags = ($entity_bk->hasFlag(EF_MRA) ? RL_MRA : 0) | ($entity_bk->hasFlag(EF_MRPA) ? RL_MRPA : 0) | ($entity_bk->hasFlag(EF_LOCK) ? RL_LOCK : 0);
         $entity_bk->m_postvars = $session_back;
 

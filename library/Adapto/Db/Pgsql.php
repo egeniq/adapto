@@ -105,7 +105,7 @@ class Adapto_Db_Pgsql extends Adapto_Db
         /* limit? */
         if ($offset >= 0 && $limit >= 0)
             $query .= " LIMIT $limit OFFSET $offset";
-        atkdebug("atkpgsqldb.query(): " . $query);
+        Adapto_Util_Debugger::debug("atkpgsqldb.query(): " . $query);
 
         /* connect to database */
         if ($this->connect() == DB_SUCCESS) {

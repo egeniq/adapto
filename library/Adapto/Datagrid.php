@@ -1059,7 +1059,7 @@ class Adapto_Datagrid
         $this->m_componentInstances = array();
 
         foreach ($this->getComponents() as $name => $info) {
-            $comp = atknew($info['class'], $this, $info['options']);
+            $comp = Adapto_ClassLoader::create($info['class'], $this, $info['options']);
             $this->m_componentInstances[$name] = $comp;
             if ($comp instanceof atkDGListener)
                 $this->addListener($comp);

@@ -74,7 +74,7 @@ class Adapto_Attribute_Country extends Adapto_ListAttribute
         }
 
         // When switch is not user get country options
-        atkdebug("CountryAttribute - $name - $switch");
+        Adapto_Util_Debugger::debug("CountryAttribute - $name - $switch");
         if ($switch != "user") {
             //we assume that the 3 param is flags
             if (is_numeric($optionArray))
@@ -113,7 +113,7 @@ class Adapto_Attribute_Country extends Adapto_ListAttribute
         }
 
         if (count($custom_list) == 0) {
-            atkerror('Adapto_Attribute_Country: setList: empty custom country list');
+            throw new Adapto_Exception('Adapto_Attribute_Country: setList: empty custom country list');
             return false;
         }
 
@@ -206,7 +206,7 @@ class Adapto_Attribute_Country extends Adapto_ListAttribute
     {
         $lng = atkLanguage::getLanguage();
         if (!array_key_exists($iso_code, $this->m_country))
-            atkdebug('UNKNOWN ISO CODE: ' . $iso_code);
+            Adapto_Util_Debugger::debug('UNKNOWN ISO CODE: ' . $iso_code);
         if (array_key_exists($lng, $this->m_country[$iso_code])) {
             return $this->m_country[$iso_code][$lng];
         } else {

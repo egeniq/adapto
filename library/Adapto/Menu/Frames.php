@@ -99,15 +99,15 @@ class Adapto_Menu_Frames extends Adapto_PlainMenu
                     . $delimiter;
         }
         $menu .= $this->getFooter($atkmenutop);
-        $page = &atknew("atk.ui.atkpage");
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = &Adapto_ClassLoader::create("atk.ui.atkpage");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_style($theme->stylePath("style.css"));
         $menustylepath = $theme->stylePath("menu.css");
         if (!empty($menustylepath))
             $page->register_style($menustylepath);
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/menuload.js");
 
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
 
         $box = $ui
                 ->renderBox(

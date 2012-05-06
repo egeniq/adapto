@@ -253,7 +253,7 @@ class Adapto_Db
      */
     function setSequenceValue($seqname, $value)
     {
-        atkerror('WARNING: ' . get_class($this) . '.setSequenceValue NOT IMPLEMENTED!');
+        throw new Adapto_Exception('WARNING: ' . get_class($this) . '.setSequenceValue NOT IMPLEMENTED!');
     }
 
     /**
@@ -407,7 +407,7 @@ class Adapto_Db
      */
     function setUserError($errno)
     {
-        atkdebug(__CLASS__ . "::setUserError() -> " . $errno);
+        Adapto_Util_Debugger::debug(__CLASS__ . "::setUserError() -> " . $errno);
         $this->m_user_error[] = $errno;
     }
 
@@ -489,7 +489,7 @@ class Adapto_Db
 
     /**
      * If haltonerror is set, this will raise an atkerror. If not, it will
-     * place the error in atkdebug and continue.
+     * place the error in Adapto_Util_Debugger::debug and continue.
      * @access protected
      * 
      * @param String $message
@@ -498,13 +498,13 @@ class Adapto_Db
     {
         if ($this->m_haltonerror) {
             if ($this->getErrorType() === "system") {
-                atkdebug(__CLASS__ . "::halt() on system error");
+                Adapto_Util_Debugger::debug(__CLASS__ . "::halt() on system error");
                 if (!in_array($this->m_errno, $this->m_user_error))
                     $level = 'critical';
-                atkerror($this->getErrorMsg());
+                throw new Adapto_Exception($this->getErrorMsg());
                 halt($this->getErrorMsg(), $level);
             } else {
-                atkdebug(__CLASS__ . "::halt() on user error (not halting)");
+                Adapto_Util_Debugger::debug(__CLASS__ . "::halt() on user error (not halting)");
             }
         }
     }
@@ -561,7 +561,7 @@ class Adapto_Db
     function connect($mode = "rw")
     {
         if ($this->m_link_id == NULL) {
-            atkdebug("atkdb::connect -> Don't switch use current db");
+            Adapto_Util_Debugger::debug("atkdb::connect -> Don't switch use current db");
             return $this->doConnect($this->m_host, $this->m_user, $this->m_password, $this->m_database, $this->m_port, $this->m_charset);
         }
         return DB_SUCCESS;
@@ -1174,7 +1174,7 @@ class Adapto_Db
      */
     function &createQuery()
     {
-        $query = &atknew("atk.db.atk" . $this->m_type . "query");
+        $query = &Adapto_ClassLoader::create("atk.db.atk" . $this->m_type . "query");
         $query->m_db = &$this;
         return $query;
     }
@@ -1186,7 +1186,7 @@ class Adapto_Db
      */
     function toggleForeignKeys($enable)
     {
-        atkdebug('WARNING: ' . get_class($this) . '::toggleForeignKeys not implemented!');
+        Adapto_Util_Debugger::debug('WARNING: ' . get_class($this) . '::toggleForeignKeys not implemented!');
     }
 
     /**
@@ -1211,7 +1211,7 @@ class Adapto_Db
         } while ($count < $prevCount && $count > 0);
 
         if ($count > 0) {
-            atkerror(__CLASS__ . '::deleteAll failed, probably because of circular dependencies');
+            throw new Adapto_Exception(__CLASS__ . '::deleteAll failed, probably because of circular dependencies');
         }
     }
 
@@ -1294,8 +1294,8 @@ class Adapto_Db
                 return null;
             }
 
-            atkdebug("Creating new database instance with '{$driver}' driver");
-            $dbinstance = atknew($driver)->init($conn, $mode);
+            Adapto_Util_Debugger::debug("Creating new database instance with '{$driver}' driver");
+            $dbinstance = Adapto_ClassLoader::create($driver)->init($conn, $mode);
 
             $g_dbinstances[$conn] = $dbinstance;
         }
@@ -1312,7 +1312,7 @@ class Adapto_Db
 
     public function init($connectionname = 'default', $mode = 'r')
     {
-        atkdebug("(Re)Initialising database instance with connection name '$connectionname' and mode '$mode'");
+        Adapto_Util_Debugger::debug("(Re)Initialising database instance with connection name '$connectionname' and mode '$mode'");
 
         $config = Adapto_Config::getGlobal("db");
         $this->m_connection = $connectionname;

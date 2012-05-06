@@ -256,7 +256,7 @@ class Adapto_Relation_Secure extends Adapto_OneToOneRelation
                         $decryptedlink = $this->decrypt($records[$i], $this->m_linkbackfield);
 
                         if (!$decryptedlink && $errorconfig) {
-                            atkdebug(
+                            Adapto_Util_Debugger::debug(
                                     "Unable to decrypt link: " . $link . "for record: " . var_export($records[$i], true) . " with linkbackfield: "
                                             . $this->m_linkbackfield);
                             $decrypterror = true;
@@ -267,7 +267,7 @@ class Adapto_Relation_Secure extends Adapto_OneToOneRelation
                     }
                     if ($decrypterror) {
                         if ($errorconfig == 2)
-                            atkerror("There were errors decrypting the secured links, see debuginfo");
+                            throw new Adapto_Exception("There were errors decrypting the secured links, see debuginfo");
                         else if ($errorconfig == 1)
                             mailreport();
                     }
@@ -305,7 +305,7 @@ class Adapto_Relation_Secure extends Adapto_OneToOneRelation
                 $this->m_refKey = $backup_refkey;
                 return $load;
             } else {
-                atkdebug(
+                Adapto_Util_Debugger::debug(
                         "Could not decrypt the link: $link for " . $this->m_ownerInstance->primaryKeyField() . "='"
                                 . $record[$this->m_ownerInstance->primaryKeyField()]);
             }
@@ -343,7 +343,7 @@ class Adapto_Relation_Secure extends Adapto_OneToOneRelation
                               SET {$this->m_cachefield}='$cryptedlink'
                               WHERE " . $this->m_ownerInstance->primaryKeyField() . " = '" . $record[$this->m_ownerInstance->primaryKeyField()] . "'");
                 } else if (!$cryptedlink || !is_numeric($cryptedlink)) {
-                    atkdebug("decrypt($record, $field) failed! and yielded: $cryptedlink");
+                    Adapto_Util_Debugger::debug("decrypt($record, $field) failed! and yielded: $cryptedlink");
                     return NULL;
                 }
             } else {

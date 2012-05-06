@@ -572,7 +572,7 @@ class Adapto_Handler_SmartSearch extends Adapto_AbstractSearchHandler
         $params['saved_criteria'] = $this->getSavedCriteria($name);
 
         $params["criteria"] = array();
-        atkdebug('criteria smartSearchForm: ' . print_r($criteria, true));
+        Adapto_Util_Debugger::debug('criteria smartSearchForm: ' . print_r($criteria, true));
         foreach ($criteria as $i => $criterium) {
             $params["criteria"][] = $this->getCriterium($i, $criterium);
         }
@@ -606,7 +606,7 @@ class Adapto_Handler_SmartSearch extends Adapto_AbstractSearchHandler
         useattrib('atkdateattribute');
         atkDateAttribute::registerScriptsAndStyles();
 
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_style($theme->stylePath("atkdateattribute.css"));
 
         $params = array();

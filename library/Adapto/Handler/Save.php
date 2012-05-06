@@ -224,8 +224,8 @@ class Adapto_Handler_Save extends Adapto_ActionHandler
 
     protected function storeRecordInSession(&$record)
     {
-        atkdebug("STORING RECORD IN SESSION");
-        $result = atkinstance('atk.session.atksessionstore')->addDataRow($record, $this->m_entity->primaryKeyField());
+        Adapto_Util_Debugger::debug("STORING RECORD IN SESSION");
+        $result = Adapto_ClassLoader::getInstance('atk.session.atksessionstore')->addDataRow($record, $this->m_entity->primaryKeyField());
         return ($result !== false);
     }
 

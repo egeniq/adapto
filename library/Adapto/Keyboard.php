@@ -57,7 +57,7 @@ class Adapto_Keyboard
     {
         static $s_kb;
         if ($s_kb == NULL) {
-            atkdebug("Creating Adapto_Keyboard instance");
+            Adapto_Util_Debugger::debug("Creating Adapto_Keyboard instance");
             $s_kb = new Adapto_Keyboard();
         }
 

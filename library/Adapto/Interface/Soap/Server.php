@@ -62,6 +62,6 @@
   	 */
   	public function __call($method, $args)
   	{
-  	  atkdebug("Function $method called with args: ".var_export($args, true));
+  	  Adapto_Util_Debugger::debug("Function $method called with args: ".var_export($args, true));
   	}
   }

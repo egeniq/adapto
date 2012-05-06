@@ -101,7 +101,7 @@ class Adapto_Handler_ViewEditBase extends Adapto_ActionHandler
     protected function getRecordFromSession()
     {
         $selector = atkArrayNvl($this->m_entity->m_postvars, 'atkselector', '');
-        return atkinstance('atk.session.atksessionstore')->getDataRowForSelector($selector);
+        return Adapto_ClassLoader::getInstance('atk.session.atksessionstore')->getDataRowForSelector($selector);
     }
 
     /**
@@ -314,7 +314,7 @@ class Adapto_Handler_ViewEditBase extends Adapto_ActionHandler
 
         $attr = $this->m_entity->getAttribute($attribute);
         if ($attr == NULL) {
-            atkerror("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
+            throw new Adapto_Exception("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
             return '';
         }
 

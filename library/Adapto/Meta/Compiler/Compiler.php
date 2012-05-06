@@ -48,7 +48,7 @@ class Adapto_Meta_Compiler
         }
 
         if (!isset(self::$instances[$class])) {
-            self::$instances[$class] = atknew($class);
+            self::$instances[$class] = Adapto_ClassLoader::create($class);
         }
 
         return self::$instances[$class];

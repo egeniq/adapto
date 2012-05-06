@@ -22,101 +22,7 @@
  * @package adapto
  */
 class Adapto_Config
-{
-    /**
-     * Load global configuration variables.
-     */
-
-    public static function loadGlobals()
-    {
-        $overrides = array();
-
-        // Put all "config_" globals as variables in the function scope
-        foreach ($GLOBALS as $key => $value) {
-            if (substr($key, 0, 7) === 'config_') {
-
-                $$key = $value;
-
-                // Store the current value, so that we can restore it later. Since our includes below here, depend on
-                // some of these variables, we can't simply change the ordering of this process. Also we can't use
-                // $GLOBALS, due to the use of the global keyword later on.
-                $overrides[$key] = $GLOBALS[$key];
-            }
-        }
-
-        // Include the defaults
-        require_once $config_atkroot . "atk/defaultconfig.inc.php";
-
-        // Get the application config, this is leading and will override all previously defined configuration values.
-        $applicationConfig = self::getApplicationConfig($config_application_dir);
-
-        // Merge everything we got, including variables defined in our application config and configuration defined
-        // prior to constructing Adapto_Config
-        $allVars = array_merge(get_defined_vars(), $applicationConfig);
-
-        // Get all defined config variables, make then global and update their value
-        foreach ($allVars as $key => $value) {
-            if (substr($key, 0, 7) === 'config_') {
-                // Reference the variable to the global scope
-                global $$key;
-
-                // If a key was previously defined, use that instead of the default value.
-                if (array_key_exists($key, $applicationConfig)) {
-                    $$key = $applicationConfig[$key];
-                } else if (array_key_exists($key, $overrides)) {
-                    $$key = $overrides[$key];
-                } else {
-                    $$key = $value;
-                }
-            }
-        }
-    }
-
-    /**
-     * Get the application configuration.
-     *
-     * @static
-     * @param  $path The path to 'config.inc.php in the application directory
-     * @return array
-     */
-
-    static public function getApplicationConfig($path)
-    {
-        require_once $path . 'config.inc.php';
-        return get_defined_vars();
-    }
-
-    /**
-     * Returns the value for a global configuration variable.
-     * 
-     * @param string $name    configuration variable name (without the config_ prefix)
-     * @param mixed  $default default (fallback) value
-     */
-
-    public static function getGlobal($name, $default = null)
-    {
-        $fullName = 'config_' . $name;
-        if (function_exists($fullName)) {
-            return $fullName();
-        }
-
-        return isset($GLOBALS[$fullName]) ? $GLOBALS[$fullName] : $default;
-    }
-
-    /**
-     * Sets the value of a global configuration variable.
-     * 
-     * Only works for configuration variables where no function for exists.
-     * 
-     * @param string $name  configuration variable name (without the config_ prefix)
-     * @param mixed  $value new value
-     */
-
-    public static function setGlobal($name, $value)
-    {
-        $GLOBALS['config_' . $name] = $value;
-    }
-
+{ 
     /**
      * Get a configuration value for a section (typically a module)
      *
@@ -135,27 +41,41 @@ class Adapto_Config
      * @return mixed Configuration value
      */
 
-    public static function get($section, $tag, $default = "")
+    public static function get($section, $tag, $default = NULL)
     {
         static $s_configs = array();
 
-        $fn = 'config_' . $section . '_' . $tag;
-        if (function_exists($fn)) {
-            return $fn();
-        }
-
         if (!isset($s_configs[$section])) {
             $config = self::getConfigForSection($section);
-            if (!is_array($config)) {
-                $config = array();
-            }
+            
             $s_configs[$section] = $config;
-        }
+        }   
 
-        if (isset($s_configs[$section][$tag]) && $s_configs[$section][$tag] !== "") {
-            return $s_configs[$section][$tag];
+        $elems = explode(".", $tag); 
+       
+        $root = $s_configs[$section];
+        if (!is_object($root)) {
+            throw new Adapto_Exception("Config section $section not found.");
+        }
+                
+        while (count($elems)>1 && $root != NULL) {
+            $item = array_shift($elems);
+            $root = $root->get($item);
+        }
+        
+        $value = NULL;
+        if ($root != NULL) {
+            $value = $root->get($elems[0]);
+        }
+        
+        if ($value != NULL) {
+            return $value;
         } else {
-            return $default;
+            if ($default === NULL) {
+                throw new Adapto_Exception("Config value '$tag' not found in section '$section' and no default provided.");
+            } else {
+                return $default;
+            }
         }
     }
 
@@ -165,45 +85,15 @@ class Adapto_Config
      * and merge them as fallbacks.
      *
      * @param string $section Name of the section to get configs for
-     * @return array Configuration values
+     * @return Zend_Config Configuration values
      */
 
     public static function getConfigForSection($section)
     {
-        $config = self::getDirConfigForSection(Adapto_Config::getGlobal('configdir'), $section);
-        if (moduleExists($section)) {
-            $dir = moduleDir($section) . 'skel/configs/';
-            if (file_exists($dir)) {
-                $module_configs = self::getDirConfigForSection($dir, $section);
-                $config = array_merge($module_configs, $config);
-            }
-        }
+        $config = Zend_Registry::get("Config_".ucfirst($section));
         return $config;
     }
 
-    /**
-     * Get all configuration values from all configuration files for
-     * a specific directory and a specific section.
-     *
-     * @param string $dir     Directory where the configuration files are
-     * @param string $section Section to get configuration values for
-     * @return array Configuration values
-     */
-
-    protected static function getDirConfigForSection($dir, $section)
-    {
-        atkdebug("Loading config file for section $section");
-        $config = array();
-        @include($dir . $section . ".inc.php");
-
-        $other = glob(Adapto_Config::getGlobal("configdir") . "{$section}.*.inc.php");
-        if (is_array($other)) {
-            foreach ($other as $file) {
-                include($file);
-            }
-        }
-        return $config;
-    }
 
     /**
      * Is debugging enabled for client IP?
@@ -227,10 +117,10 @@ class Adapto_Config
     {
         $session = &atkSessionManager::getSession();
 
-        if (isset($_REQUEST["atkdebug"]["key"])) {
-            $session["debug"]["key"] = $_REQUEST["atkdebug"]["key"];
-        } else if (isset($_COOKIE['ATKDEBUG_KEY']) && !empty($_COOKIE['ATKDEBUG_KEY'])) {
-            $session["debug"]["key"] = $_COOKIE['ATKDEBUG_KEY'];
+        if (isset($_REQUEST["Adapto_Util_Debugger::debug"]["key"])) {
+            $session["debug"]["key"] = $_REQUEST["Adapto_Util_Debugger::debug"]["key"];
+        } else if (isset($_COOKIE['Adapto_Util_Debugger::debug_KEY']) && !empty($_COOKIE['Adapto_Util_Debugger::debug_KEY'])) {
+            $session["debug"]["key"] = $_COOKIE['Adapto_Util_Debugger::debug_KEY'];
         }
 
         return (isset($session["debug"]["key"]) && $session["debug"]["key"] == $params["key"]);
@@ -261,10 +151,10 @@ class Adapto_Config
         $config_debug_enabled = $enabled;
 
         if ($enabled) {
-            if (isset($_REQUEST["atkdebug"]["level"])) {
-                $session["debug"]["level"] = $_REQUEST["atkdebug"]["level"];
-            } else if (isset($_COOKIE['ATKDEBUG_LEVEL'])) {
-                $session["debug"]["level"] = $_COOKIE['ATKDEBUG_LEVEL'];
+            if (isset($_REQUEST["Adapto_Util_Debugger::debug"]["level"])) {
+                $session["debug"]["level"] = $_REQUEST["Adapto_Util_Debugger::debug"]["level"];
+            } else if (isset($_COOKIE['Adapto_Util_Debugger::debug_LEVEL'])) {
+                $session["debug"]["level"] = $_COOKIE['Adapto_Util_Debugger::debug_LEVEL'];
             }
 
             if (isset($session["debug"]["level"]))
@@ -389,28 +279,6 @@ define("MF_SPECIFIC_3", 16);
  */
 define("MF_NO_PRELOAD", 32);
 
-/**
- * Load a module.
- *
- * This method is used in the config.inc.php or config.modules.inc file to
- * load the modules.
- *
- * @param String $name The name of the module to load.
- * @param String path The path where the module is located (relative or
- *                    absolute). If omitted, ATK assumes that the module is
- *                    installed in the default module dir (identified by
- *                    $config_module_path).
- * @param int flags The module (MF_*) flags that influence how the module is
- *                  loaded.
- */
-function module($name, $path = "", $flags = 0)
-{
-    global $g_modules, $config_module_path, $g_moduleflags;
-    if ($path == "")
-        $path = $config_module_path . "/" . $name . "/";
-    $g_modules[$name] = $path;
-    if ($flags > 0)
-        $g_moduleflags[$name] = $flags;
-}
+
 
 ?>

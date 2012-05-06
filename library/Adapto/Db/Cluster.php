@@ -136,7 +136,7 @@ class Adapto_Db_Cluster extends Adapto_Db
 
     public function createQuery()
     {
-        $query = &atknew("atk.db.atk{$this->m_current_clusterentity->m_type}query");
+        $query = &Adapto_ClassLoader::create("atk.db.atk{$this->m_current_clusterentity->m_type}query");
         $query->m_db = $this;
         return $query;
     }

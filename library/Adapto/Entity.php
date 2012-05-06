@@ -704,7 +704,7 @@ class Adapto_Entity
     {
         if ($type == "")
             $type = strtolower(get_class($this));
-        atkdebug("Creating a new Adapto_Entity for $type");
+        Adapto_Util_Debugger::debug("Creating a new Adapto_Entity for $type");
         $this->m_type = $type;
         $this->m_flags = $flags;
         $this->m_module = Adapto_Module::getModuleScope();
@@ -1059,7 +1059,7 @@ class Adapto_Entity
     function remove($attribname)
     {
         if (is_object($this->m_attribList[$attribname])) {
-            atkdebug("removing attribute $attribname");
+            Adapto_Util_Debugger::debug("removing attribute $attribname");
 
             $listindex = $this->m_attribList[$attribname]->m_index;
 
@@ -1428,7 +1428,7 @@ class Adapto_Entity
      */
     function setTabIndex($tabname, $index, $action = "")
     {
-        atkdebug("Adapto_Entity::setTabIndex($tabname,$index,$action)");
+        Adapto_Util_Debugger::debug("Adapto_Entity::setTabIndex($tabname,$index,$action)");
         $actionList = array("add", "edit", "view");
         if ($action != "")
             $actionList = array($action);
@@ -1513,7 +1513,7 @@ class Adapto_Entity
                     $this->m_filledTabs[] = $tabCode;
                 }
             } else {
-                atkdebug("atkentity::getTabs() Warning: $attribname is not an object!?");
+                Adapto_Util_Debugger::debug("atkentity::getTabs() Warning: $attribname is not an object!?");
             }
         }
 
@@ -1599,7 +1599,7 @@ class Adapto_Entity
             if (isset($g_entitys[$this->m_module][$this->m_type]) && Adapto_in_array($priv, $g_entitys[$this->m_module][$this->m_type])) {
                 // authorisation is required
                 if (!$secMgr->allowed($this->m_module . "." . $this->m_type, "tab_" . $tablist[$i])) {
-                    atkdebug("Removing TAB " . $tablist[$i] . " because access to this tab was denied");
+                    Adapto_Util_Debugger::debug("Removing TAB " . $tablist[$i] . " because access to this tab was denied");
                     $disable[] = $tablist[$i];
                     unset($tablist[$i]);
                 }
@@ -1635,7 +1635,7 @@ class Adapto_Entity
                 if (in_array($tabEntry, $this->m_filledTabs)) {
                     $tabList[] = $tabEntry;
                 } else {
-                    atkdebug("Removing TAB " . $tabEntry . " because it had no attributes assigned");
+                    Adapto_Util_Debugger::debug("Removing TAB " . $tabEntry . " because it had no attributes assigned");
                 }
             }
         }
@@ -1751,7 +1751,7 @@ class Adapto_Entity
      */
     function getFormButtons($mode, $record)
     {
-        $controller = &atkinstance('atk.atkcontroller');
+        $controller = Adapto_ClassLoader::getInstance('atk.atkcontroller');
         $controller->setEntity($this);
         return $controller->getFormButtons($mode, $record);
     }
@@ -1783,7 +1783,7 @@ class Adapto_Entity
      */
     function &getUi()
     {
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
         return $ui;
     }
 
@@ -2031,7 +2031,7 @@ class Adapto_Entity
                             if (is_object($p_attrib) && (!$p_attrib->hasFlag(AF_NO_FILTER)))
                                 $p_attrib->m_flags |= AF_READONLY | AF_HIDE_ADD;
                         } else {
-                            atkerror("Attribute '$attribname' doesn't exist in the attributelist");
+                            throw new Adapto_Exception("Attribute '$attribname' doesn't exist in the attributelist");
                         }
                     }
                 }
@@ -2080,7 +2080,7 @@ class Adapto_Entity
                 }
 
                 /* sometimes a field is hidden although not specified by the field itself */
-                $theme = &atkinstance("atk.ui.atktheme");
+                $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
                 if ($theme->getAttribute("tabtype") == "dhtml" || $ignoreTab) {
                     $notOnTab = FALSE;
                 } else {
@@ -2094,7 +2094,7 @@ class Adapto_Entity
                 /* we let the attribute add itself to the edit array */
                 $p_attrib->addToEditArray($mode, $result, $defaults, $record['atkerror'], $fieldprefix);
             } else {
-                atkerror("Attribute $attribname not found!");
+                throw new Adapto_Exception("Attribute $attribname not found!");
             }
         }
 
@@ -2150,7 +2150,7 @@ class Adapto_Entity
                 /* we let the attribute add itself to the view array */
                 $p_attrib->addToViewArray($mode, $result, $record);
             } else {
-                atkerror("Attribute $attribname not found!");
+                throw new Adapto_Exception("Attribute $attribname not found!");
             }
         }
 
@@ -2632,7 +2632,7 @@ class Adapto_Entity
      */
     function init()
     {
-        atkdebug("init for " . $this->m_type);
+        Adapto_Util_Debugger::debug("init for " . $this->m_type);
         global $g_modifiers;
 
         // Check if initialisation is not already done.
@@ -2668,7 +2668,7 @@ class Adapto_Entity
 
         $lockType = Adapto_Config::getGlobal("lock_type");
         if (!empty($lockType) && $this->hasFlag(EF_LOCK)) {
-            $this->m_lock = &atkinstance("atk.lock.atklock");
+            $this->m_lock = Adapto_ClassLoader::getInstance("atk.lock.atklock");
         } else
             $this->removeFlag(EF_LOCK);
 
@@ -2702,13 +2702,13 @@ class Adapto_Entity
                     $this->addListener($listener);
                 } else {
                     if (is_string($listener)) {
-                        $listenerobj = &atknew($listener);
+                        $listenerobj = &Adapto_ClassLoader::create($listener);
                         if (is_object($listenerobj)) {
                             $this->addListener($listenerobj);
                         } else
-                            atkdebug("We couldn't find a classname for listener with supposed entitytype: '$listener'");
+                            Adapto_Util_Debugger::debug("We couldn't find a classname for listener with supposed entitytype: '$listener'");
                     } else {
-                        atkdebug("Failed to add listener with supposed entitytype: '$listener'");
+                        Adapto_Util_Debugger::debug("Failed to add listener with supposed entitytype: '$listener'");
                     }
                 }
             }
@@ -2751,7 +2751,7 @@ class Adapto_Entity
      */
     function dispatch($postvars, $flags = NULL)
     {
-        atkdebug("Adapto_Entity::dispatch()");
+        Adapto_Util_Debugger::debug("Adapto_Entity::dispatch()");
         $controller = &atkcontroller::getInstance();
         $controller->setEntity($this);
         return $controller->handleRequest($postvars, $flags);
@@ -2826,7 +2826,7 @@ class Adapto_Entity
      */
     function &getPage()
     {
-        $page = &atkinstance("atk.ui.atkpage");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
         return $page;
     }
 
@@ -2873,7 +2873,7 @@ class Adapto_Entity
     {
         global $g_returnurl;
 
-        atkdebug("atkentity::redirect()");
+        Adapto_Util_Debugger::debug("atkentity::redirect()");
 
         $record = $recordOrExit;
         if (is_bool($recordOrExit)) {
@@ -2896,16 +2896,16 @@ class Adapto_Entity
 
         // The actual redirect.
         if (Adapto_Config::getGlobal("debug") >= 2) {
-            $debugger = &atkinstance('atk.utils.atkdebugger');
+            $debugger = Adapto_ClassLoader::getInstance('atk.utils.Adapto_Util_Debugger::debugger');
             $debugger->setRedirectUrl($location);
-            atkdebug('Non-debug version would have redirected to <a href="' . $location . '">' . $location . '</a>');
+            Adapto_Util_Debugger::debug('Non-debug version would have redirected to <a href="' . $location . '">' . $location . '</a>');
             if ($exit) {
                 $output = &atkOutput::getInstance();
                 $output->outputFlush();
                 exit();
             }
         } else {
-            atkdebug('redirecting to: ' . $location);
+            Adapto_Util_Debugger::debug('redirecting to: ' . $location);
 
             if (substr($location, -1) == "&") {
                 $location = substr($location, 0, -1);
@@ -3139,7 +3139,7 @@ class Adapto_Entity
      */
     function validate(&$record, $mode, $ignoreList = array())
     {
-        $validateObj = &atknew($this->m_validate_class);
+        $validateObj = &Adapto_ClassLoader::create($this->m_validate_class);
 
         $validateObj->setEntity($this);
         $validateObj->setRecord($record);
@@ -3260,7 +3260,7 @@ class Adapto_Entity
             if ($this->hasFlag(EF_ML) && $record["atkmlsplit"] == "") {
                 $record["atkmlsplit"] = 1;
 
-                $mltool = &atkinstance("atk.utils.atkmlsplitter");
+                $mltool = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
                 $mltool->updateMlRecords($this, $record, "update", $excludes, $includes);
             }
 
@@ -3274,7 +3274,7 @@ class Adapto_Entity
             else
                 return true;
         } else {
-            atkdebug("NOT UPDATING! NO SELECTOR SET!");
+            Adapto_Util_Debugger::debug("NOT UPDATING! NO SELECTOR SET!");
             return false;
         }
         return true;
@@ -3296,7 +3296,7 @@ class Adapto_Entity
             $p_attrib = &$this->m_attribList[$storelist[$i]];
             if (!$p_attrib->store($this->getDb(), $record, $mode)) {
                 // something went wrong.
-                atkdebug("Store aborted. Attribute '" . $storelist[$i] . "' reported an error.");
+                Adapto_Util_Debugger::debug("Store aborted. Attribute '" . $storelist[$i] . "' reported an error.");
                 return false;
             }
         }
@@ -3393,7 +3393,7 @@ class Adapto_Entity
             $class = 'atkmlselector';
         }
 
-        $selector = atknew('atk.utils.' . $class, $this);
+        $selector = Adapto_ClassLoader::create('atk.utils.' . $class, $this);
         $this->_initSelector($selector, $condition, $params);
 
         return $selector;
@@ -3470,11 +3470,11 @@ class Adapto_Entity
                     $p_attrib->addToQuery($query, $alias, $fieldaliasprefix, $dummy, $level, $mode);
                 }
             } else
-                atkdebug("$attribname is not an object?! Check your descriptor_def for non-existant fields");
+                Adapto_Util_Debugger::debug("$attribname is not an object?! Check your descriptor_def for non-existant fields");
         }
 
         if ($this->hasFlag(EF_ML)) {
-            $mltool = &atkinstance("atk.utils.atkmlsplitter");
+            $mltool = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
             $mltool->addMlCondition($query, $this, $mode, $alias);
         }
     }
@@ -3526,7 +3526,7 @@ class Adapto_Entity
                     if (is_array($searchmode)) {
                         $attribsearchmode = $attribsearchmode[$p_attrib->m_name];
                     }
-                    atkdebug("getSearchCondition: $table - $fieldaliasprefix");
+                    Adapto_Util_Debugger::debug("getSearchCondition: $table - $fieldaliasprefix");
                     $searchCondition = $p_attrib->getSearchCondition($query, $table, $value, $searchmode, $fieldaliasprefix);
                     if ($searchCondition != "")
                         $searchConditions[] = $searchCondition;
@@ -3567,7 +3567,7 @@ class Adapto_Entity
     {
         if ($exectrigger)
             if (!$this->executeTrigger("preAdd", $record, $mode))
-                return atkerror("preAdd() failed!");
+                return throw new Adapto_Exception("preAdd() failed!");
 
         $db = &$this->getDb();
         $query = &$db->createQuery();
@@ -3598,7 +3598,7 @@ class Adapto_Entity
         }
 
         if (!$query->executeInsert()) {
-            atkdebug("executeInsert failed..");
+            Adapto_Util_Debugger::debug("executeInsert failed..");
             return false;
         }
 
@@ -3607,12 +3607,12 @@ class Adapto_Entity
 
         if ($this->hasFlag(EF_ML) && $record["atkmlsplit"] == "") {
             $record["atkmlsplit"] = 1;
-            $mltool = &atkinstance("atk.utils.atkmlsplitter");
+            $mltool = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
             $mltool->updateMlRecords($this, $record, $mode);
         }
 
         if (!$this->_storeAttributes($storelist["post"], $record, $mode)) {
-            atkdebug("_storeAttributes failed..");
+            Adapto_Util_Debugger::debug("_storeAttributes failed..");
             return false;
         }
 
@@ -3644,12 +3644,12 @@ class Adapto_Entity
             $return = $this->$trigger($record, $mode);
 
             if ($return === NULL) {
-                atkdebug("Undefined return: " . $this->atkEntityType() . ".$trigger doesn't return anything, it should return a boolean!", DEBUG_WARNING);
+                Adapto_Util_Debugger::debug("Undefined return: " . $this->atkEntityType() . ".$trigger doesn't return anything, it should return a boolean!", DEBUG_WARNING);
                 $return = true;
             }
 
             if (!$return) {
-                atkdebug($this->atkEntityType() . ".$trigger failed!");
+                Adapto_Util_Debugger::debug($this->atkEntityType() . ".$trigger failed!");
                 return false;
             }
 
@@ -3658,14 +3658,14 @@ class Adapto_Entity
                 $return = $listener->notify($trigger, $record, $mode);
 
                 if ($return === NULL) {
-                    atkdebug(
+                    Adapto_Util_Debugger::debug(
                             "Undefined return: " . $this->atkEntityType() . ", " . get_class($listener)
                                     . ".notify('$trigger', ...) doesn't return anything, it should return a boolean!", DEBUG_WARNING);
                     $return = true;
                 }
 
                 if (!$return) {
-                    atkdebug($this->atkEntityType() . ", " . get_class($listener) . ".notify('$trigger', ...) failed!");
+                    Adapto_Util_Debugger::debug($this->atkEntityType() . ", " . get_class($listener) . ".notify('$trigger', ...) failed!");
                     return false;
                 }
             }
@@ -3911,13 +3911,13 @@ class Adapto_Entity
         if (is_callable($callback, false, $callableName)) {
             if (is_array($callback)) {
                 if (!method_exists($callback[0], $callback[1])) {
-                    atkerror("The registered record actions callback method '$callableName' doesn't exist");
+                    throw new Adapto_Exception("The registered record actions callback method '$callableName' doesn't exist");
                     return;
                 }
             }
             $this->m_recordActionsCallbacks[] = $callback;
         } else {
-            atkerror("The registered record actions callback '$callableName' is not callable");
+            throw new Adapto_Exception("The registered record actions callback '$callableName' is not callable");
             return;
         }
     }
@@ -4192,22 +4192,22 @@ class Adapto_Entity
      */
     function callHandler($action)
     {
-        atkdebug("Adapto_Entity::callHandler(); action: " . $action);
+        Adapto_Util_Debugger::debug("Adapto_Entity::callHandler(); action: " . $action);
         $handler = &atkGetEntityHandler($this->m_type, $action);
 
         // handler function
         if ($handler != NULL && is_string($handler) && function_exists($handler)) {
-            atkdebug("Adapto_Entity::callHandler: Calling external handler function for '" . $action . "'");
+            Adapto_Util_Debugger::debug("Adapto_Entity::callHandler: Calling external handler function for '" . $action . "'");
             $handler($this, $action);
         }
         // handler object
  elseif ($handler != NULL && $handler instanceof atkActionHandler) {
-            atkdebug("Adapto_Entity::callHandler:Using override/existing atkActionHandler " . get_class($handler) . " class for '" . $action . "'");
+            Adapto_Util_Debugger::debug("Adapto_Entity::callHandler:Using override/existing atkActionHandler " . get_class($handler) . " class for '" . $action . "'");
             $handler->handle($this, $action, $this->m_postvars);
         }
         // no (valid) handler
  else {
-            atkdebug("Calling default handler function for '" . $action . "'");
+            Adapto_Util_Debugger::debug("Calling default handler function for '" . $action . "'");
             $this->m_handler = &$this->getHandler($action);
             $this->m_handler->handle($this, $action, $this->m_postvars);
         }
@@ -4223,7 +4223,7 @@ class Adapto_Entity
      */
     function &getHandler($action)
     {
-        atkdebug("Adapto_Entity::getHandler(); action: " . $action);
+        Adapto_Util_Debugger::debug("Adapto_Entity::getHandler(); action: " . $action);
 
         // for backwards compatibility we first check if a handler exists without using the module name
         $handler = &atkGetEntityHandler($this->m_type, $action);
@@ -4235,7 +4235,7 @@ class Adapto_Entity
 
         // The entity handler might return a class, then we need to instantiate the handler
         if (is_string($handler) && !function_exists($handler) && atkimport($handler)) {
-            $handler = &atknew($handler);
+            $handler = &Adapto_ClassLoader::create($handler);
         }
 
         // The entity handler might return a function as entityhandler. We cannot
@@ -4247,7 +4247,7 @@ class Adapto_Entity
 
         // handler object
         if ($handler != NULL && is_subclass_of($handler, "atkActionHandler")) {
-            atkdebug("Adapto_Entity::getHandler: Using existing atkActionHandler " . get_class($handler) . " class for '" . $action . "'");
+            Adapto_Util_Debugger::debug("Adapto_Entity::getHandler: Using existing atkActionHandler " . get_class($handler) . " class for '" . $action . "'");
             $handler->setEntity($this);
             $handler->setAction($action);
         } else {
@@ -4258,7 +4258,7 @@ class Adapto_Entity
 
             //If we use a default handler we need to register it to this entity
             //because we might call it a second time.
-            atkdebug("Adapto_Entity::getHandler: Register default atkActionHandler for " . $this->m_type . " action: '" . $action . "'");
+            Adapto_Util_Debugger::debug("Adapto_Entity::getHandler: Register default atkActionHandler for " . $this->m_type . " action: '" . $action . "'");
             atkRegisterEntityHandler($this->m_type, $action, $handler);
         }
 
@@ -4461,7 +4461,7 @@ class Adapto_Entity
      */
     function addStyle($style)
     {
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page = &$this->getPage();
         $page->register_style($theme->stylePath($style));
     }
@@ -4539,7 +4539,7 @@ class Adapto_Entity
         } else if (is_a($listener, 'atkTriggerListener')) {
             $this->m_triggerListeners[] = &$listener;
         } else {
-            atkdebug('Adapto_Entity::addListener: Unknown listener base class ' . get_class($listener));
+            Adapto_Util_Debugger::debug('Adapto_Entity::addListener: Unknown listener base class ' . get_class($listener));
         }
     }
 
@@ -4580,7 +4580,7 @@ class Adapto_Entity
     function &getColumnConfig($id = NULL, $forceNew = false)
     {
 
-        $columnConfig = &Adapto_Recordlist_ColumnConfig::getConfig($this, $id, $forceNew);
+        $columnConfig = Adapto_Recordlist_ColumnConfig::getConfig($this, $id, $forceNew);
         return $columnConfig;
     }
 
@@ -4682,7 +4682,7 @@ class Adapto_Entity
         $res = false;
         if (is_callable($callback, false, $callableName)) {
             if (is_array($callback) && !method_exists($callback[0], $callback[1])) {
-                atkerror("The registered row class callback method '$callableName' doesn't exist");
+                throw new Adapto_Exception("The registered row class callback method '$callableName' doesn't exist");
             } else {
                 $this->m_rowClassCallback[] = $callback;
                 $res = true;
@@ -4690,10 +4690,10 @@ class Adapto_Entity
         } else {
             if (is_array($callback)) {
                 if (!method_exists($callback[0], $callback[1])) {
-                    atkerror("The registered row class callback method '$callableName' doesn't exist");
+                    throw new Adapto_Exception("The registered row class callback method '$callableName' doesn't exist");
                 }
             }
-            atkerror("The registered row class callback '$callableName' is not callable");
+            throw new Adapto_Exception("The registered row class callback '$callableName' is not callable");
         }
         return $res;
     }

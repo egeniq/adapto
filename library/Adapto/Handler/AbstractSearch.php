@@ -74,7 +74,7 @@ abstract class Adapto_Handler_AbstractSearch extends Adapto_ActionHandler
         $db = $this->m_entity->getDb();
         $this->m_table_exists = $db->tableExists($this->m_table);
 
-        atkdebug('tableExists checking table: ' . $this->m_table . ' exists : ' . print_r($this->m_table_exists, true));
+        Adapto_Util_Debugger::debug('tableExists checking table: ' . $this->m_table . ' exists : ' . print_r($this->m_table_exists, true));
 
         return $this->m_table_exists;
     }

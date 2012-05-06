@@ -31,7 +31,7 @@
   atksession();
   atksecure();
 
-  $theme = &atkinstance('atk.ui.atktheme');
+  $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
   if (Adapto_Config::getGlobal("fullscreen"))
   {
     // Fullscreen mode. Use index.php as launcher, and launch app.php fullscreen.
@@ -39,8 +39,8 @@
       atksession();
       atksecure();
 
-      $page = &atknew("atk.ui.atkpage");
-      $ui = &atkinstance("atk.ui.atkui");
+      $page = &Adapto_ClassLoader::create("atk.ui.atkpage");
+      $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
       $theme = &atkTheme::getInstance();
       $output = &atkOutput::getInstance();
 
@@ -68,7 +68,7 @@
     }
     else
     {
-      $indexpage = &atknew('atk.ui.atkindexpage');
+      $indexpage = &Adapto_ClassLoader::create('atk.ui.atkindexpage');
       $indexpage->generate();
     }
   }

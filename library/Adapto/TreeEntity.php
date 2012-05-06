@@ -93,7 +93,7 @@ class Adapto_TreeEntity extends Adapto_Entity
      */
     function buildTree()
     {
-        atkdebug("atktreeentity::buildtree() " . $this->m_parent);
+        Adapto_Util_Debugger::debug("atktreeentity::buildtree() " . $this->m_parent);
         $recordset = $this->selectDb(atkArrayNvl($this->m_postvars, "atkfilter", ""), "", "", $this->m_listExcludes, "", "admin");
 
         $treeobject = new tree;
@@ -124,7 +124,7 @@ class Adapto_TreeEntity extends Adapto_Entity
             $content .= $adminHeader . "<br><br>";
         }
 
-        atkdebug("Entering treeview page.");
+        Adapto_Util_Debugger::debug("Entering treeview page.");
 
         $t = $this->buildTree();
 
@@ -163,7 +163,7 @@ class Adapto_TreeEntity extends Adapto_Entity
             $content .= "<br>" . $adminFooter;
         }
 
-        atkdebug("Generated treeview");
+        Adapto_Util_Debugger::debug("Generated treeview");
 
         return $ui->renderBox(array("title" => atktext('title_' . $this->m_type . '_tree', $this->m_module), "content" => $content));
 
@@ -208,7 +208,7 @@ class Adapto_TreeEntity extends Adapto_Entity
      */
     function getIcon($name)
     {
-        $theme = &atkInstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         return $theme->iconPath("tree_$name", "tree", $this->m_module);
     }
 
@@ -590,9 +590,9 @@ class Adapto_TreeEntity extends Adapto_Entity
         parent::copyDb($record, $mode);
 
         if (!empty($this->m_parent)) {
-            atkdebug("copyDb - Main Record added");
+            Adapto_Util_Debugger::debug("copyDb - Main Record added");
             $newparent = $record[$this->m_primaryKey[0]];
-            atkdebug('CopyDbCopychildren(' . $this->m_parent . '=' . $oldparent . ',' . $newparent . ')');
+            Adapto_Util_Debugger::debug('CopyDbCopychildren(' . $this->m_parent . '=' . $oldparent . ',' . $newparent . ')');
             $this->copyChildren($this->m_table . '.' . $this->m_parent . '=' . $oldparent, $newparent, $mode);
         }
         return true;
@@ -617,13 +617,13 @@ class Adapto_TreeEntity extends Adapto_Entity
                 $oldrec = $recordset[$i];
                 parent::copyDb($recordset[$i], $mode);
 
-                atkdebug("Child Record added");
+                Adapto_Util_Debugger::debug("Child Record added");
                 $newparent = $recordset[$i][$this->m_primaryKey[0]];
-                atkdebug('CopyChildren(' . $this->m_parent . '=' . $oldrec[$this->m_primaryKey[0]] . ',' . $newparent . ')');
+                Adapto_Util_Debugger::debug('CopyChildren(' . $this->m_parent . '=' . $oldrec[$this->m_primaryKey[0]] . ',' . $newparent . ')');
                 $this->copyChildren($this->m_table . '.' . $this->m_parent . '=' . $oldrec[$this->m_primaryKey[0]], $newparent);
             }
         } else {
-            atkdebug("No records found with Selector: $selector - $parent");
+            Adapto_Util_Debugger::debug("No records found with Selector: $selector - $parent");
         }
         return "";
     }
@@ -636,7 +636,7 @@ class Adapto_TreeEntity extends Adapto_Entity
      */
     function deleteDb($selector)
     {
-        atkdebug("Retrieve record");
+        Adapto_Util_Debugger::debug("Retrieve record");
         $recordset = $this->selectDb($selector, "", "", "", "", "delete");
         for ($i = 0; $i < count($recordset); $i++) {
             foreach (array_keys($this->m_attribList) as $attribname) {
@@ -648,11 +648,11 @@ class Adapto_TreeEntity extends Adapto_Entity
         }
         $parent = $recordset[0][$this->m_primaryKey[0]];
         if ($this->m_parent != "") {
-            atkdebug("Check for child records");
+            Adapto_Util_Debugger::debug("Check for child records");
             $children = $this->selectDb($this->m_table . '.' . $this->m_parent . '=' . $parent, "", "", "", "", "delete");
 
             if (count($children) > 0) {
-                atkdebug('DeleteChildren(' . $this->m_table . '.' . $this->m_parent . '=' . $parent . ',' . $parent . ')');
+                Adapto_Util_Debugger::debug('DeleteChildren(' . $this->m_table . '.' . $this->m_parent . '=' . $parent . ',' . $parent . ')');
                 $this->deleteChildren($this->m_table . '.' . $this->m_parent . '=' . $parent, $parent);
             }
         }
@@ -678,7 +678,7 @@ class Adapto_TreeEntity extends Adapto_Entity
      */
     function deleteChildren($selector, $parent)
     {
-        atkdebug("Check for child records of the Child");
+        Adapto_Util_Debugger::debug("Check for child records of the Child");
         $recordset = $this->selectDb($this->m_table . '.' . $this->m_parent . '=' . $parent, "", "", "", "", "delete");
         for ($i = 0; $i < count($recordset); $i++) {
             foreach (array_keys($this->m_attribList) as $attribname) {
@@ -692,7 +692,7 @@ class Adapto_TreeEntity extends Adapto_Entity
         if (count($recordset) > 0) {
             for ($i = 0; $i < count($recordset); $i++) {
                 $parent = $recordset[$i][$this->m_primaryKey[0]];
-                atkdebug('DeleteChildren(' . $this->m_table . '.' . $this->m_parent . '=' . $recordset[$i][$this->m_primaryKey[0]] . ',' . $parent . ')');
+                Adapto_Util_Debugger::debug('DeleteChildren(' . $this->m_table . '.' . $this->m_parent . '=' . $recordset[$i][$this->m_primaryKey[0]] . ',' . $parent . ')');
                 $this->deleteChildren($this->m_table . '.' . $this->m_parent . '=' . $recordset[$i][$this->m_primaryKey[0]], $parent);
             }
         }

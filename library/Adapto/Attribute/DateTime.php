@@ -575,7 +575,7 @@ class Adapto_Attribute_DateTime extends Adapto_Attribute
                 }
             }
 
-            atkdebug('WARNING: could not determine UTC offset for Adapto_Attribute_DateTime "' . $this->fieldName() . '"!');
+            Adapto_Util_Debugger::debug('WARNING: could not determine UTC offset for Adapto_Attribute_DateTime "' . $this->fieldName() . '"!');
             return 0;
         } else {
             return 0;

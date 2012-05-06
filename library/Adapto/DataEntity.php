@@ -84,7 +84,7 @@ class Adapto_DataEntity extends Adapto_Entity
 
     public function selectDb($selector = null, $order = null, $limit = null)
     {
-        atkdebug(get_class($this) . '::selectDb(' . $selector . ')');
+        Adapto_Util_Debugger::debug(get_class($this) . '::selectDb(' . $selector . ')');
 
         if ($order == null) {
             $order = $this->getOrder();
@@ -95,7 +95,7 @@ class Adapto_DataEntity extends Adapto_Entity
                 'search' => isset($this->m_postvars['atksearch']) ? $this->m_postvars['atksearch'] : null);
 
         $result = $this->findData($params);
-        atkdebug('Result ' . get_class($this) . '::selectDb(' . $selector . ') => ' . count($result) . ' row(s)');
+        Adapto_Util_Debugger::debug('Result ' . get_class($this) . '::selectDb(' . $selector . ') => ' . count($result) . ' row(s)');
         return $result;
     }
 

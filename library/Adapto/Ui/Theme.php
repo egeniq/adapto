@@ -52,13 +52,9 @@ class Adapto_Ui_Theme
 
     public function __construct()
     {
-        global $g_theme;
-        atkdebug("Created a new Adapto_Ui_Theme instance");
-        if (isset($g_theme["Name"]) && $g_theme["Name"] != "") {
-            $this->m_name = $g_theme["Name"];
-        } else {
-            $this->m_name = Adapto_Config::getGlobal("defaulttheme");
-        }
+        Adapto_Util_Debugger::debug("Created a new Adapto_Ui_Theme instance");
+        $this->m_name = Adapto_Config::get("adapto", "theme.name");    
+          
         $this->_loadTheme();
     }
 
@@ -83,12 +79,12 @@ class Adapto_Ui_Theme
             return moduleDir($matches[1]) . $matches[2];
         }
 
-        if (substr($relpath, 0, 4) === 'atk/')
-            $location = 'atk';
+        if (substr($relpath, 0, 4) === 'Adapto/')
+            $location = 'Adapto';
         else if (substr($relpath, 0, 7) === 'themes/')
             $location = 'app';
 
-        return ($location === 'app' ? Adapto_Config::getGlobal('application_dir') : Adapto_Config::getGlobal("atkroot")) . $relpath;
+        return ($location === 'app' ? APPLICATION_PATH : APPLICATION_PATH . '/../library/Adapto/') . $relpath;
     }
 
     /**
@@ -100,9 +96,9 @@ class Adapto_Ui_Theme
     function _loadTheme()
     {
         if (!count($this->m_theme)) {
-            $filename = Adapto_Config::getGlobal("atktempdir") . "themes/" . $this->m_name . ".inc";
-            if (!file_exists($filename) || Adapto_Config::getGlobal("force_theme_recompile")) {
-                $compiler = &atknew("atk.ui.atkthemecompiler");
+            $filename = Adapto_Config::get("adapto", "system.tempDir") . "/themes/" . $this->m_name . ".inc";
+            if (!file_exists($filename) || Adapto_Config::get("adapto", "theme.force.recompile", false)) {
+                $compiler = &Adapto_ClassLoader::create("Adapto_Ui_ThemeCompiler");
                 $compiler->compile($this->m_name);
             }
             include($filename);
@@ -136,10 +132,11 @@ class Adapto_Ui_Theme
         if ($module != "" && isset($this->m_theme["modulefiles"][$module][$type][$name])) {
             return moduleDir($module) . "themes/" . $this->m_theme["modulefiles"][$module][$type][$name];
         } else if (isset($this->m_theme["files"][$type][$name])) {
-            return Adapto_Ui_Theme::absPath($this->m_theme["files"][$type][$name]);
+            return $this->m_theme["files"][$type][$name];
         }
         return "";
     }
+   
 
     /**
      * Returns full path for themed template file

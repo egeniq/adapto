@@ -41,18 +41,18 @@ class Adapto_Error_ZendPlatformHandler extends Adapto_ErrorHandlerBase
     protected function zendPlatformAvailable()
     {
         if (!function_exists('accelerator_license_info')) {
-            atkdebug('Zend Platform was not detected');
+            Adapto_Util_Debugger::debug('Zend Platform was not detected');
             return false;
         }
 
         if (!function_exists('accelerator_get_configuration')) {
             $licenseInfo = accelerator_license_info();
-            atkdebug('The Zend Platform extension is not loaded correctly: ' . $licenseInfo['failure_reason']);
+            Adapto_Util_Debugger::debug('The Zend Platform extension is not loaded correctly: ' . $licenseInfo['failure_reason']);
             return false;
         }
 
         if (!function_exists('monitor_custom_event')) {
-            atkdebug('Zend Platform seems to be there, but the function \'monitor_custom_event\' could not be found');
+            Adapto_Util_Debugger::debug('Zend Platform seems to be there, but the function \'monitor_custom_event\' could not be found');
             return false;
         }
 

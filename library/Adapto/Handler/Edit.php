@@ -182,7 +182,7 @@ class Adapto_Handler_Edit extends Adapto_ViewEditBase
         $ui = &$entity->getUi();
 
         if (!is_object($ui)) {
-            atkerror("ui object failure");
+            throw new Adapto_Exception("ui object failure");
             return false;
         }
 
@@ -443,7 +443,7 @@ class Adapto_Handler_Edit extends Adapto_ViewEditBase
             /* obligatory indicator */
             if ($field["obligatory"]) {
                 // load images
-                $theme = &atkinstance("atk.ui.atktheme");
+                $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
                 $reqimg = '<img align="top" src="' . $theme->imgPath("required_field.gif") . '" border="0"
                      alt="' . atktext("field_obligatory") . '" title="' . atktext("field_obligatory") . '">';
 
@@ -614,7 +614,7 @@ class Adapto_Handler_Edit extends Adapto_ViewEditBase
 
         $params["errortitle"] = $error_title;
         $params["errors"] = $errors; // Add the list of errors.
-        atkdebug("Render editform - $template");
+        Adapto_Util_Debugger::debug("Render editform - $template");
         if ($template) {
             $result .= $ui->render($template, $params);
         } else {

@@ -230,7 +230,7 @@ class Adapto_FileEditor extends Adapto_Entity
                     }
                 }
             } else {
-                atkdebug("Dir " . $this->m_dir . " could not be read");
+                Adapto_Util_Debugger::debug("Dir " . $this->m_dir . " could not be read");
             }
         } else {
             // file selected, read file.
@@ -247,7 +247,7 @@ class Adapto_FileEditor extends Adapto_Entity
             if (is_file($this->m_dir . $filename)) {
                 $record['filecontent'] = implode("", file($this->m_dir . $filename));
             } else {
-                atkdebug("File $filename not found");
+                Adapto_Util_Debugger::debug("File $filename not found");
             }
             $res[] = $record;
         }
@@ -292,12 +292,12 @@ class Adapto_FileEditor extends Adapto_Entity
         $this->m_dir = $this->stripDir($sessmngr->stackVar('dirname'));
         $fp = @fopen($this->m_dir . $record['filename'], "wb");
         if ($fp == NULL) {
-            atkerror("Unable to open file " . $record['filename'] . " for writing. (Is directory '" . $this->m_dir . "' readable by webserver?");
+            throw new Adapto_Exception("Unable to open file " . $record['filename'] . " for writing. (Is directory '" . $this->m_dir . "' readable by webserver?");
             return false;
         } else {
             fwrite($fp, $record['filecontent']);
             fclose($fp);
-            atkdebug("Wrote " . $record['filename']);
+            Adapto_Util_Debugger::debug("Wrote " . $record['filename']);
         }
         return true;
     }
@@ -325,20 +325,20 @@ class Adapto_FileEditor extends Adapto_Entity
                 $filename = $this->m_dir . $decodedprimkey["dummy.filename"];
 
                 unlink($filename);
-                atkdebug("Filename changed. Deleted original '$filename'.");
+                Adapto_Util_Debugger::debug("Filename changed. Deleted original '$filename'.");
             }
             $fp = @fopen($this->m_dir . $record['filename'], "wb");
             if ($fp == NULL) {
-                atkerror("Unable to open file " . $record['filename'] . " for writing. (Is directory '" . $this->m_dir . "' readable by webserver?");
+                throw new Adapto_Exception("Unable to open file " . $record['filename'] . " for writing. (Is directory '" . $this->m_dir . "' readable by webserver?");
             } else {
                 fwrite($fp, $record['filecontent']);
                 fclose($fp);
-                atkdebug("Wrote " . $record['filename']);
+                Adapto_Util_Debugger::debug("Wrote " . $record['filename']);
                 $record['atkprimkey'] = $record['filename'];
             }
             return true;
         } else {
-            atkdebug("NOT UPDATING! NO SELECTOR SET!");
+            Adapto_Util_Debugger::debug("NOT UPDATING! NO SELECTOR SET!");
             return false;
         }
     }
@@ -362,9 +362,9 @@ class Adapto_FileEditor extends Adapto_Entity
 
         if (strpos($filename, "..") === false) {
             unlink($this->m_dir . $filename);
-            atkdebug("Deleted " . $this->m_dir . $filename);
+            Adapto_Util_Debugger::debug("Deleted " . $this->m_dir . $filename);
         } else {
-            atkerror("Cannot unlink relative files. Possible hack attempt detected!");
+            throw new Adapto_Exception("Cannot unlink relative files. Possible hack attempt detected!");
         }
         return true;
     }

@@ -31,7 +31,7 @@ class Adapto_Menu_Dropdown extends Adapto_PlainMenu
      */
     function render()
     {
-        $page = &atkinstance("atk.ui.atkpage");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
         $menu = $this->load();
         $page->addContent($menu);
 
@@ -57,8 +57,8 @@ class Adapto_Menu_Dropdown extends Adapto_PlainMenu
     {
         global $Adapto_VARS, $g_menu;
 
-        $page = &atkinstance('atk.ui.atkpage');
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = Adapto_ClassLoader::getInstance('atk.ui.atkpage');
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_script(Adapto_Config::getGlobal('atkroot') . 'atk/javascript/dropdown_menu.js');
         $page->register_style($theme->stylePath("atkdropdownmenu.css"));
         $page->m_loadscripts[] = "new DHTMLListMenu('nav');";

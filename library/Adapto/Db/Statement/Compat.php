@@ -46,7 +46,7 @@ class Adapto_Db_Statement_Compat extends Adapto_Statement
             throw new Adapto_StatementException("Cannot connect to database.", atkStatementException::NO_DATABASE_CONNECTION);
         }
 
-        atkdebug("Prepare query: " . $this->_getParsedQuery());
+        Adapto_Util_Debugger::debug("Prepare query: " . $this->_getParsedQuery());
     }
 
     /**
@@ -60,10 +60,10 @@ class Adapto_Db_Statement_Compat extends Adapto_Statement
     protected function _bindParams($params)
     {
         $query = $this->_getParsedQuery();
-        atkdebug("Binding parameters for query: " . $this->_getParsedQuery());
+        Adapto_Util_Debugger::debug("Binding parameters for query: " . $this->_getParsedQuery());
 
         foreach (array_values($this->_getBindPositions()) as $i => $param) {
-            atkdebug("Bind param {$i}: " . ($params[$param] === null ? 'NULL' : $params[$param]));
+            Adapto_Util_Debugger::debug("Bind param {$i}: " . ($params[$param] === null ? 'NULL' : $params[$param]));
         }
 
         foreach (array_reverse($this->_getBindPositions(), true) as $position => $param) {

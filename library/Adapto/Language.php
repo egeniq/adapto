@@ -90,7 +90,7 @@ class Adapto_Language
 
     public function __construct()
     {
-        atkdebug("New instance made of Adapto_Language");
+        Adapto_Util_Debugger::debug("New instance made of Adapto_Language");
     }
 
     /**
@@ -151,7 +151,7 @@ class Adapto_Language
             global $g_modules;
 
             $modules = array();
-            if (is_array($g_modules) && ($modulefallback || Adapto_Config::getGlobal("language_modulefallback", false))) {
+            if (is_array($g_modules) && ($modulefallback || Adapto_Config::get('adapto', "language.modulefallback", false))) {
                 foreach ($g_modules as $modname => $modpath) {
                     $modules[] = $modname;
                 }
@@ -182,7 +182,7 @@ class Adapto_Language
      * @return String the string from the languagefile
      */
 
-    public static function text($string, $module, $entity = "", $lng = "", $firstfallback = "", $entityfaulttext = false, $modulefallback = false)
+    public static function text($string, $module="adapto", $entity = "", $lng = "", $firstfallback = "", $entityfaulttext = false, $modulefallback = false)
     {
         // We don't translate nothing
         if ($string == '')
@@ -250,7 +250,7 @@ class Adapto_Language
 
         if (isset($Adapto_VARS["atklng"])
                 && (in_array($Adapto_VARS["atklng"], Adapto_Language::getSupportedLanguages())
-                        || in_array($Adapto_VARS["atklng"], Adapto_Config::getGlobal('supported_languages')))) {
+                        || in_array($Adapto_VARS["atklng"], Adapto_Config::get('adapto', 'language.supported_languages', array('en'))))) {
             $lng = $Adapto_VARS["atklng"];
         } // we first check for an atklng variable
  else {
@@ -291,21 +291,21 @@ class Adapto_Language
         if (!empty($sessionmanager)) {
             if (function_exists("getUser")) {
                 $userinfo = getUser();
-                $fieldname = Adapto_Config::getGlobal('auth_languagefield');
+                $fieldname = Adapto_Config::get('adapto', 'auth_languagefield');
                 if (isset($userinfo[$fieldname]) && in_array($userinfo[$fieldname], $supported))
                     return $userinfo[$fieldname];
             }
         }
 
         // Otherwise we check the headers
-        if (Adapto_Config::getGlobal('use_browser_language', false)) {
+        if (Adapto_Config::get('adapto', 'language.use_browser_language', false)) {
             $headerlng = Adapto_Language::getLanguageFromHeaders();
             if ($headerlng && in_array($headerlng, $supported))
                 return $headerlng;
         }
 
         // We give up and just return the default language
-        return Adapto_Config::getGlobal('language');
+        return Adapto_Config::get('adapto', 'language', 'en');
     }
 
     /**
@@ -347,17 +347,6 @@ class Adapto_Language
 
     public static function getSupportedLanguages()
     {
-        $supportedlanguagesmodule = Adapto_Config::getGlobal('supported_languages_module');
-        if (self::$s_supportedLanguages == null && $supportedlanguagesmodule) {
-            $supportedlanguagesdir = Adapto_Language::getLanguageDirForModule($supportedlanguagesmodule);
-
-            $supportedlanguagescollector = new getSupportedLanguagesCollector();
-            $traverser = new Adapto_DirectoryTraverser();
-            $traverser->addCallbackObject($supportedlanguagescollector);
-            $traverser->traverse($supportedlanguagesdir);
-            self::$s_supportedLanguages = $supportedlanguagescollector->getLanguages();
-        }
-
         return (array) self::$s_supportedLanguages;
     }
 
@@ -440,8 +429,8 @@ class Adapto_Language
         }
 
         if (!$entityfaulttext) {
-            if (Adapto_Config::getGlobal("debug_translations", false))
-                atkdebug(
+            if (Adapto_Config::get('adapto', 'language.debug_translations', false))
+                Adapto_Util_Debugger::debug(
                         "Adapto_Language: translation for '$key' with module: '$module' and entity: '$entity' and language: '$lng' not found, returning default text");
 
             // Still nothing found. return default string
@@ -497,12 +486,12 @@ class Adapto_Language
 
     public function getLanguageDirForModule($module)
     {
-        if ($module == "atk") {
-            $path = Adapto_Config::getGlobal("atkroot") . "atk/" . (isset($this) ? $this->LANGDIR : 'languages/');
+        if ($module == "adapto") {
+            $path = APPLICATION_PATH . "/../Adapto/" . (isset($this) ? $this->LANGDIR : 'languages/');
         } else if ($module == "langoverrides") {
-            $path = Adapto_Config::getGlobal("language_basedir", (isset($this) ? $this->LANGDIR : 'languages/'));
+            $path = Adapto_Config::get("adapto", "language_basedir", (isset($this) ? $this->LANGDIR : 'languages/'));
         } else {
-            $path = moduleDir($module) . (isset($this) ? $this->LANGDIR : 'languages/');
+            $path = APPLICATION_PATH.'/modules/'. ($module) . (isset($this) ? $this->LANGDIR : 'languages/');
         }
         return $path;
     }

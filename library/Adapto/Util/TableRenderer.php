@@ -229,7 +229,7 @@ class Adapto_Util_TableRenderer
      */
     function registerStyle($style, $module = "")
     {
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page = &atkPage::getInstance();
         $page->register_style($theme->stylePath($style . ".css", $module));
     }
@@ -280,7 +280,7 @@ class Adapto_Util_TableRenderer
      *
      * <b>Example:</b>
      * <code>
-     *  $tbl = &atknew("atk.utils.atktablerenderer");
+     *  $tbl = &Adapto_ClassLoader::create("atk.utils.atktablerenderer");
      *  $tbl->render($data, TBL_HEADER|TBL_ALTERNATE, "recordlist");
      * </code>
      *

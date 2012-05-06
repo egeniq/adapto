@@ -56,7 +56,7 @@ class Adapto_Db_Statement_MySQLi extends Adapto_Statement
         }
 
         $conn = $this->getDb()->link_id();
-        atkdebug("Prepare query: " . $this->_getParsedQuery());
+        Adapto_Util_Debugger::debug("Prepare query: " . $this->_getParsedQuery());
         $this->m_stmt = $conn->prepare($this->_getParsedQuery());
         if (!$this->m_stmt || $conn->errno) {
             throw new Adapto_StatementException("Cannot prepare statement (ERROR: {$conn->errno} - {$conn->error}).",
@@ -97,7 +97,7 @@ class Adapto_Db_Statement_MySQLi extends Adapto_Statement
         $args = array();
         $args[] = str_repeat('s', count($this->_getBindPositions()));
         foreach ($this->_getBindPositions() as $param) {
-            atkdebug("Bind param {$i}: " . ($params[$param] === null ? 'NULL' : $params[$param]));
+            Adapto_Util_Debugger::debug("Bind param {$i}: " . ($params[$param] === null ? 'NULL' : $params[$param]));
             $args[] = &$params[$param];
             $i++;
         }
@@ -168,7 +168,7 @@ class Adapto_Db_Statement_MySQLi extends Adapto_Statement
     {
         if (Adapto_Config::getGlobal("debug") >= 0) {
 
-            atkDebugger::addQuery($this->_getParsedQuery(), false);
+            Adapto_Util_Debugger::debugger::addQuery($this->_getParsedQuery(), false);
         }
 
         $this->_bindParams($params);

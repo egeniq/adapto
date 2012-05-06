@@ -32,7 +32,7 @@ class Adapto_Handler_EditCopy extends Adapto_ActionHandler
      */
     function action_editcopy()
     {
-        atkdebug("atkentity::action_editcopy()");
+        Adapto_Util_Debugger::debug("atkentity::action_editcopy()");
 
         $record = $this->getCopyRecord();
         // allowed to editcopy record?
@@ -69,7 +69,7 @@ class Adapto_Handler_EditCopy extends Adapto_ActionHandler
             return $recordset[0];
         }
  else {
-            atkdebug("Geen records gevonden met selector: $selector");
+            Adapto_Util_Debugger::debug("Geen records gevonden met selector: $selector");
             $this->m_entity->redirect();
         }
     }

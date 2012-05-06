@@ -124,7 +124,7 @@ abstract class Adapto_Datagrid_Component
 
     protected function getTheme()
     {
-        return atkinstance("atk.ui.atktheme");
+        return Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
     }
 
     /**

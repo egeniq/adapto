@@ -73,7 +73,7 @@ class Adapto_Listener_RecycleBin extends Adapto_TriggerListener
 
     public function preDelete($record)
     {
-        atkdebug("delete performed, storing record in recyclebin");
+        Adapto_Util_Debugger::debug("delete performed, storing record in recyclebin");
 
         if (isset($this->_options["entity"])) {
 
@@ -97,7 +97,7 @@ class Adapto_Listener_RecycleBin extends Adapto_TriggerListener
             } else { // default behaviour: assume table with _bin appendix
                 $entity->setTable($entity->getTable() . "_bin");
             }
-            atkdebug("adding record to recyclebin");
+            Adapto_Util_Debugger::debug("adding record to recyclebin");
             $entity->addDb($record);
         }
         return true;

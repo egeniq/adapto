@@ -39,7 +39,7 @@
   $menu = &atkMenu::getMenu();
                   
   if (is_object($menu)) $output->output($menu->render());
-  else atkerror("no menu object created!");;
+  else throw new Adapto_Exception("no menu object created!");;
               
   $output->outputFlush();
                         

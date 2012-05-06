@@ -44,14 +44,15 @@ class Adapto_Ui_ThemeCompiler
     {
         // Process theme directory structure into data array.
         $data = $this->readStructure($name);
-
+        
         // Write it to the compiled theme file
         if (count($data)) {
-            if (!file_exists(Adapto_Config::getGlobal("atktempdir") . "themes/")) {
-                mkdir(Adapto_Config::getGlobal("atktempdir") . "themes/");
+           
+            if (!file_exists(Adapto_Config::get("adapto", "system.tempDir") . "/themes/")) {
+                mkdir(Adapto_Config::get("adapto", "system.tempDir") . "/themes/");
             }
 
-            $tmpfile = new Adapto_TmpFile("themes/$name.inc");
+            $tmpfile = new Adapto_Util_TmpFile("themes/$name.inc");
             $tmpfile->writeAsPhp("theme", $data);
             return true;
         }
@@ -81,23 +82,22 @@ class Adapto_Ui_ThemeCompiler
         $data = array();
 
         $path = $this->findTheme($name, $location);
+        
         if ($path == "") {
             // theme not found.
-            $defaulttheme = Adapto_Config::getGlobal("defaulttheme");
+            $defaulttheme = Adapto_Config::get("adapto", "theme.name");
             if ($name != $defaulttheme) {
                 // this is not the default theme, let's load that instead.
                 return $this->readStructure($defaulttheme, "auto");
             } else {
                 // this is the default theme, set in the config. If this doesn't exist, fallback to default.
-                return $this->readStructure("default", "atk");
+                return $this->readStructure("default", "adapto");
             }
         }
 
-        $abspath = atkTheme::absPath($path, $location);
-
         // First parse the themedef file for attributes
-        if ($path != "" && file_exists($abspath . "themedef.inc")) {
-            include($abspath . "themedef.inc");
+        if ($path != "" && file_exists($path . "themedef.inc")) {
+            include($path . "themedef.inc");
 
             if (isset($theme["basetheme"])) // If theme is derived from another theme, use that other theme as basis
  {
@@ -119,7 +119,7 @@ class Adapto_Ui_ThemeCompiler
             }
 
             // Second scan all files in the theme path
-            $this->scanThemePath($path, $abspath, $data);
+            $this->_scanThemePath($name, $path, $data);
             $this->scanModulePath($name, $data);
 
             $data["attributes"]["basepath"] = $path;
@@ -137,22 +137,22 @@ class Adapto_Ui_ThemeCompiler
      * @return String The path relative to atk root, where the theme is located
      */
     function findTheme($name, &$location)
-    {
+    {        
         if (strpos($name, ".") !== false) {
             list($module, $name) = explode(".", $name);
-            $path = moduleDir($module) . "themes/" . $name . "/";
+            $path = Adapto_Module::pathForModule($module) . "themes/" . $name . "/";
             if (file_exists($path . "themedef.inc")) {
                 $location = "module";
                 return "module/$module/themes/$name/";
             }
-        } else if ($location != "atk" && file_exists(Adapto_Config::getGlobal("application_dir") . "themes/$name/themedef.inc")) {
+        } else if ($location != "adapto" && file_exists(APPLICATION_PATH . "/themes/$name/themedef.inc")) {
             $location = "app";
             return "themes/$name/";
-        } else if ($location != "app" && file_exists(Adapto_Config::getGlobal("atkroot") . "atk/themes/$name/themedef.inc")) {
-            $location = "atk";
-            return "atk/themes/$name/";
+        } else if ($location != "app" && file_exists(APPLICATION_PATH . "/../library/Adapto/Theme/$name/themedef.inc")) {
+            $location = "adapto";
+            return APPLICATION_PATH . "/../library/Adapto/Theme/$name/";
         }
-        atkerror("Theme $name not found");
+        throw new Adapto_Exception("Theme $name not found");
         $location = "";
         return "";
     }
@@ -166,39 +166,50 @@ class Adapto_Ui_ThemeCompiler
      * @param String $abspath The absolute path of the theme
      * @param String $data Reference to the data array in which to report the file locations
      */
-    function scanThemePath($path, $abspath, &$data)
+    private function _scanThemePath($themeName, $abspath, &$data)
     {
-        $traverser = &atknew("atk.utils.atkdirectorytraverser");
+        $traverser = &Adapto_ClassLoader::create("Adapto_Util_DirectoryTraverser");
         $subitems = $traverser->getDirContents($abspath);
         foreach ($subitems as $name) {
-            if (in_array($name, array("images", "styles", "templates"))) // images, styles and templates are compiled the same
- {
+            // images, styles and templates are compiled the same
+            if (in_array($name, array("images", "styles", "templates"))) {
                 $files = $this->_dirContents($abspath . $name);
                 foreach ($files as $file) {
                     $key = $file;
-                    if (substr($key, -8) == '.tpl.php') {
-                        $key = substr($key, 0, -4);
+                    
+                    if (in_array($name, array("images", "styles"))) {
+                        
+                        if (!file_exists("adapto_static/".$themeName."/".$name)) {
+                            if (!Adapto_Util_Files::mkdirRecursive("adapto_static/".$themeName.'/'.$name)) {
+                                throw new Adapto_Exception("public/adapto_static is not writable.");
+                            }
+                        }           
+                        
+                        // Todo: move the installation of public files to a later stage, 'scan' must not have
+                        // side effects.
+                        copy($abspath."/".$name."/".$file, "adapto_static/".$themeName."/".$name."/".$file);
                     }
-
-                    $data["files"][$name][$key] = $path . $name . "/" . $file;
+                    $data["files"][$name][$key] = $themeName."/".$name . "/" . $file;
                 }
-            } else if ($name == "icons") // new Adapto_5 style icon theme dirs
- {
+            } else if ($name == "icons") {
                 $subs = $this->_dirContents($abspath . $name);
                 foreach ($subs as $type) {
                     $files = $this->_dirContents($abspath . $name . "/" . $type);
                     foreach ($files as $file) {
-                        $data["files"]["icons"][$type][$file] = $path . $name . "/" . $type . "/" . $file;
+                        
+                          if (!file_exists("adapto_static/".$themeName."/".$name."/".$type)) {
+                            if (!Adapto_Util_Files::mkdirRecursive("adapto_static/".$themeName.'/'.$name."/".$type)) {
+                                throw new Adapto_Exception("public/adapto_static is not writable.");
+                            }
+                        }           
+                        
+                        // Todo: move the installation of public files to a later stage, 'scan' must not have
+                        // side effects.
+                        copy($abspath."/".$name."/".$type."/".$file, "adapto_static/".$themeName."/".$name."/".$type."/".$file);
+                        $data["files"]["icons"][$type][$file] = $themeName . "/" . $name . "/" . $type . "/" . $file;
                     }
                 }
-            } else if (in_array($name, array("tree_icons", "recordlist_icons", "toolbar_icons"))) // Old ATK5 style icon theme dirs
- {
-                $type = substr($name, 0, -6);
-                $files = $this->_dirContents($abspath . $name);
-                foreach ($files as $file) {
-                    $data["files"]["icons"][$type][$file] = $path . $name . "/" . $file;
-                }
-            }
+            } 
         }
     }
 
@@ -212,10 +223,10 @@ class Adapto_Ui_ThemeCompiler
      */
     function scanModulePath($theme, &$data)
     {
-        global $g_modules;
+        $modules = array(); // todo, how do we ask ZF for a list of modules?
 
-        $traverser = &atknew("atk.utils.atkdirectorytraverser");
-        foreach ($g_modules as $module => $modpath) {
+        $traverser = &Adapto_ClassLoader::create("Adapto_Util_DirectoryTraverser");
+        foreach ($modules as $module => $modpath) {
             $abspath = $modpath . "themes/" . $theme . "/";
 
             if (is_dir($abspath)) {
@@ -251,7 +262,7 @@ class Adapto_Ui_ThemeCompiler
     function _dirContents($path)
     {
         $files = array();
-        $traverser = &atknew("atk.utils.atkdirectorytraverser");
+        $traverser = &Adapto_ClassLoader::create("Adapto_Util_DirectoryTraverser");
         $traverser->addExclude('/^\.(.*)/'); // ignore everything starting with a '.'
         $traverser->addExclude('/^CVS$/'); // ignore CVS directories
         $files = $traverser->getDirContents($path);

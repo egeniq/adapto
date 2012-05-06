@@ -108,7 +108,7 @@ class Adapto_Handler_Action
 
         // when we're finished, cleanup any atkrejects (that we haven't set ourselves).
         if (!$this->m_rejecting) {
-            atkdebug("clearing the stuff");
+            Adapto_Util_Debugger::debug("clearing the stuff");
             $this->getRejectInfo(); // this will clear it.
         }
     }
@@ -263,16 +263,16 @@ class Adapto_Handler_Action
         array_shift($arguments);
 
         if ($this->m_entity !== NULL && method_exists($this->m_entity, $methodname)) {
-            atkdebug("Invoking '$methodname' override on entity");
+            Adapto_Util_Debugger::debug("Invoking '$methodname' override on entity");
             // We pass the original object as first parameter to the override.
             array_unshift($arguments, $this);
             $arguments[0] = &$this; // reference copy workaround;
             return call_user_func_array(array(&$this->m_entity, $methodname), $arguments);
         } else if (method_exists($this, $methodname)) {
-            atkdebug("Invoking '$methodname' on actionhandler for action " . $this->m_action);
+            Adapto_Util_Debugger::debug("Invoking '$methodname' on actionhandler for action " . $this->m_action);
             return call_user_func_array(array(&$this, $methodname), $arguments);
         }
-        atkerror("Undefined method '$methodname' in Adapto_Handler_Action");
+        throw new Adapto_Exception("Undefined method '$methodname' in Adapto_Handler_Action");
     }
 
     /**
@@ -294,7 +294,7 @@ class Adapto_Handler_Action
         // are handled the backwardscompatible default way (invoking action_$action on the entity)
         $filename = Adapto_Config::getGlobal("atkroot") . "atk/handlers/class.atk" . $action . "handler.inc";
         if (file_exists($filename)) {
-            return atknew("atk.handlers.atk" . $action . "handler");
+            return Adapto_ClassLoader::create("atk.handlers.atk" . $action . "handler");
         } else {
             // We don't have handlers yet for other actions.
             $actionhandler = new Adapto_Handler_Action(); // The default handler will automatically
@@ -327,7 +327,7 @@ class Adapto_Handler_Action
     {
         static $recordlistcache;
         if (!$recordlistcache) {
-            $recordlistcache = &atknew("atk.recordlist.atkrecordlistcache");
+            $recordlistcache = &Adapto_ClassLoader::create("atk.recordlist.atkrecordlistcache");
             $recordlistcache->setEntity($this->m_entity);
             $recordlistcache->setPostvars($this->m_postvars);
         }

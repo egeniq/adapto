@@ -37,7 +37,7 @@ class Adapto_Util_MLSelector extends Adapto_Selector
 
     protected function _applyMultiLanguageConditionsToQuery(atkQuery $query)
     {
-        $mlSplitter = atkinstance("atk.utils.atkmlsplitter");
+        $mlSplitter = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
         $mlSplitter->addMlCondition($query, $this->_getEntity(), $this->m_mode, $this->_getEntity()->getTable());
     }
 
@@ -70,7 +70,7 @@ class Adapto_Util_MLSelector extends Adapto_Selector
         // So we split this before sending it to the multi-language splitter.
         // This only happens in case of an atkOneToManyRelation.
         if ($this->m_mode == 'copy') {
-            $mlSplitter = atkinstance("atk.utils.atkmlsplitter");
+            $mlSplitter = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
 
             $result = array();
             $ids = array();
@@ -97,7 +97,7 @@ class Adapto_Util_MLSelector extends Adapto_Selector
         }
         // Combine multi-language records on edit.
  else if ($this->m_mode == 'edit') {
-            $mlSplitter = atkinstance("atk.utils.atkmlsplitter");
+            $mlSplitter = Adapto_ClassLoader::getInstance("atk.utils.atkmlsplitter");
             $mlSplitter->combineMlRecordSet($this->_getEntity(), $rows, $query);
         }
 

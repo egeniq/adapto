@@ -891,7 +891,7 @@ class Adapto_Db_Query
     {
         $dbconfig = Adapto_Config::getGlobal("db");
         $name = "atk" . $dbconfig["default"]["driver"] . "query";
-        return atknew(($basepath ? $basepath . '.' : '') . $name);
+        return Adapto_ClassLoader::create(($basepath ? $basepath . '.' : '') . $name);
     }
 
     /**

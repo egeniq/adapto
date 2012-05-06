@@ -29,7 +29,7 @@ class Adapto_Handler_Document extends Adapto_ActionHandler
     function action_document()
     {
         // Add "Action document" to debug log to indicate this function is entered
-        atkdebug("Action document");
+        Adapto_Util_Debugger::debug("Action document");
 
         // Load and instantiate the documentwriter
 
@@ -37,13 +37,13 @@ class Adapto_Handler_Document extends Adapto_ActionHandler
 
         // ATKSelector must be available to perform this action
         if ($this->m_postvars["atkselector"] == "") {
-            atkerror("Selector parameter not available.");
+            throw new Adapto_Exception("Selector parameter not available.");
             return false;
         }
 
         // ATKDocTpl must be available to perform this action
         if (!isset($this->m_postvars["atkdoctpl"])) {
-            atkerror("atkdoctpl parameter not available.");
+            throw new Adapto_Exception("atkdoctpl parameter not available.");
             return false;
         }
 
@@ -51,13 +51,13 @@ class Adapto_Handler_Document extends Adapto_ActionHandler
 
         // Check for invalid characters in filename, modulename and entityname in order to prevent hacking
         if (ereg("[<>\\/|;]", $module . $entity . $this->m_postvars["atkdoctpl"]) !== false) {
-            atkerror("Invalid filename given.");
+            throw new Adapto_Exception("Invalid filename given.");
             return false;
         }
 
         // Check if the file exists
         if (!is_file($tpl_file)) {
-            atkerror("Given file does not exist.");
+            throw new Adapto_Exception("Given file does not exist.");
             return false;
         }
 

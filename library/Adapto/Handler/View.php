@@ -121,7 +121,7 @@ class Adapto_Handler_View extends Adapto_ViewEditBase
 
             return $total;
         } else {
-            atkerror("ui object error");
+            throw new Adapto_Exception("ui object error");
         }
     }
 

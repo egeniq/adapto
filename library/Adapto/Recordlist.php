@@ -143,7 +143,7 @@
       $this->setEntity($entity);
       $this->m_flags = $flags;
 
-      $theme = &atkinstance("atk.ui.atktheme");
+      $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
       $page = &atkPage::getInstance();
       $page->register_style($theme->stylePath("recordlist.css",$this->m_entity->m_module));
 

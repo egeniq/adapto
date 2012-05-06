@@ -209,7 +209,7 @@
         // Validate if destination was created succesfully
         if (!is_object($this->m_destInstance))
         {
-          atkerror("Relation with unknown entitytype '".$this->m_destination."' (in entity '".$this->m_owner."')");
+          throw new Adapto_Exception("Relation with unknown entitytype '".$this->m_destination."' (in entity '".$this->m_owner."')");
           $this->m_destInstance = NULL;
           return false;
         }

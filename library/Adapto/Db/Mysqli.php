@@ -77,7 +77,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
 
             /* set character set */
             if (!empty($charset)) {
-                atkdebug("Set database character set to: {$charset}");
+                Adapto_Util_Debugger::debug("Set database character set to: {$charset}");
                 $this->_query("SET NAMES '{$charset}'", true);
             }
 
@@ -110,7 +110,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
     function disconnect()
     {
         if ($this->m_link_id) {
-            atkdebug("Disconnecting from database...");
+            Adapto_Util_Debugger::debug("Disconnecting from database...");
             @mysqli_close($this->m_link_id);
             $this->m_link_id = 0;
         }
@@ -205,7 +205,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
     {
         if (Adapto_Config::getGlobal("debug") >= 0) {
 
-            atkDebugger::addQuery($query, $isSystemQuery);
+            Adapto_Util_Debugger::debugger::addQuery($query, $isSystemQuery);
         }
 
         return @mysqli_query($this->m_link_id, $query);
@@ -246,7 +246,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
         preg_match("/\'(.*)\'/U", $error, $matches);
 
         if (is_array($matches) && sizeof($matches) == 2) {
-            atkdebug(
+            Adapto_Util_Debugger::debug(
                     "<b>Fallback feature called because error '1100' occured during the last query. Running query again using table lock for table '{$matches[1]}'.</b>");
             $table = $matches[1];
 
@@ -317,7 +317,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
 
             if (Adapto_Config::getGlobal("debug") >= 0) {
 
-                atkDebugger::addQuery($query);
+                Adapto_Util_Debugger::debugger::addQuery($query);
             }
 
             $result = $this->_query($query, true);
@@ -339,7 +339,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
         /* connect first */
         if ($this->connect('w') == DB_SUCCESS) {
             /* unlock */
-            atkdebug("unlock tables");
+            Adapto_Util_Debugger::debug("unlock tables");
             $result = $this->_query("UNLOCK TABLES", true);
             if (!$result)
                 $this->halt("unlock tables failed.");
@@ -437,7 +437,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
             $id = $this->_query("SHOW TABLES LIKE '" . $table . "'", true);
         }
         $result = @mysqli_num_rows($id) > 0;
-        atkdebug("Table exists? $table => " . ($result ? 'yes' : 'no'));
+        Adapto_Util_Debugger::debug("Table exists? $table => " . ($result ? 'yes' : 'no'));
         return $result;
     }
 
@@ -453,7 +453,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
         $id = $this->_query("SHOW TABLE STATUS LIKE '" . $table . "'", true);
         $status = @mysqli_fetch_array($id, MYSQLI_ASSOC | Adapto_Config::getGlobal("mysqlfetchmode"));
         $result = $status != NULL && isset($status['Engine']) ? $status['Engine'] : NULL;
-        atkdebug("Table type? $table => $result");
+        Adapto_Util_Debugger::debug("Table type? $table => $result");
         return $result;
     }
 
@@ -471,7 +471,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
             $ddl = &atkDDL::create("mysqli");
 
             /* list fields */
-            atkdebug("Retrieving metadata for $table");
+            Adapto_Util_Debugger::debug("Retrieving metadata for $table");
 
             /* The tablename may also contain a schema. If so we check for it. */
             if (strpos($table, ".") !== false) {
@@ -487,7 +487,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
             // table type
             $tableType = $this->_getTableType(isset($tablename) ? $tablename : $table);
             if (!$id) {
-                atkdebug("Metadata query failed.");
+                Adapto_Util_Debugger::debug("Metadata query failed.");
                 return array();
             }
             $i = 0;
@@ -528,7 +528,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
             if ($full)
                 $result["num_fields"] = $i;
             mysqli_free_result($id);
-            atkdebug("Metadata for $table complete");
+            Adapto_Util_Debugger::debug("Metadata for $table complete");
             return $result;
         }
         return array();
@@ -569,7 +569,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
     function commit()
     {
         if ($this->m_link_id) {
-            atkdebug("Commit");
+            Adapto_Util_Debugger::debug("Commit");
             mysqli_commit($this->m_link_id);
         }
         return true;
@@ -582,7 +582,7 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
      */
     function savepoint($name)
     {
-        atkdebug(get_class($this) . "::savepoint $name");
+        Adapto_Util_Debugger::debug(get_class($this) . "::savepoint $name");
         $this->query('SAVEPOINT ' . $name);
     }
 
@@ -595,10 +595,10 @@ class Adapto_Db_Mysqli extends Adapto_MysqlDb
     {
         if ($this->m_link_id) {
             if (!empty($savepoint)) {
-                atkdebug(get_class($this) . "::rollback (rollback to savepoint $savepoint)");
+                Adapto_Util_Debugger::debug(get_class($this) . "::rollback (rollback to savepoint $savepoint)");
                 $this->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
             } else {
-                atkdebug("Rollback");
+                Adapto_Util_Debugger::debug("Rollback");
                 mysqli_rollback($this->m_link_id);
             }
         }

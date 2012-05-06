@@ -162,7 +162,7 @@ class Adapto_Recordlist_CustomRecordList extends Adapto_RecordList
             $output = '<table border="1" cellspacing="0" cellpadding="2">' . $output . "</table>";
         }
 
-        atkdebug(Adapto_html_entity_decode($output));
+        Adapto_Util_Debugger::debug(Adapto_html_entity_decode($output));
 
         // To a File
         if (!array_key_exists("filename", $outputparams))
@@ -170,7 +170,7 @@ class Adapto_Recordlist_CustomRecordList extends Adapto_RecordList
 
         if ($this->m_exportcsv) {
             $ext = ($type == "0" ? "html" : "csv");
-            $exporter = &atknew("atk.utils.atkfileexport");
+            $exporter = &Adapto_ClassLoader::create("atk.utils.atkfileexport");
             $exporter->export($output, $outputparams["filename"], $ext, $ext, $compression);
         } else {
             return $output;

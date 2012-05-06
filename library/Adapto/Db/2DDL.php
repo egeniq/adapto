@@ -174,7 +174,7 @@ class Adapto_Db_2DDL extends Adapto_DDL
 
     function needsQuotes($generictype)
     {
-        atkdebug("Needquotes for $generictype?");
+        Adapto_Util_Debugger::debug("Needquotes for $generictype?");
         return !($generictype == "number" || $generictype == "decimal");
     }
 }

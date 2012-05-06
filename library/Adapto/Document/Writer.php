@@ -37,7 +37,7 @@
     /**
      * Adapto_Document_Writer Constructor.
      *
-     * Dont use this, use &Adapto_Document_Writer::getInstance($format) instead to get a singleton instance for any format used
+     * Dont use this, use Adapto_Document_Writer::getInstance($format) instead to get a singleton instance for any format used
      */
     public function __construct()
     {
@@ -268,7 +268,7 @@
       {
         if ($s_oo_instance == NULL)
         {
-          atkdebug("Creating a new Adapto_OpenDocumentWriter instance");
+          Adapto_Util_Debugger::debug("Creating a new Adapto_OpenDocumentWriter instance");
           
           $s_oo_instance = new Adapto_OpenDocumentWriter();
         }
@@ -279,7 +279,7 @@
       {
         if ($s_docx_instance == NULL)
         {
-          atkdebug("Creating a new Adapto_DocxWriter instance");
+          Adapto_Util_Debugger::debug("Creating a new Adapto_DocxWriter instance");
           
           $s_docx_instance = new Adapto_DocxWriter();
         }
@@ -288,7 +288,7 @@
       }
       else 
       {
-        atkdebug(sprintf("Failed to create Adapto_Document_Writer instance (unknown format: %s)", $format));
+        Adapto_Util_Debugger::debug(sprintf("Failed to create Adapto_Document_Writer instance (unknown format: %s)", $format));
       }
     }
   }

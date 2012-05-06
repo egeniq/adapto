@@ -56,7 +56,7 @@
   	 */
   	private function __construct()
   	{
-  	  atkdebug("Created a new Adapto_Interface_Server instance.");
+  	  Adapto_Util_Debugger::debug("Created a new Adapto_Interface_Server instance.");
   	}
   	
   	/**
@@ -65,7 +65,7 @@
   	 */
   	public function run()
   	{
-  	  $output = atkinstance("atk.ui.atkoutput");
+  	  $output = Adapto_ClassLoader::getInstance("atk.ui.atkoutput");
   	  $protocol = $this->getProtocol();
   	  if (!$this->isValidProtocol($protocol))
   	  {
@@ -73,7 +73,7 @@
   	  }
   	  else 
   	  {
-  	  	$server = atknew("atk.interface.${protocol}.atk${protocol}server");
+  	  	$server = Adapto_ClassLoader::create("atk.interface.${protocol}.atk${protocol}server");
   	  	$output->output($server->handleRequest($_REQUEST));
   	  }
   	  $output->outputFlush();

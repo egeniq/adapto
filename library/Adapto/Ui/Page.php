@@ -125,7 +125,7 @@ class Adapto_Ui_Page
         static $s_page = NULL;
         if ($s_page == NULL) {
             $s_page = new Adapto_Ui_Page();
-            atkdebug("Created a new Adapto_Ui_Page instance");
+            Adapto_Util_Debugger::debug("Created a new Adapto_Ui_Page instance");
         }
         return $s_page;
     }
@@ -136,13 +136,15 @@ class Adapto_Ui_Page
 
     public function __construct()
     {
-        // register default scripts
+        // register default scripts TODO FIX THIS
+        /*
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/prototype/prototype.js");
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/prototype-ext.js");
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/scriptaculous/scriptaculous.js");
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/scriptaculous-ext.js");
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/class.atktools.js");
         $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/atkbusy.js");
+        */
     }
 
     /**
@@ -356,10 +358,9 @@ class Adapto_Ui_Page
     {
         $res = "<head>\n  <title>$title</title>\n";
 
-        $version = atkversion();
-        $res .= '  <meta name="atkversion" content="' . $version . '" />' . "\n";
+        $version = Adapto_About::getVersion();
+        $res .= '  <meta name="adapto_version" content="' . $version . '" />' . "\n";
 
-        $res .= '  <meta http-equiv="Content-Type" content="text/html; charset=' . atkGetCharset() . '" />' . "\n";
         if ($extra_header != "")
             $res .= $extra_header . "\n";
 
@@ -367,7 +368,7 @@ class Adapto_Ui_Page
         $this->addScripts($res);
         $this->addStyles($res);
 
-        $favico = Adapto_Config::getGlobal("defaultfavico");
+        $favico = Adapto_Config::get('adapto', 'ui.favico', '');
         if ($favico != "") {
             $res .= '  <link rel="icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
             $res .= '  <link rel="shortcut icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
@@ -591,8 +592,8 @@ class Adapto_Ui_Page
             $title = $this->m_title;
         }
 
-        $ui = &atkinstance('atk.ui.atkui');
-        $theme = &atkinstance('atk.ui.atktheme');
+        $ui = Adapto_ClassLoader::getInstance('Adapto_Ui');
+        $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
 
         if (is_bool($flags) && $flags == true) {
             $flags = HTML_STRICT;
@@ -606,18 +607,19 @@ class Adapto_Ui_Page
             $this->m_content = $ui->render('page.tpl', array('content' => $this->m_content));
 
         $page = '';
-        if (hasFlag($flags, HTML_DOCTYPE))
-            $page .= $theme->getAttribute('doctype', Adapto_Config::getGlobal("doctype"));
+        if ($flags & HTML_DOCTYPE) {
+            $page .= $theme->getAttribute('doctype', Adapto_Config::get('adapto', 'doctype', 'html'));
+        }
         $page .= "\n<html>\n";
 
-        if (hasFlag($flags, HTML_HEADER))
+        if ($flags & HTML_HEADER)
             $page .= $this->head($title, $extra_header);
-        if (hasFlag($flags, HTML_BODY))
+        if ($flags & HTML_BODY)
             $page .= $this->body($extrabodyprops);
 
         $page .= $this->m_content . "\n";
         $page .= $this->renderHiddenVars();
-        if (hasFlag($flags, HTML_BODY))
+        if ($flags & HTML_BODY)
             $page .= "</body>\n";
         $page .= "</html>\n";
 

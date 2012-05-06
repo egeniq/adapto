@@ -52,11 +52,11 @@ class Adapto_Db_Oci8 extends Adapto_Db
         /* establish connection to database */
         if (empty($this->m_link_id)) {
             $connectfunc = (Adapto_Config::getGlobal("databasepersistent") ? "OCIPlogon" : "OCILogon");
-            atkdebug("Connectiontype: " . $connectfunc);
+            Adapto_Util_Debugger::debug("Connectiontype: " . $connectfunc);
             $this->m_link_id = $connectfunc($this->m_user, $this->m_password, $this->m_database);
             if (!$this->m_link_id) {
                 $error = OCIError(); // can't pass link_id because it is null if connect failed.
-                atkdebug("CONNECT ERROR");
+                Adapto_Util_Debugger::debug("CONNECT ERROR");
                 $this->halt($this->_translateError($error));
             }
 
@@ -90,7 +90,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
      */
     function getAtkDbErrno()
     {
-        atkdebug("atkoci8db::getAtkDbErrno() -> " . $this->getDbErrno());
+        Adapto_Util_Debugger::debug("atkoci8db::getAtkDbErrno() -> " . $this->getDbErrno());
         return $this->_translateError(array('code' => $this->getDbErrno(), 'error' => $this->getDbError()));
     }
 
@@ -105,7 +105,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
     {
         $this->m_errno = $err['code'];
         $this->m_error = ($err['message'] ? $err['message'] : $err['error']);
-        atkdebug(get_class($this) . '::_translateError() -> DB Error code: ' . $err['code']);
+        Adapto_Util_Debugger::debug(get_class($this) . '::_translateError() -> DB Error code: ' . $err['code']);
         switch ($this->m_errno) {
         case 0:
             return DB_SUCCESS;
@@ -124,7 +124,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
     function disconnect()
     {
         if ($this->m_link_id) {
-            atkdebug("Disconnecting from database...");
+            Adapto_Util_Debugger::debug("Disconnecting from database...");
             OCILogoff($this->m_link_id);
         }
     }
@@ -151,7 +151,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
      */
     function commit()
     {
-        atkdebug(get_class($this) . "::commit");
+        Adapto_Util_Debugger::debug(get_class($this) . "::commit");
         if ($this->m_link_id) {
             return OCICommit($this->m_link_id);
         }
@@ -166,7 +166,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
      */
     function savepoint($name)
     {
-        atkdebug(get_class($this) . "::savepoint $name");
+        Adapto_Util_Debugger::debug(get_class($this) . "::savepoint $name");
         $this->query('SAVEPOINT ' . $name);
     }
 
@@ -179,10 +179,10 @@ class Adapto_Db_Oci8 extends Adapto_Db
     function rollback($savepoint = "")
     {
         if (!empty($savepoint)) {
-            atkdebug(get_class($this) . "::rollback (rollback to savepoint $savepoint)");
+            Adapto_Util_Debugger::debug(get_class($this) . "::rollback (rollback to savepoint $savepoint)");
             $this->query('ROLLBACK TO SAVEPOINT ' . $savepoint);
         } else if ($this->m_link_id) {
-            atkdebug(get_class($this) . "::rollback (global rollback)");
+            Adapto_Util_Debugger::debug(get_class($this) . "::rollback (global rollback)");
             OCIRollback($this->m_link_id);
         }
         return true;
@@ -211,7 +211,7 @@ class Adapto_Db_Oci8 extends Adapto_Db
         }
 
         /* query */
-        atkdebug("atkoci8db.query(): " . $query);
+        Adapto_Util_Debugger::debug("atkoci8db.query(): " . $query);
 
         /* connect to database */
         if ($this->connect() == DB_SUCCESS) {
@@ -228,14 +228,14 @@ class Adapto_Db_Oci8 extends Adapto_Db
             if ($this->m_query_id) {
                 if (!@OCIExecute($this->m_query_id, OCI_DEFAULT)) {
                     $error = OCIError($this->m_query_id);
-                    atkerror("Invalid SQL: $query");
+                    throw new Adapto_Exception("Invalid SQL: $query");
                     $this->halt($this->_translateError($error));
                     return false;
                 }
             } else {
                 /* error in query */
                 $error = OCIError($this->m_link_id);
-                atkerror("Invalid SQL: $query");
+                throw new Adapto_Exception("Invalid SQL: $query");
                 $this->halt($this->_translateError($error));
                 return false;
             }
@@ -449,20 +449,20 @@ class Adapto_Db_Oci8 extends Adapto_Db
         if ($this->connect() == DB_SUCCESS) {
             $sequence = Adapto_Config::getGlobal("database_sequenceprefix") . $sequence;
             $query = "SELECT {$sequence}.NEXTVAL AS value FROM DUAL";
-            atkdebug($query);
+            Adapto_Util_Debugger::debug($query);
             list($row) = $this->getRows($query);
             $diff = $value - $row['value'];
             if ($diff > 0) {
                 $query = "ALTER SEQUENCE {$sequence} INCREMENT BY {$diff}";
-                atkdebug($query);
+                Adapto_Util_Debugger::debug($query);
                 $queryId = OCIParse($this->m_link_id, $query);
                 @OCIExecute($queryId, OCI_DEFAULT) or $this->halt("Cannot set sequence value for sequence '$sequence'");
                 $query = "SELECT {$sequence}.NEXTVAL AS value FROM DUAL";
-                atkdebug($query);
+                Adapto_Util_Debugger::debug($query);
                 $queryId = OCIParse($this->m_link_id, $query);
                 @OCIExecute($queryId, OCI_DEFAULT) or $this->halt("Cannot set sequence value for sequence '$sequence'");
                 $query = "ALTER SEQUENCE {$sequence} INCREMENT BY 1";
-                atkdebug($query);
+                Adapto_Util_Debugger::debug($query);
                 $queryId = OCIParse($this->m_link_id, $query);
                 @OCIExecute($queryId, OCI_DEFAULT) or $this->halt("Cannot set sequence value for sequence '$sequence'");
             }
