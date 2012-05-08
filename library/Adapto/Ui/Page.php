@@ -116,6 +116,12 @@ class Adapto_Ui_Page
     protected $m_title = '';
 
     /**
+     * The controller we're rendering this page into.
+     * @var Adapto_Controller_Action
+     */
+    private $_controller = NULL;
+
+    /**
      * Retrieve the one-and-only Adapto_Ui_Page instance.
      * @return Adapto_Ui_Page
      */
@@ -134,17 +140,9 @@ class Adapto_Ui_Page
      * Constructor.
      */
 
-    public function __construct()
+    public function __construct(Adapto_Controller_Action $controller)
     {
-        // register default scripts TODO FIX THIS
-        /*
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/prototype/prototype.js");
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/prototype-ext.js");
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/scriptaculous/scriptaculous.js");
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/scriptaculous-ext.js");
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/class.atktools.js");
-        $this->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/atkbusy.js");
-        */
+        $this->_controller = $controller;
     }
 
     /**
@@ -356,10 +354,11 @@ class Adapto_Ui_Page
      */
     function head($title, $extra_header = "")
     {
-        $res = "<head>\n  <title>$title</title>\n";
+        $this->_controller->view->headTitle($title);
 
         $version = Adapto_About::getVersion();
-        $res .= '  <meta name="adapto_version" content="' . $version . '" />' . "\n";
+       
+        $this->_controller->view->headMeta()->appendName('adapto_version', $version);
 
         if ($extra_header != "")
             $res .= $extra_header . "\n";
@@ -369,13 +368,11 @@ class Adapto_Ui_Page
         $this->addStyles($res);
 
         $favico = Adapto_Config::get('adapto', 'ui.favico', '');
-        if ($favico != "") {
+        if ($favico != '') {
             $res .= '  <link rel="icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
             $res .= '  <link rel="shortcut icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
         }
 
-        $res .= "</head>\n";
-        return $res;
     }
 
     /**
@@ -501,11 +498,12 @@ class Adapto_Ui_Page
     {
         if (!$partial) {
             foreach ($this->m_stylesheets as $file => $media) {
-                $res .= '  <link href="' . $file . '" rel="stylesheet" type="text/css" media="' . $media . '" />' . "\n";
+                $this->_controller->view->headLink()->appendStylesheet("adapto_static/".$file, $media);
             }
 
-            for ($i = 0; $i < count($this->m_stylecode); $i++)
-                $res .= '<style type="text/css"> ' . $this->m_stylecode[$i] . ' </style>' . "\n";
+            for ($i = 0; $i < count($this->m_stylecode); $i++) {
+                $this->_controller->view->headStyle()->appendStyle($this->m_stylecode[$i]);
+            }
         } else {
             $files = '';
             foreach ($this->m_stylesheets as $file => $media) {
