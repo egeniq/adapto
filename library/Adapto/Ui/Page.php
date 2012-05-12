@@ -600,7 +600,7 @@ class Adapto_Ui_Page
         } elseif (hasFlag($flags, HTML_PARTIAL)) {
             return $this->renderPartial();
         }
-
+        
         if ($theme->tplPath('page.tpl'))
             $this->m_content = $ui->render('page.tpl', array('content' => $this->m_content));
 
@@ -608,19 +608,15 @@ class Adapto_Ui_Page
         if ($flags & HTML_DOCTYPE) {
             $page .= $theme->getAttribute('doctype', Adapto_Config::get('adapto', 'doctype', 'html'));
         }
-        $page .= "\n<html>\n";
 
         if ($flags & HTML_HEADER)
-            $page .= $this->head($title, $extra_header);
+            $this->head($title, $extra_header);
         if ($flags & HTML_BODY)
-            $page .= $this->body($extrabodyprops);
+            $this->body($extrabodyprops);
 
         $page .= $this->m_content . "\n";
         $page .= $this->renderHiddenVars();
-        if ($flags & HTML_BODY)
-            $page .= "</body>\n";
-        $page .= "</html>\n";
-
+     
         return $page;
     }
 
