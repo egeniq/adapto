@@ -17,12 +17,12 @@ class Adapto_IndexController extends Adapto_Controller_Action
         $page->register_style($theme->stylePath("style.css"));
         $box = $ui
                 ->renderBox(
-                        array("title" => Adapto_Language::text("app_shorttitle"), "content" => "<br><br>" . Adapto_Language::text("app_description")
+                        array("title" => Adapto_Language::_("app_shorttitsle"), "content" => "<br><br>" . Adapto_Language::_("app_description")
                                 . "<br><br>"));
 
         $page->addContent($box);
 
-        $this->view->content = $page->render(Adapto_Language::text('app_shorttitle'), true);
+        $this->view->content = $page->render(Adapto_Language::_('app_shorttitle'), true);
 
     }
 

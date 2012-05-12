@@ -72,7 +72,7 @@ class Adapto_Ui
         if ($this->m_theme->tplPath($tpl)=="") // no specific theme for this action
         {
 
-            $tpl = "action.tpl";
+            $tpl = "action.phtml";
         }
         return $this->render($tpl, $vars, $module);
     }
@@ -85,16 +85,16 @@ class Adapto_Ui
      */
     function renderList($action, $vars, $module="")
     {
-        return $this->render("list.tpl", $vars, $module);
+        return $this->render("list.phtml", $vars, $module);
     }
 
     /**
      * Renders a box with Smarty template.
      * Call with a $name variable to provide a
-     * better default than "box.tpl".
+     * better default than "box.phtml".
      *
      * For instance, calling renderBox($smartyvars, "menu")
-     * will make it search for a menu.tpl first and use that
+     * will make it search for a menu.phtml first and use that
      * if it's available, otherwise it will just use box.tpl
      *
      * @param array $vars the variables for the template
@@ -103,11 +103,11 @@ class Adapto_Ui
      */
     function renderBox($vars, $name="", $module="")
     {
-        if ($name && file_exists($this->m_theme->tplPath($name.".tpl")))
+        if ($name && file_exists($this->m_theme->tplPath($name.".phtml")))
         {
-            return $this->render($name.".tpl", $vars);
+            return $this->render($name.".phtml", $vars);
         }
-        return $this->render("box.tpl", $vars, $module);
+        return $this->render("box.phtml", $vars, $module);
     }
 
     /**
@@ -119,7 +119,7 @@ class Adapto_Ui
      */
     function renderDialog($vars, $module="")
     {
-        return $this->render("dialog.tpl", $vars, $module);
+        return $this->render("dialog.phtml", $vars, $module);
     }
 
     /**
@@ -136,7 +136,7 @@ class Adapto_Ui
             $page = &atkPage::getInstance();
             $page->register_script(Adapto_Config::getGlobal("atkroot")."atk/javascript/tools.js");
         }
-        return $this->render("tabs.tpl", $vars, $module);
+        return $this->render("tabs.phtml", $vars, $module);
     }
 
     /**

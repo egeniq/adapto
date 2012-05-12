@@ -605,9 +605,6 @@ class Adapto_Ui_Page
             $this->m_content = $ui->render('page.tpl', array('content' => $this->m_content));
 
         $page = '';
-        if ($flags & HTML_DOCTYPE) {
-            $page .= $theme->getAttribute('doctype', Adapto_Config::get('adapto', 'doctype', 'html'));
-        }
 
         if ($flags & HTML_HEADER)
             $this->head($title, $extra_header);
