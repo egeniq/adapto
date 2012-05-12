@@ -17,7 +17,7 @@ class Adapto_IndexController extends Adapto_Controller_Action
         $page->register_style($theme->stylePath("style.css"));
         $box = $ui
                 ->renderBox(
-                        array("title" => Adapto_Language::_("app_shorttitsle"), "content" => "<br><br>" . Adapto_Language::_("app_description")
+                        array("title" => Adapto_Language::_("app_shorttitle"), "content" => "<br><br>" . Adapto_Language::_("app_description")
                                 . "<br><br>"));
 
         $page->addContent($box);
