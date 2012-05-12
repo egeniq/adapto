@@ -36,7 +36,7 @@ class Adapto_Ui
      */
     public function __construct()
     {
-        $this->m_theme = &atkinstance("atk.ui.atktheme");
+        $this->m_theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
     }
 
     /**
@@ -50,7 +50,7 @@ class Adapto_Ui
 
         if ($s_instance==NULL)
         {
-            atkdebug("Creating a new Adapto_Ui instance");
+            Adapto_Util_Debugger::debug("Creating a new Adapto_Ui instance");
             $s_instance = new Adapto_Ui();
         }
 
@@ -72,7 +72,7 @@ class Adapto_Ui
         if ($this->m_theme->tplPath($tpl)=="") // no specific theme for this action
         {
 
-            $tpl = "action.tpl";
+            $tpl = "action.phtml";
         }
         return $this->render($tpl, $vars, $module);
     }
@@ -85,16 +85,16 @@ class Adapto_Ui
      */
     function renderList($action, $vars, $module="")
     {
-        return $this->render("list.tpl", $vars, $module);
+        return $this->render("list.phtml", $vars, $module);
     }
 
     /**
      * Renders a box with Smarty template.
      * Call with a $name variable to provide a
-     * better default than "box.tpl".
+     * better default than "box.phtml".
      *
      * For instance, calling renderBox($smartyvars, "menu")
-     * will make it search for a menu.tpl first and use that
+     * will make it search for a menu.phtml first and use that
      * if it's available, otherwise it will just use box.tpl
      *
      * @param array $vars the variables for the template
@@ -103,11 +103,11 @@ class Adapto_Ui
      */
     function renderBox($vars, $name="", $module="")
     {
-        if ($name && file_exists($this->m_theme->tplPath($name.".tpl")))
+        if ($name && file_exists($this->m_theme->tplPath($name.".phtml")))
         {
-            return $this->render($name.".tpl", $vars);
+            return $this->render($name.".phtml", $vars);
         }
-        return $this->render("box.tpl", $vars, $module);
+        return $this->render("box.phtml", $vars, $module);
     }
 
     /**
@@ -119,7 +119,7 @@ class Adapto_Ui
      */
     function renderDialog($vars, $module="")
     {
-        return $this->render("dialog.tpl", $vars, $module);
+        return $this->render("dialog.phtml", $vars, $module);
     }
 
     /**
@@ -136,7 +136,7 @@ class Adapto_Ui
             $page = &atkPage::getInstance();
             $page->register_script(Adapto_Config::getGlobal("atkroot")."atk/javascript/tools.js");
         }
-        return $this->render("tabs.tpl", $vars, $module);
+        return $this->render("tabs.phtml", $vars, $module);
     }
 
     /**
@@ -154,37 +154,13 @@ class Adapto_Ui
     {
         $path = $this->templatePath($name, $module);
 
-        if (substr($path, -4) != '.php' && file_exists($path.'.php'))
-        {
-            $path .= '.php';
-        }
-
-        $result = $this->renderPhp($path, $vars);
-
-        if (Adapto_Config::getGlobal('debug') >= 3)
-        {
-            $result =
-          "\n<!-- START [{$path}] -->\n".
-            $result.
-          "\n<!-- END [{$path}] -->\n";
-        }
-
-        return $result;
-    }
-
-    /**
-     * Render PHP-based template.
-     *
-     * @param string $path template path
-     * @param array  $vars template variables
-     *
-     * @return string rendered template
-     */
-    private function renderPhp($path, $vars)
-    {
-
-        $view = new Adapto_PHPView($path, $vars);
-        return (string)$view;
+        $view = new Zend_View();
+        $view->assign($vars);  
+                
+        $view->setScriptPath($this->m_theme->getAttribute("basepath")."/templates");
+        $view->addHelperPath('Adapto/Ui/View/Helper', 'Adapto_Ui_View_Helper_'); //Change as per your path and class
+           
+        return $view->render($name);
     }
 
     /**

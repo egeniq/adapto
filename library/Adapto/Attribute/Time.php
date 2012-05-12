@@ -184,7 +184,7 @@ class Adapto_Attribute_Time extends Adapto_Attribute
             $m_defSec = $default[2];
         }
 
-        atkdebug("defhour=$m_defHour   defmin=$m_defMin");
+        Adapto_Util_Debugger::debug("defhour=$m_defHour   defmin=$m_defMin");
         // generate hour dropdown
         if (!$this->hasflag(AF_OBLIGATORY))
             $m_hourBox .= '<option value=""' . ($m_defHour === "" ? ' selected' : '') . '></option>';

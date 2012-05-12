@@ -81,7 +81,7 @@ class Adapto_Attribute_Document extends Adapto_DummyAttribute
     function getDocumentFiles($path, $record)
     {
         // Read the directory contents using the directorytraverser
-        $dirtrav = &atknew("atk.utils.atkdirectorytraverser");
+        $dirtrav = &Adapto_ClassLoader::create("atk.utils.atkdirectorytraverser");
         return $dirtrav->getDirContents($path);
     }
 

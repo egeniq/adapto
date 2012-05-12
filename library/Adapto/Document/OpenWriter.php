@@ -147,7 +147,7 @@
       // Throw an error and abort if the source file does not exist
       if (!file_exists($tempfilename))
       {
-        atkerror("Adapto_Document_OpenWriter->store: Temporary file '$tempfilename' could not be found. The document most likely failed to parse.");
+        throw new Adapto_Exception("Adapto_Document_OpenWriter->store: Temporary file '$tempfilename' could not be found. The document most likely failed to parse.");
         return false;
       }
 
@@ -156,17 +156,17 @@
       {
         if ($create_non_existing_dir)
         {
-          atkdebug("Adapto_Document_OpenWriter->store: Trying to create output location '".dirname($outputfilename)."'");
+          Adapto_Util_Debugger::debug("Adapto_Document_OpenWriter->store: Trying to create output location '".dirname($outputfilename)."'");
           
           if (!mkdir(dirname($outputfilename), 0755, true))
           {
-            atkerror("Adapto_Document_OpenWriter->store: Output location '".dirname($outputfilename)."' could not be created. The outputfile '$outputfilename' can not be stored.");
+            throw new Adapto_Exception("Adapto_Document_OpenWriter->store: Output location '".dirname($outputfilename)."' could not be created. The outputfile '$outputfilename' can not be stored.");
             return false;
           }          
         }
         else
         {
-          atkerror("Adapto_Document_OpenWriter->store: Output location '".dirname($outputfilename)."' could not be found. The outputfile '$outputfilename' can not be stored.");
+          throw new Adapto_Exception("Adapto_Document_OpenWriter->store: Output location '".dirname($outputfilename)."' could not be found. The outputfile '$outputfilename' can not be stored.");
           return false;
         }      
       }

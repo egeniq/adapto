@@ -103,7 +103,7 @@ class Adapto_Db_db2db extends Adapto_Db
         case 2005:
             return DB_UNKNOWNHOST;
         default:
-            atkdebug("mysqldb::translateError -> MySQL Error: " . $this->m_errno . " -> " . $this->m_error);
+            Adapto_Util_Debugger::debug("mysqldb::translateError -> MySQL Error: " . $this->m_errno . " -> " . $this->m_error);
             return DB_UNKNOWNERROR;
         }
     }
@@ -130,7 +130,7 @@ class Adapto_Db_db2db extends Adapto_Db
     function disconnect()
     {
         if ($this->m_link_id) {
-            atkdebug("Disconnecting from database...");
+            Adapto_Util_Debugger::debug("Disconnecting from database...");
             @db2_close($this->m_link_id);
             $this->m_link_id = 0;
         }
@@ -147,11 +147,11 @@ class Adapto_Db_db2db extends Adapto_Db
     function query($query, $offset = -1, $limit = -1)
     {
 
-        atkdebug("In query dinges");
-        atkdebug("Query:" . $query);
-        atkdebug("Query added to debugger...");
+        Adapto_Util_Debugger::debug("In query dinges");
+        Adapto_Util_Debugger::debug("Query:" . $query);
+        Adapto_Util_Debugger::debug("Query added to debugger...");
 
-        atkdebug("Adapto_Db_db2db::query -> connect with mode = $mode");
+        Adapto_Util_Debugger::debug("Adapto_Db_db2db::query -> connect with mode = $mode");
 
         /* connect to database */
         if ($this->connect($mode) == DB_SUCCESS) {
@@ -222,7 +222,7 @@ class Adapto_Db_db2db extends Adapto_Db
      */
     function seek($position = 0)
     {
-        atkerror("Seek not (yet) implemented for db2 driver");
+        throw new Adapto_Exception("Seek not (yet) implemented for db2 driver");
     }
 
     /**
@@ -240,7 +240,7 @@ class Adapto_Db_db2db extends Adapto_Db
         if ($this->connect("w") == DB_SUCCESS) {
             $query = "LOCK TABLE $table IN " . ($mode == "write" ? "EXCLUSIVE" : "SHARE") . " MODE";
 
-            atkDebugger::addQuery($query);
+            Adapto_Util_Debugger::debugger::addQuery($query);
 
             /* lock */
             $result = @db2_exec($this->m_link_id, $query);
@@ -353,7 +353,7 @@ class Adapto_Db_db2db extends Adapto_Db
      */
     function _getTableType($table)
     {
-        atkerror("_getTableType not implemented yet for db2 database");
+        throw new Adapto_Exception("_getTableType not implemented yet for db2 database");
     }
 
     /**
@@ -422,7 +422,7 @@ class Adapto_Db_db2db extends Adapto_Db
      */
     function table_names()
     {
-        atkerror("table_names for Adapto_Db_db2db not implemented yet!");
+        throw new Adapto_Exception("table_names for Adapto_Db_db2db not implemented yet!");
         /* query */
         $this->query("SHOW TABLES"); // not sure if this is the right syntax for db2?
 

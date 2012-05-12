@@ -278,7 +278,7 @@ class Adapto_Handler_Updatehandler extends Adapto_ActionHandler
     private function updateRecordInSession($record)
     {
         $selector = atkArrayNvl($this->m_postvars, 'atkselector', '');
-        return (atkinstance('atk.session.atksessionstore')->updateDataRowForSelector($selector, $record) !== false);
+        return (Adapto_ClassLoader::getInstance('atk.session.atksessionstore')->updateDataRowForSelector($selector, $record) !== false);
     }
 
     /**

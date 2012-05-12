@@ -51,7 +51,7 @@ class Adapto_Lock
             if (file_exists($file)) {
                 include_once($file);
                 if (class_exists($class)) {
-                    atkdebug('Constructing a new lock - ' . strtolower($class));
+                    Adapto_Util_Debugger::debug('Constructing a new lock - ' . strtolower($class));
                     $_instance = new $class();
                 }
             }

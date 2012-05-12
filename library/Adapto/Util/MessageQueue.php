@@ -71,7 +71,7 @@ class Adapto_Util_MessageQueue
      */
     function addMessage($txt, $type = AMQ_GENERAL)
     {
-        $instance = &Adapto_Util_MessageQueue::getInstance();
+        $instance = Adapto_Util_MessageQueue::getInstance();
         if (is_object($instance)) {
             return $instance->_addMessage($txt, $type);
         }
@@ -118,7 +118,7 @@ class Adapto_Util_MessageQueue
      */
     function getMessage()
     {
-        $instance = &Adapto_Util_MessageQueue::getInstance();
+        $instance = Adapto_Util_MessageQueue::getInstance();
         if (is_object($instance)) {
             return $instance->_getMessage();
         }
@@ -143,7 +143,7 @@ class Adapto_Util_MessageQueue
      */
     function getMessages()
     {
-        $instance = &Adapto_Util_MessageQueue::getInstance();
+        $instance = Adapto_Util_MessageQueue::getInstance();
         if (is_object($instance)) {
             return $instance->_getMessages();
         }

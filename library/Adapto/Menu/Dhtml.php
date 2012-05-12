@@ -112,8 +112,8 @@ class Adapto_Menu_Dhtml extends Adapto_menuinterface
         $divs .= '<div id="T1' . $tab . '" class="tab-body"><a class="tablink" href="index.php?atklogout=1" target="_top">' . atktext("logout", "atk")
                 . '</a></div>' . "\n";
 
-        $page = &atknew("atk.ui.atkpage");
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = &Adapto_ClassLoader::create("atk.ui.atkpage");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_style($theme->stylePath("style.css"));
         $page->register_style($theme->stylePath("dhtmlmenu.css"));
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/Adapto_tabs.js");

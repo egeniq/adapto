@@ -64,7 +64,7 @@ class Adapto_Attribute_State extends Adapto_ListAttribute
         }
 
         // When switch is not user get country options
-        atkdebug("StateAttribute - $name - $switch");
+        Adapto_Util_Debugger::debug("StateAttribute - $name - $switch");
 
         $this->fillStateArray();
         $valueArray = $this->getStateValueArray($switch);

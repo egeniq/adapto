@@ -322,7 +322,7 @@ class Adapto_Attribute_Bool extends Adapto_Attribute
             $result = '<input type="hidden" name="' . $fieldprefix . $this->formName() . '" value="' . htmlspecialchars($record[$this->fieldName()]) . '">';
             return $result;
         } else
-            atkdebug("Warning attribute " . $this->m_name . " has no proper hide method!");
+            Adapto_Util_Debugger::debug("Warning attribute " . $this->m_name . " has no proper hide method!");
     }
 }
 ?>

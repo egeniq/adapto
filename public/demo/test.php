@@ -25,7 +25,7 @@
   atksession();
   atksecure();
   
-  $suite = &atknew("atk.test.atktestsuite");  
+  $suite = &Adapto_ClassLoader::create("atk.test.atktestsuite");  
   $suite->run("html", $_REQUEST["atkmodule"]); 
 
 ?>

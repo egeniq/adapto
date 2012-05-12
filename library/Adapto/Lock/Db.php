@@ -75,7 +75,7 @@ class Adapto_Lock_Db extends Adapto_Lock
         $this->storeLockList($atklockList);
 
         if (!isset($Adapto_VARS['atkpartial']) && $this->m_id > 0) {
-            $page = &atkinstance("atk.ui.atkpage");
+            $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
             $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/xml.js");
             $page->register_script(session_url("include.php?file=atk/lock/lock.js.php&stack=" . atkStackID() . "&id=" . $this->m_id, SESSION_NEW));
         }

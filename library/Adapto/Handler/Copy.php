@@ -42,7 +42,7 @@ class Adapto_Handler_Copy extends Adapto_ActionHandler
      */
     function entityCopy()
     {
-        atkdebug("Adapto_Handler_Copy::entityCopy()");
+        Adapto_Util_Debugger::debug("Adapto_Handler_Copy::entityCopy()");
         $recordset = $this->m_entity->selectDb($this->m_postvars['atkselector'], "", "", "", "", "copy");
         $db = &$this->m_entity->getDb();
         if (count($recordset) > 0) {
@@ -53,10 +53,10 @@ class Adapto_Handler_Copy extends Adapto_ActionHandler
             }
 
             if (!$this->m_entity->copyDb($recordset[0])) {
-                atkdebug("atkentity::action_copy() -> Error");
+                Adapto_Util_Debugger::debug("atkentity::action_copy() -> Error");
                 $db->rollback();
                 $location = $this->m_entity->feedbackUrl("save", ACTION_FAILED, $recordset[0], $db->getErrorMsg());
-                atkdebug("atkentity::action_copy() -> Redirect");
+                Adapto_Util_Debugger::debug("atkentity::action_copy() -> Redirect");
                 $this->m_entity->redirect($location);
             } else {
                 $db->commit();

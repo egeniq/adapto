@@ -407,7 +407,7 @@ class Adapto_Util_Selector implements ArrayAccess, Countable, IteratorAggregate
 
                 $attr->searchCondition($query, $this->_getEntity()->getTable(), $value, $searchMode, '');
             } else {
-                atkdebug("Using default search method for $key");
+                Adapto_Util_Debugger::debug("Using default search method for $key");
                 $condition = "LOWER(" . $this->_getEntity()->getTable() . "." . $key . ") LIKE LOWER('%" . $this->_getDb()->escapeSQL($value, true) . "%')";
                 $query->addSearchCondition($condition);
             }

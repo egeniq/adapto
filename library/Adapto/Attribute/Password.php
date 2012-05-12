@@ -120,7 +120,7 @@ class Adapto_Attribute_Password extends Adapto_Attribute
                 if (in_array(strtolower($name), array("minsize", "minupperchars", "minlowerchars", "minalphabeticchars", "minnumbers", "minspecialchars"))) {
                     $this->m_restrictions[strtolower($name)] = $value;
                 } else {
-                    atkdebug("Adapto_Attribute_Password->setRestrictions(): Unknown restriction: \"$name\"=\"$value\"", DEBUG_WARNING);
+                    Adapto_Util_Debugger::debug("Adapto_Attribute_Password->setRestrictions(): Unknown restriction: \"$name\"=\"$value\"", DEBUG_WARNING);
                 }
             }
         }

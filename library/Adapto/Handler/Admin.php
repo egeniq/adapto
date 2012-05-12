@@ -404,7 +404,7 @@ class Adapto_Handler_Admin extends Adapto_ActionHandler
 
         $attr = &$this->m_entity->getAttribute($attribute);
         if ($attr == NULL) {
-            atkerror("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
+            throw new Adapto_Exception("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
             return '';
         }
 

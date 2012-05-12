@@ -111,7 +111,7 @@ class Adapto_Recordlist_Cache
         $this->_setCacheId();
 
         if (file_exists($this->m_cacheid) && filesize($this->m_cacheid) && !$this->noCaching()) {
-            $theme = &atkinstance("atk.ui.atktheme");
+            $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
             $page = &atkPage::getInstance();
 
             $page->register_style($theme->stylePath("recordlist.css"));
@@ -162,7 +162,7 @@ class Adapto_Recordlist_Cache
                 fwrite($fp, $output);
                 fclose($fp);
             } else {
-                return atkerror("Couldn't open {$this->m_cacheid} for writing!");
+                return throw new Adapto_Exception("Couldn't open {$this->m_cacheid} for writing!");
             }
 
             $fp = &fopen($this->m_cacheid . "_actionloader", "a+");
@@ -170,9 +170,9 @@ class Adapto_Recordlist_Cache
                 fwrite($fp, $actionloader);
                 fclose($fp);
             } else {
-                return atkerror("Couldn't open {$this->m_cacheid}_actionloader for writing!");
+                return throw new Adapto_Exception("Couldn't open {$this->m_cacheid}_actionloader for writing!");
             }
-            atkdebug("New cache created for {$this->m_entity->m_module}.{$this->m_entity->m_type} and written to: $this->m_cacheid");
+            Adapto_Util_Debugger::debug("New cache created for {$this->m_entity->m_module}.{$this->m_entity->m_type} and written to: $this->m_cacheid");
         }
         return;
     }
@@ -212,7 +212,7 @@ class Adapto_Recordlist_Cache
                 unlink($cachedir . $cachefile);
             }
         }
-        atkdebug("Cache for {$this->m_entity->m_module}.{$this->m_entity->m_type} cleared");
+        Adapto_Util_Debugger::debug("Cache for {$this->m_entity->m_module}.{$this->m_entity->m_type} cleared");
     }
 
     /**

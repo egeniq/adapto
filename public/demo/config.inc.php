@@ -76,10 +76,10 @@
   $config_debug = 0;
 
   // Smart debug parameters. Is used to dynamically enable debugging for
-  // certain IP addresses or if for example the special atkdebug[key] request
+  // certain IP addresses or if for example the special Adapto_Util_Debugger::debug[key] request
   // variable equals a configured key etc. If smart debugging is enabled
   // you can also change the debug level dynamically using the special
-  // atkdebug[level] request variable.
+  // Adapto_Util_Debugger::debug[level] request variable.
   //
   // $config_smart_debug[] = array("type" => "request", "key" => "test");
   // $config_smart_debug[] = array("type" => "ip", "list" => array("10.0.0.4"));
@@ -150,7 +150,7 @@
   // "pop3"   - users / passwords are stored in the POP3 server
   // "ldap"   - users / passwords are stored in an LDAP server
   // "server" - authentication is done by the webserver (.htaccess)
-  // custom type with a fullclassname like 'module.mymodule.myauth' (syntax similar as atknew or 
+  // custom type with a fullclassname like 'module.mymodule.myauth' (syntax similar as Adapto_ClassLoader::create or 
   // if you need to use multiple authentication types list them delimited by comma
   $config_authentication = "db";
 

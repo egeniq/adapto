@@ -133,7 +133,7 @@ class Adapto_Console_Controller
             $controller = new $matches[1]();
         } else if (atkimport($class)) // user supplied ATK class path
  {
-            $controller = atknew($class);
+            $controller = Adapto_ClassLoader::create($class);
         } else {
             die('Unknown console controller "' . $class . '".' . "\n");
         }

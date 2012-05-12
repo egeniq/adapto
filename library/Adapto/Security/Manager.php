@@ -130,21 +130,21 @@ class Adapto_Security_Manager
 
     public function __construct($authentication_type = "none", $authorization_type = "none", $securityscheme = "none")
     {
-        atkdebug("creating securityManager (authenticationtype: $authentication_type, authorizationtype: $authorization_type, scheme: $securityscheme)");
+        Adapto_Util_Debugger::debug("creating securityManager (authenticationtype: $authentication_type, authorizationtype: $authorization_type, scheme: $securityscheme)");
 
         // required interface;
 
         $authentication = $this->_getAuthTypes($authentication_type);
         foreach ($authentication as $class) {
-            if (!$obj = atknew($class)) {
-                atkdebug("Adapto_Security_Manager() unsupported authentication type or type no found for $class");
+            if (!$obj = Adapto_ClassLoader::create($class)) {
+                Adapto_Util_Debugger::debug("Adapto_Security_Manager() unsupported authentication type or type no found for $class");
             } else
                 $this->m_authentication[$class] = $obj;
         }
 
         /* authorization class */
         $clsname = $this->_getclassname($authorization_type);
-        $this->m_authorization = &atknew($clsname);
+        $this->m_authorization = &Adapto_ClassLoader::create($clsname);
 
         /* security scheme */
         $this->m_scheme = $securityscheme;
@@ -177,14 +177,14 @@ class Adapto_Security_Manager
         $userrecords = $userentity
                 ->selectDb($selector, "", "", "", array(Adapto_Config::getGlobal("auth_userpk"), Adapto_Config::getGlobal("auth_emailfield"), Adapto_Config::getGlobal("auth_passwordfield")), "edit");
         if (count($userrecords) != 1) {
-            atkdebug("User '$username' not found.");
+            Adapto_Util_Debugger::debug("User '$username' not found.");
             return false;
         }
 
         // Retrieve the email address
         $email = $userrecords[0][Adapto_Config::getGlobal("auth_emailfield")];
         if (empty($email)) {
-            atkdebug("Email address for '$username' not available.");
+            Adapto_Util_Debugger::debug("Email address for '$username' not available.");
             return false;
         }
 
@@ -288,7 +288,7 @@ class Adapto_Security_Manager
 
                 // for security reasons administrator will never be cookied..
                 if ($auth_user == "" && $user != "" && $user != "administrator") {
-                    atkdebug("Using cookie to retrieve previously used userid/password");
+                    Adapto_Util_Debugger::debug("Using cookie to retrieve previously used userid/password");
                     $auth_user = $user;
                     $auth_pw = $passwd;
                     $md5 = ($enc == "MD5"); // cookie may already be md5;
@@ -336,7 +336,7 @@ class Adapto_Security_Manager
                             $obj->canMd5() && !$md5 ? $tmp_pw = md5($auth_pw) : $tmp_pw = $auth_pw;
                             $response = $obj->validateUser($auth_user, $tmp_pw);
                             if ($response == AUTH_SUCCESS) {
-                                atkdebug("Adapto_Security_Manager::authenticate() using $name authentication");
+                                Adapto_Util_Debugger::debug("Adapto_Security_Manager::authenticate() using $name authentication");
                                 $authname = $name;
                                 break;
                             }
@@ -352,7 +352,7 @@ class Adapto_Security_Manager
                         // used by aktsecurerelation to decrypt an linkpass
                         // for convenience, we also store the user as a global variable.
                         (is_array($this->m_user['level'])) ? $dbg = implode(",", $this->m_user['level']) : $dbg = $this->m_user['level'];
-                        atkdebug("Logged in user: " . $this->m_user["name"] . " (level: " . $dbg . ")");
+                        Adapto_Util_Debugger::debug("Logged in user: " . $this->m_user["name"] . " (level: " . $dbg . ")");
                         $authenticated = true;
 
                         // Remember that we are logged in..
@@ -409,7 +409,7 @@ class Adapto_Security_Manager
 
             if (Adapto_Config::getGlobal("authentication_session") && $session["login"] == 1 && $session_auth["authenticated"] == 1 && !empty($session_auth["user"])) {
                 $this->m_user = $session_auth["user"];
-                atkdebug("Using session for authentication / user = " . $this->m_user["name"]);
+                Adapto_Util_Debugger::debug("Using session for authentication / user = " . $this->m_user["name"]);
             } else {
                 // Invalid session
                 $authenticated = false;
@@ -428,9 +428,9 @@ class Adapto_Security_Manager
                 $location .= 'login=' . $auth_user . '&error=' . $response;
 
                 if (Adapto_Config::getGlobal("debug") >= 2) {
-                    $debugger = &atkinstance('atk.utils.atkdebugger');
+                    $debugger = Adapto_ClassLoader::getInstance('atk.utils.Adapto_Util_Debugger::debugger');
                     $debugger->setRedirectUrl($location);
-                    atkdebug('Non-debug version would have redirected to <a href="' . $location . '">' . $location . '</a>');
+                    Adapto_Util_Debugger::debug('Non-debug version would have redirected to <a href="' . $location . '">' . $location . '</a>');
                     $output = &atkOutput::getInstance();
                     $output->outputFlush();
                     exit();
@@ -518,10 +518,10 @@ class Adapto_Security_Manager
 
         sessionStore('loginattempts', $loginattempts);
 
-        atkdebug('LoginAttempts: ' . $loginattempts);
+        Adapto_Util_Debugger::debug('LoginAttempts: ' . $loginattempts);
 
-        $page = &atkinstance("atk.ui.atkpage", true);
-        $ui = &atkinstance("atk.ui.atkui");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage", true);
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
 
         $page->register_style($ui->stylePath("style.css"));
         $page->register_style($ui->stylePath("login.css"));
@@ -722,7 +722,7 @@ class Adapto_Security_Manager
                 @fwrite($fp, $logstamp . $message . "\n");
                 @fclose($fp);
             } else {
-                atkdebug("error opening logfile");
+                Adapto_Util_Debugger::debug("error opening logfile");
             }
         }
     }

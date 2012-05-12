@@ -22,7 +22,7 @@
  * @package adapto
  * @subpackage utils
  */
-class Adapto_Util_ClassLoader
+class Adapto_ClassLoader
 {
     /**
      * Class path mounts.
@@ -37,43 +37,6 @@ class Adapto_Util_ClassLoader
      * @var boolean
      */
     static $s_isReindexed = false;
-
-    /**
-     * Imports a file
-     * @param string $fullclassname Name of class in atkformat (map1.map2.classfile)
-     * @param bool   $failsafe      If $failsafe is true (default), the class is required.  Otherwise, the
-     *                                class is included.
-     * @param bool   $path          Whether or not it is NOT an ATK classname
-     *                                 ("map.class"), if true it will interpret classname
-     *                                 as: "map/class.classname.inc", default false.
-     * @return bool whether the file we want to import was actually imported or not
-     */
-
-    static function import($fullclassname, $failsafe = true, $path = false)
-    {
-        $filename = ($path === false) ? self::getClassPath($fullclassname) : $fullclassname;
-
-        static $alreadyHad = array();
-
-        if (array_key_exists($filename, $alreadyHad) === true) {
-            return $alreadyHad[$filename];
-        } else {
-            if (is_readable($filename) === true) {
-                $alreadyHad[$filename] = true;
-
-                if ($failsafe === true) {
-                    require_once($filename);
-                } else {
-                    include_once($filename);
-                }
-                return true;
-            } else {
-                $alreadyHad[$filename] = false;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Clean-up the given path.
@@ -117,7 +80,7 @@ class Adapto_Util_ClassLoader
      * 
      * Example:
      * Adapto_Util_ClassLoader::mountClassPath('frontend', Adapto_Config::getGlobal('atkroot').'../frontend/');
-     * Adapto_Util_ClassLoader::newInstance('frontend.helloworld');
+     * Adapto_Util_ClassLoader::create('frontend.helloworld');
      *
      * @param string $prefix prefix
      * @param string $path   class path
@@ -199,12 +162,12 @@ class Adapto_Util_ClassLoader
      * @return object instance of the class
      */
 
-    static function newInstance($fullclassname)
+    static function create($fullclassname)
     {
         $args = func_get_args();
         array_shift($args);
         $args = array_values($args);
-        return self::newInstanceArgs($fullclassname, $args);
+        return self::createWithArgs($fullclassname, $args);
     }
 
     /**
@@ -216,23 +179,19 @@ class Adapto_Util_ClassLoader
      * @return object instance of the class
      */
 
-    static function newInstanceArgs($fullclassname, $args = array())
+    static function createWithArgs($fullclassname, $args = array())
     {
-        $fullclassname = self::resolveClass($fullclassname);
-        self::import($fullclassname, true);
-
-        $elems = explode(".", strtolower($fullclassname));
-        $classname = $elems[count($elems) - 1];
-
+        $classname = self::resolveClass($fullclassname);
+     
         if (class_exists($classname)) {
             if (count($args) === 0) {
                 return new $classname();
             } else {
                 $class = new ReflectionClass($classname);
-                return $class->newInstanceArgs($args);
+                return $class->createWithArgs($args);
             }
         } else {
-            atkerror("Class $fullclassname not found.");
+            throw new Adapto_Exception("Class $fullclassname not found.");
             return null;
         }
     }
@@ -247,14 +206,13 @@ class Adapto_Util_ClassLoader
      * @return obj instance of the class
      * */
 
-    static function getSingletonInstance($fullclassname, $reset = false)
+    static function getInstance($fullclassname, $reset = false)
     {
         static $s_instances = array();
         $fullclassname = self::resolveClass($fullclassname);
         if (!isset($s_instances[$fullclassname]) || $reset) {
-            self::import($fullclassname);
             $classname = substr(strrchr('.' . $fullclassname, '.'), 1);
-            atkdebug("Getting singleton instance $fullclassname");
+            Adapto_Util_Debugger::debug("Getting singleton instance $fullclassname");
             $s_instances[$fullclassname] = call_user_func(array($classname, 'getInstance'), $reset);
         }
 
@@ -356,7 +314,7 @@ class Adapto_Util_ClassLoader
 
         list($class, $method) = explode("#", $str);
         if ($class != "" && $method != "") {
-            $handler = &atknew($class);
+            $handler = &Adapto_ClassLoader::create($class);
             if (is_object($handler)) {
                 return call_user_func_array(array($handler, $method), $params);
             }
@@ -433,7 +391,7 @@ class Adapto_Util_ClassLoader
      */
     function findAllClasses()
     {
-        $traverser = atknew('atk.utils.atkdirectorytraverser');
+        $traverser = Adapto_ClassLoader::create('atk.utils.atkdirefctorytraverser');
         $classfinder = new Adapto_ClassFinder();
         $traverser->addCallbackObject($classfinder);
         $cwd = getcwd();
@@ -441,7 +399,7 @@ class Adapto_Util_ClassLoader
         $traverser->traverse('atk');
         chdir($cwd);
         $classes = $classfinder->getClasses();
-        atkdebug("Adapto_Util_ClassLoader::findAllClasses(): Found " . count($classes) . ' classes');
+        Adapto_Util_Debugger::debug("Adapto_Util_ClassLoader::findAllClasses(): Found " . count($classes) . ' classes');
         return $classes;
     }
 }

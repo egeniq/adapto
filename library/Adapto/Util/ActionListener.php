@@ -83,7 +83,7 @@ class Adapto_Util_ActionListener
     function notify($action, $record)
     {
         if (count($this->m_actionfilter) == 0 || Adapto_in_array($action, $this->m_actionfilter)) {
-            atkdebug("Action $action performed on " . $this->m_entity->atkEntityType() . " (" . $this->m_entity->primaryKey($record) . ")");
+            Adapto_Util_Debugger::debug("Action $action performed on " . $this->m_entity->atkEntityType() . " (" . $this->m_entity->primaryKey($record) . ")");
             $this->actionPerformed($action, $record);
         }
     }
@@ -114,7 +114,7 @@ class Adapto_Util_ActionListener
     function preNotify($action, &$record)
     {
         if (count($this->m_actionfilter) == 0 || Adapto_in_array($action, $this->m_actionfilter)) {
-            atkdebug("Action $action to be performed on " . $this->m_entity->atkEntityType() . " (" . $this->m_entity->primaryKey($record) . ")");
+            Adapto_Util_Debugger::debug("Action $action to be performed on " . $this->m_entity->atkEntityType() . " (" . $this->m_entity->primaryKey($record) . ")");
             $this->preActionPerformed($action, $record);
         }
     }

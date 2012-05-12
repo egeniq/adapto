@@ -267,7 +267,7 @@ class Adapto_Attribute_FuzzySearch extends Adapto_Attribute
      */
     function getMatches($searchstring)
     {
-        atkdebug("Performing search");
+        Adapto_Util_Debugger::debug("Performing search");
         $result = array();
 
         if ($this->createSearchEntityInstance() && $searchstring != "") {

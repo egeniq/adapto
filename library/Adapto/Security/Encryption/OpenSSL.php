@@ -53,7 +53,7 @@
       $key  = openssl_get_publickey($keys['public']);
 
       if($key)  openssl_public_encrypt($input,$encrypted,$key);
-      else      atkerror("Adapto_Security_Encryption_OpenSSL::encrypt << not a valid key passed");
+      else      throw new Adapto_Exception("Adapto_Security_Encryption_OpenSSL::encrypt << not a valid key passed");
       
       return $this->stripbackslashes($encrypted);
     }
@@ -70,7 +70,7 @@
       $keys   = $this->getKeys($key);
       $key    = openssl_get_privatekey($keys['private']);
 
-      if($key)  atkerror("Adapto_Security_Encryption_OpenSSL::decrypt << not a valid key passed");
+      if($key)  throw new Adapto_Exception("Adapto_Security_Encryption_OpenSSL::decrypt << not a valid key passed");
       else      
       {
         echo "decrypt for: input:$input, decrypted: $decrypted, key: $key";

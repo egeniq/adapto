@@ -315,7 +315,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
         $classname = $this->m_destination;
         $cache_id = $this->m_owner . "." . $this->m_name;
         $rel = &atkGetEntity($classname, true, $cache_id);
-        atkdebug("O2O DELETE for $classname: " . $this->m_refKey . "=" . $record[$this->m_ownerInstance->primaryKeyField()]);
+        Adapto_Util_Debugger::debug("O2O DELETE for $classname: " . $this->m_refKey . "=" . $record[$this->m_ownerInstance->primaryKeyField()]);
 
         if ($this->m_refKey != "") {
             // Foreign key is in the destination entity
@@ -489,7 +489,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
         if ($this->createDestination()) {
             $vars = &$this->_getStoreValue($record);
             if ($vars["mode"] == "edit") {
-                atkdebug("Updating existing one2one record");
+                Adapto_Util_Debugger::debug("Updating existing one2one record");
                 // we put the vars in the postvars, because there is information
                 // like atkorgkey in it that is vital.
                 // but we restore the postvars after we're done updating
@@ -503,7 +503,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
                     // destination record already exists, and we are not copying.
                     $result = true;
                 } else {
-                    atkdebug("atkonetoonerelation->store(): Adding new one2one record for mode $mode");
+                    Adapto_Util_Debugger::debug("atkonetoonerelation->store(): Adding new one2one record for mode $mode");
                     $this->m_destInstance->preAdd($vars);
                     $result = $this->m_destInstance->addDb($vars, true, $mode);
                 }
@@ -513,7 +513,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
                 }
                 return $result;
             } else {
-                atkdebug("atkonetoonerelation->store(): Nothing to store in one2one record");
+                Adapto_Util_Debugger::debug("atkonetoonerelation->store(): Nothing to store in one2one record");
                 return true;
             }
         }
@@ -608,7 +608,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
      */
     function hide($record = "", $fieldprefix = "")
     {
-        atkdebug("hide called for " . $this->fieldName());
+        Adapto_Util_Debugger::debug("hide called for " . $this->fieldName());
         if ($this->createDestination()) {
             if ($record[$this->fieldName()] != NULL) {
                 $myrecord = $record[$this->fieldName()];
@@ -1050,7 +1050,7 @@ class Adapto_Relation_OneToOne extends Adapto_Relation
                     if (is_object($p_attrib)) {
                         $p_attrib->searchCondition($query, $p_attrib->getTable($key), $val, $this->getChildSearchMode($searchmode, $p_attrib->formName()));
                     } else
-                        atkdebug("Field $key was not found in this relation (this is very weird)");
+                        Adapto_Util_Debugger::debug("Field $key was not found in this relation (this is very weird)");
                 }
             }
         } else {

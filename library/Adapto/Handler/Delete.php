@@ -159,7 +159,7 @@ class Adapto_Handler_Delete extends Adapto_ActionHandler
     protected function _doDeleteSession()
     {
         $selector = atkArrayNvl($this->m_postvars, 'atkselector', '');
-        return atkinstance('atk.session.atksessionstore')->deleteDataRowForSelector($selector);
+        return Adapto_ClassLoader::getInstance('atk.session.atksessionstore')->deleteDataRowForSelector($selector);
     }
 
     /**

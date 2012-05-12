@@ -373,7 +373,7 @@ class Adapto_Attribute_ColorPicker extends Adapto_Attribute
                 }
             }
         } else {
-            atkerror("Error in function check_color(): Invalid argument for color type.");
+            throw new Adapto_Exception("Error in function check_color(): Invalid argument for color type.");
             return false;
         }
     }
@@ -387,12 +387,12 @@ class Adapto_Attribute_ColorPicker extends Adapto_Attribute
     function checkNumArgs($numargs)
     {
         if ($numargs < 1) {
-            atkerror("Error in function check_color(): No arguments passed to function.");
+            throw new Adapto_Exception("Error in function check_color(): No arguments passed to function.");
             return false;
         }
 
         if ($numargs > 2) {
-            atkerror("Error in function check_color(): Too many arguments passed to function.");
+            throw new Adapto_Exception("Error in function check_color(): Too many arguments passed to function.");
             return false;
         }
 

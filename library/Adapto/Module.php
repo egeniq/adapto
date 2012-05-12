@@ -155,7 +155,7 @@ class Adapto_Module
 
         /* overloader check */
         if (!empty($g_overloaders[$entity])) {
-            atkdebug("Using overloader '" . $g_overloaders[$entity] . "' for class '" . $entity . "'");
+            Adapto_Util_Debugger::debug("Using overloader '" . $g_overloaders[$entity] . "' for class '" . $entity . "'");
             self::$s_isOverloader = true;
             $entity = newEntity($g_overloaders[$entity], FALSE);
             self::$s_isOverloader = false;
@@ -217,7 +217,7 @@ class Adapto_Module
             if ($res !== false) {
                 return $res;
             } else {
-                atkerror("Cannot create entity, because a required file ($file) does not exist!", "critical");
+                throw new Adapto_Exception("Cannot create entity, because a required file ($file) does not exist!", "critical");
                 return NULL;
             }
         }
@@ -335,7 +335,7 @@ class Adapto_Module
             // If the modifiers is found
             if (method_exists($this, $modifiername)) {
                 // Add a debug line so we know, the modifier is applied
-                atkdebug(sprintf("Applying modifier %s from module %s to entity %s", $modifiername, $this->m_name, $entity->m_type));
+                Adapto_Util_Debugger::debug(sprintf("Applying modifier %s from module %s to entity %s", $modifiername, $this->m_name, $entity->m_type));
 
                 // Apply the modifier
                 $entity->m_modifier = $this->m_name;
@@ -349,8 +349,14 @@ class Adapto_Module
 
         // If none of the modifiers was found, add a warning to the debug log
         if ($appliedmodifiers == 0)
-            atkdebug(
+            Adapto_Util_Debugger::debug(
                     sprintf("Failed to apply modifier function %s from module %s to entity %s; modifier function not found", implode(" or ", $specificmodifiers),
                             $this->m_name, $entity->m_type), DEBUG_WARNING);
+    }
+    
+    static public function pathForModule($moduleName) 
+    {
+        // Todo, read this from ZF somewhere.
+        return APPLICATION_PATH."/modules/".$moduleName;
     }
 }

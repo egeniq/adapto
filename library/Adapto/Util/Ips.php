@@ -58,7 +58,7 @@ class Adapto_Util_Ips
     function ipStringFormat($ip)
     {
         if (!Adapto_Util_Ips::ipValidate($ip)) {
-            atkDebug("Adapto_Util_Ips::ipStringFormat() Invalid ip given");
+            Adapto_Util_Debugger::debug("Adapto_Util_Ips::ipStringFormat() Invalid ip given");
             return null;
         }
         $long = is_numeric($ip) ? $ip : Adapto_Util_Ips::ipLongFormat($ip);
@@ -85,7 +85,7 @@ class Adapto_Util_Ips
     function ipLongFormat($ip)
     {
         if (!Adapto_Util_Ips::ipValidate($ip)) {
-            atkDebug("Adapto_Util_Ips::ipLongFormat() Invalid ip given");
+            Adapto_Util_Debugger::debug("Adapto_Util_Ips::ipLongFormat() Invalid ip given");
             return null;
         }
         if (is_numeric($ip))

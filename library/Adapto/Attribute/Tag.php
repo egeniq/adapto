@@ -174,9 +174,9 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
      */
     function edit($rec = "", $prefix = "", $mode = "")
     {
-        atkdebug("edit of attribute '$this->fieldName()'");
+        Adapto_Util_Debugger::debug("edit of attribute '$this->fieldName()'");
 
-        $page = &atkinstance('atk.ui.atkpage');
+        $page = Adapto_ClassLoader::getInstance('atk.ui.atkpage');
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/class.atktagattribute.js");
 
         if ($this->createDestinationInstance()) {
@@ -189,7 +189,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
             $html .= atkTextAttribute::edit($rec, $prefix, $mode);
             return $html;
         } else {
-            atkdebug("could not create destination instance");
+            Adapto_Util_Debugger::debug("could not create destination instance");
             return false;
         }
     }
@@ -298,7 +298,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
      */
     function getMatches($searchstring)
     {
-        atkdebug("Performing search");
+        Adapto_Util_Debugger::debug("Performing search");
         $result = array();
 
         if ($this->createDestinationInstance() && $searchstring != "") {
@@ -370,12 +370,12 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
         $resultset = array();
 
         if (!$this->createLink()) {
-            atkdebug("could not create an instance for the link '$this->m_link'");
+            Adapto_Util_Debugger::debug("could not create an instance for the link '$this->m_link'");
             return false;
         }
 
         if (!$this->createDestinationInstance()) {
-            atkdebug("could not create an instance for the destination '$this->m_destination'");
+            Adapto_Util_Debugger::debug("could not create an instance for the destination '$this->m_destination'");
             return false;
         }
 
@@ -384,7 +384,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
         $selector = $this->m_linkInstance->m_table . "." . $this->getLocalKey() . "='" . $objectid . "'";
 
         if (!$this->m_linkInstance->deleteDb($selector)) {
-            atkdebug("could not delete the linked default tags");
+            Adapto_Util_Debugger::debug("could not delete the linked default tags");
             return false;
         }
 
@@ -414,7 +414,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
 
                 //if one keyword could not be added, stop adding them.
                 if (!$this->m_destInstance->validate($defaultsRec, 'add') || !$this->m_destInstance->addDb($defaultsRec)) {
-                    atkdebug("could not add default keyword");
+                    Adapto_Util_Debugger::debug("could not add default keyword");
                     return false;
                 } else {
                     $newrecord = decodeKeyValueSet($defaultsRec["atkprimkey"]);
@@ -433,7 +433,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
             $locKey = $rec[$this->m_ownerInstance->primaryKeyField()];
             $remKey = $res[$this->m_destInstance->primaryKeyField()];
 
-            atkdebug("<h2>LOCKEY:$locKey REMKEY:$remKey</h2>");
+            Adapto_Util_Debugger::debug("<h2>LOCKEY:$locKey REMKEY:$remKey</h2>");
 
             $newrecord = $this->m_linkInstance->initial_values();
             $newrecord[$this->getLocalKey()][$this->m_ownerInstance->primaryKeyField()] = $locKey;
@@ -446,10 +446,10 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
             $existing = $this->m_linkInstance->selectDb($where, "", "", "", $this->m_linkInstance->m_primaryKey);
 
             if (!count($existing)) {
-                atkdebug("does not exist, adding new record.");
+                Adapto_Util_Debugger::debug("does not exist, adding new record.");
 
                 if (!$this->m_linkInstance->addDb($newrecord, true, $mode)) {
-                    atkdebug("could not add keyword");
+                    Adapto_Util_Debugger::debug("could not add keyword");
                     return false;
                 }
             }
@@ -465,7 +465,7 @@ class Adapto_Attribute_Tag extends Adapto_FuzzySearchAttribute
      */
     function load($notused, $record)
     {
-        atkdebug("calling load");
+        Adapto_Util_Debugger::debug("calling load");
         if ($this->createLink()) {
             return $this->m_linkInstance
                     ->selectDb($this->m_linkInstance->m_table . "." . $this->getLocalKey() . "='" . $record[$this->m_ownerInstance->primaryKeyField()] . "'");

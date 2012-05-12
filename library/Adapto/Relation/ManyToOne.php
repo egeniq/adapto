@@ -274,7 +274,7 @@ class Adapto_Relation_ManyToOne extends Adapto_Relation
         }
 
         if ($this->hasFlag(AF_MANYTOONE_LAZY) && (count($this->m_refKey) > 1 || $this->m_refKey[0] != $this->fieldName())) {
-            atkerror("AF_MANYTOONE_LAZY flag is not supported for multi-column reference key or a reference key that uses another column.");
+            throw new Adapto_Exception("AF_MANYTOONE_LAZY flag is not supported for multi-column reference key or a reference key that uses another column.");
         }
     }
 
@@ -497,7 +497,7 @@ class Adapto_Relation_ManyToOne extends Adapto_Relation
     function value2db($rec)
     {
         if ($this->isEmpty($rec)) {
-            atkdebug($this->fieldName() . " IS EMPTY!");
+            Adapto_Util_Debugger::debug($this->fieldName() . " IS EMPTY!");
             return NULL;
         } else {
             if ($this->createDestination()) {
@@ -658,7 +658,7 @@ class Adapto_Relation_ManyToOne extends Adapto_Relation
             }
             return $result;
         } else {
-            atkdebug("Can't create destination! ($this->m_destination");
+            Adapto_Util_Debugger::debug("Can't create destination! ($this->m_destination");
         }
         return "";
     }
@@ -675,7 +675,7 @@ class Adapto_Relation_ManyToOne extends Adapto_Relation
         if (!is_array($record) || $record[$this->fieldName()] == "")
             return;
 
-        atkdebug("Delayed loading of " . ($fullOrFields || is_array($fullOrFields) ? "" : "descriptor ") . "fields for " . $this->m_name);
+        Adapto_Util_Debugger::debug("Delayed loading of " . ($fullOrFields || is_array($fullOrFields) ? "" : "descriptor ") . "fields for " . $this->m_name);
         $this->createDestination();
 
         $includes = "";
@@ -812,7 +812,7 @@ class Adapto_Relation_ManyToOne extends Adapto_Relation
     function edit($record, $fieldprefix = "", $mode = "edit")
     {
         if (!$this->createDestination()) {
-            return atkerror("Could not create destination for destination: $this->m_destination!");
+            return throw new Adapto_Exception("Could not create destination for destination: $this->m_destination!");
         }
 
         $recordset = $this->m_selectableRecords;

@@ -172,7 +172,7 @@ class Adapto_Attribute_Number extends Adapto_Attribute
                     . htmlspecialchars($this->formatNumber($record[$this->fieldName()])) . '">';
             return $result;
         } else
-            atkdebug("Warning attribute " . $this->m_name . " has no proper hide method!");
+            Adapto_Util_Debugger::debug("Warning attribute " . $this->m_name . " has no proper hide method!");
     }
 
     /**

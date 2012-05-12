@@ -552,7 +552,7 @@ class Adapto_Attribute_Profile extends Adapto_Attribute
                 $action = $elems[2];
             } else {
                 // never happens..
-                atkdebug("profileattribute encountered incomplete combination");
+                Adapto_Util_Debugger::debug("profileattribute encountered incomplete combination");
             }
             $actions[$entity][] = $action;
         }

@@ -38,7 +38,7 @@ class Adapto_Ui_Smarty
     {
         static $s_smarty = NULL;
         if ($s_smarty == NULL) {
-            atkdebug("Creating Smarty instance");
+            Adapto_Util_Debugger::debug("Creating Smarty instance");
             if (!class_exists("Smarty")) {
                 include_once(Adapto_Config::getGlobal("atkroot") . "atk/ui/smarty/Smarty.class.php");
             }
@@ -56,7 +56,7 @@ class Adapto_Ui_Smarty
             //Try to create the template compile directory if it not already exists.
             if (!file_exists(Adapto_Config::getGlobal("tplcompiledir"))) {
                 if (!mkdir(Adapto_Config::getGlobal("tplcompiledir"), 0755, true)) {
-                    atkerror("Unable to create template compile directory: " . Adapto_Config::getGlobal("tplcompiledir"));
+                    throw new Adapto_Exception("Unable to create template compile directory: " . Adapto_Config::getGlobal("tplcompiledir"));
                 }
             }
             $s_smarty->compile_dir = Adapto_Config::getGlobal("tplcompiledir"); // name of directory for compiled templates
@@ -99,7 +99,7 @@ class Adapto_Ui_Smarty
                 $s_smarty->plugins_dir[] = $customplugindir;
 
             //$s_smarty->register_compiler_function("tpl","tpl_include");
-            atkdebug("Instantiated new Smarty");
+            Adapto_Util_Debugger::debug("Instantiated new Smarty");
         }
         return $s_smarty;
     }
@@ -111,7 +111,7 @@ class Adapto_Ui_Smarty
      */
     function addPluginDir($path)
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
         $smarty->plugins_dir[] = $path;
     }
 
@@ -155,7 +155,7 @@ class Adapto_Ui_Smarty
      */
     function addFunction($moduleOrPath, $tag, $name = "", $cacheable = true, $cache_attrs = null)
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
 
         $name = empty($name) ? $tag : $name;
         $function = "__smarty_function_$name";
@@ -199,7 +199,7 @@ class Adapto_Ui_Smarty
      */
     function addCompilerFunction($moduleOrPath, $tag, $name = "", $cacheable = true)
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
 
         $name = empty($name) ? $tag : $name;
         $function = "__smarty_compiler_$name";
@@ -231,7 +231,7 @@ class Adapto_Ui_Smarty
      */
     function addBlock($moduleOrPath, $tag, $name = "", $cacheable = true)
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
 
         $name = empty($name) ? $tag : $name;
         $function = "__smarty_block_$name";
@@ -270,7 +270,7 @@ class Adapto_Ui_Smarty
      */
     function addModifier($moduleOrPath, $tag, $name = "")
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
 
         $name = empty($name) ? $tag : $name;
         $function = "__smarty_modifier_$name";
@@ -296,7 +296,7 @@ class Adapto_Ui_Smarty
      */
     function addOutputFilter($function)
     {
-        $smarty = &Adapto_Ui_Smarty::getInstance();
+        $smarty = Adapto_Ui_Smarty::getInstance();
         $smarty->register_outputfilter($function);
     }
 }

@@ -181,7 +181,7 @@ class Adapto_Attribute_TabbedPane extends Adapto_Attribute
                     $fields["fields"][] = $entry;
                 }
             } else {
-                atkerror("Attribute $name not found!");
+                throw new Adapto_Exception("Attribute $name not found!");
             }
         }
         /* check for errors */
@@ -261,7 +261,7 @@ class Adapto_Attribute_TabbedPane extends Adapto_Attribute
 
         // Handle fields
         // load images
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $tipimg = $theme->imgPath("help.gif");
         $reqimg = '<img align="top" src="' . $theme->imgPath("required_field.gif") . '" border="0"
                   alt="' . atktext("field_obligatory") . '" title="' . atktext("field_obligatory") . '">';
@@ -419,7 +419,7 @@ class Adapto_Attribute_TabbedPane extends Adapto_Attribute
                     $ttip = atktext($entity->m_type . "_" . $name . "_tooltip", $module, "", "", "", true);
 
                     if ($ttip) {
-                        $theme = &atkinstance("atk.ui.atktheme");
+                        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
                         $tipimg = $theme->imgPath("help.gif");
 
                         $onelinetip = preg_replace('/([\r\n])/e', "", $ttip);
@@ -449,7 +449,7 @@ class Adapto_Attribute_TabbedPane extends Adapto_Attribute
                     $fields[] = $tplfield;
                 }
             } else {
-                atkerror("Attribute $name not found!");
+                throw new Adapto_Exception("Attribute $name not found!");
             }
         }
         $innerform = $ui->render($entity->getTemplate("view", $record, $tab), array("fields" => $fields));

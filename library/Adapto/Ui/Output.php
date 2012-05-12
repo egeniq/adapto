@@ -58,7 +58,7 @@ class Adapto_Ui_Output
     {
         static $s_instance = NULL;
         if ($s_instance == NULL) {
-            atkdebug("Created a new Adapto_Ui_Output instance");
+            Adapto_Util_Debugger::debug("Created a new Adapto_Ui_Output instance");
             $s_instance = new Adapto_Ui_Output();
         }
         return $s_instance;
@@ -111,7 +111,7 @@ class Adapto_Ui_Output
 
     public static function sendNoCacheHeaders()
     {
-        atkdebug("Sending no-cache headers (lmd: " . gmdate("D, d M Y H:i:s") . " GMT)");
+        Adapto_Util_Debugger::debug("Sending no-cache headers (lmd: " . gmdate("D, d M Y H:i:s") . " GMT)");
         Adapto_Ui_Output::header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
         Adapto_Ui_Output::header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // always modified
         Adapto_Ui_Output::header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -153,7 +153,7 @@ class Adapto_Ui_Output
                 mailreport();
             }
 
-            $debugger = atkinstance('atk.utils.atkdebugger');
+            $debugger = Adapto_ClassLoader::getInstance('atk.utils.Adapto_Util_Debugger::debugger');
             $res .= $debugger->renderDebugAndErrorMessages();
         }
 

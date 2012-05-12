@@ -44,7 +44,7 @@ class Adapto_Menu_Outlook extends Adapto_menuinterface
     {
         global $g_menu, $Adapto_VARS, $g_modules;
         $page = &atkPage::getInstance();
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $atkmenutop = $Adapto_VARS["atkmenutop"];
         if ($atkmenutop == "")
             $atkmenutop = "main";
@@ -115,9 +115,9 @@ class Adapto_Menu_Outlook extends Adapto_menuinterface
                         if ($g_menu[$atkmenutop][$i]["url"] != "") {
                             if ($g_menu[$atkmenutop][$i]["module"] != "") {
                                 $menu_icon = $g_modules[$g_menu[$atkmenutop][$i]["module"]] . 'icons/' . $atkmenutop . '_' . $name . '.gif';
-                                atkdebug("Search for menu icon: $menu_icon");
+                                Adapto_Util_Debugger::debug("Search for menu icon: $menu_icon");
                             } else {
-                                atkdebug("Search for menu icon by iconpath: $menu_icon | $atkmenutop -> $name");
+                                Adapto_Util_Debugger::debug("Search for menu icon by iconpath: $menu_icon | $atkmenutop -> $name");
                                 $menu_icon = $theme->iconPath($atkmenutop . '_' . $name, "outlook");
                             }
 

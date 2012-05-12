@@ -235,7 +235,7 @@ class Adapto_Relation_ManyToMany extends Adapto_Relation
 
             // Validate if destination was created succesfully
             if (!is_object($this->m_linkInstance)) {
-                atkerror("Relation with unknown entitytype '" . $this->m_link . "' (in entity '" . $this->m_owner . "')");
+                throw new Adapto_Exception("Relation with unknown entitytype '" . $this->m_link . "' (in entity '" . $this->m_owner . "')");
                 $this->m_linkInstance = NULL;
                 return false;
             }
@@ -552,7 +552,7 @@ class Adapto_Relation_ManyToMany extends Adapto_Relation
         $selector = $this->getLink()->primaryKey($record);
 
         if (empty($selector)) {
-            atkerror(
+            throw new Adapto_Exception(
                     'primaryKey-selector for link entity is empty. Did you add an AF_PRIMARY flag to the primary key field(s) of the intermediate entity? Deleting records aborted to prevent dataloss.');
             return false;
         }

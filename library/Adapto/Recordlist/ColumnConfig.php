@@ -94,11 +94,11 @@ class Adapto_Recordlist_ColumnConfig
 
             if (!is_array($colcfg) || $forceNew) {
                 // create new
-                atkdebug("New colconfig initialising");
+                Adapto_Util_Debugger::debug("New colconfig initialising");
                 $s_instances[$id]->init();
             } else {
                 // inherit old config from session.
-                atkdebug("Resuming colconfig from session");
+                Adapto_Util_Debugger::debug("Resuming colconfig from session");
                 $s_instances[$id]->m_colcfg = &$colcfg;
             }
 

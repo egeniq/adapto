@@ -52,7 +52,7 @@
      */
     public function __construct()
     {
-      atkdebug("Creating url vault");
+      Adapto_Util_Debugger::debug("Creating url vault");
       $sm = &atkGetSessionManager();
       $session = &$sm->getSession();
       if (!isset($session["atkurlvault"])||!is_array($session["atkurlvault"])) $session["atkurlvault"] = array();

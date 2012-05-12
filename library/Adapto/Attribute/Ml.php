@@ -370,7 +370,7 @@ class Adapto_Attribute_Ml extends Adapto_Attribute
         if (method_exists($query, $func)) {
             $searchcondition = $query->$func($table . "." . $this->fieldName() . (!$this->isMlEntity() ? '_' . $languages[0] : ''), $this->escapeSQL($value));
         } else {
-            atkdebug("Database doesn't support searchmode '$searchmode' for " . $this->fieldName() . ", ignoring condition.");
+            Adapto_Util_Debugger::debug("Database doesn't support searchmode '$searchmode' for " . $this->fieldName() . ", ignoring condition.");
         }
         return $searchcondition;
     }

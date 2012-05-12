@@ -145,7 +145,7 @@ class Adapto_Front_Controller implements ArrayAccess
 
         $importPath = "module.{$module}.controllers.{$name}controller";
         if (atkimport($importPath)) {
-            atkdebug('Create ' . $importPath . ' controller instance');
+            Adapto_Util_Debugger::debug('Create ' . $importPath . ' controller instance');
             $class = "{$name}controller";
             return new $class($module, $name, $action, $parent);
         } else {
@@ -188,8 +188,8 @@ class Adapto_Front_Controller implements ArrayAccess
         $class = Adapto_Config::getGlobal("frontcontroller_bridge", "atk.front.atkfrontcontrollerbridge");
 
         if (!isset(self::$s_bridges[$class])) {
-            atkdebug('Create ' . $class . ' bridge instance');
-            self::$s_bridges[$class] = atknew($class);
+            Adapto_Util_Debugger::debug('Create ' . $class . ' bridge instance');
+            self::$s_bridges[$class] = Adapto_ClassLoader::create($class);
         }
 
         return self::$s_bridges[$class];
@@ -508,7 +508,7 @@ class Adapto_Front_Controller implements ArrayAccess
 
                 if (!isset($this->m_contentType) || $this->m_contentType == 'text/html') {
 
-                    echo atkDebugger::getInstance()->renderDebugAndErrorMessages();
+                    echo Adapto_Util_Debugger::debugger::getInstance()->renderDebugAndErrorMessages();
                 }
                 die;
             }
@@ -576,7 +576,7 @@ class Adapto_Front_Controller implements ArrayAccess
     protected function handleException($exception)
     {
         if ($this->isRoot()) {
-            atkerror($exception->__toString());
+            throw new Adapto_Exception($exception->__toString());
             $this->renderContent('An unknown error occured.');
         } else {
             throw $exception;
@@ -599,7 +599,7 @@ class Adapto_Front_Controller implements ArrayAccess
     protected function installPlugins()
     {
         /* @var $smarty Smarty */
-        $smarty = atkinstance("atk.ui.atksmarty");
+        $smarty = Adapto_ClassLoader::getInstance("atk.ui.atksmarty");
         $this->m_plugins = $smarty->_plugins;
         $smarty->register_function('_partial', array($this, 'partialFunctionTag'), false);
         $smarty->register_function('_url', array($this, 'urlFunctionTag'), false);
@@ -615,7 +615,7 @@ class Adapto_Front_Controller implements ArrayAccess
     {
         if ($this->m_plugins == NULL)
             return;
-        $smarty = atkinstance("atk.ui.atksmarty");
+        $smarty = Adapto_ClassLoader::getInstance("atk.ui.atksmarty");
         $smarty->_plugins = $this->m_plugins;
         $this->m_plugins = NULL;
     }
@@ -1155,7 +1155,7 @@ class Adapto_Front_Controller implements ArrayAccess
         $template = $this->getFileForTemplate($template, $vars, $partial);
 
         /* @var $smarty Smarty */
-        $smarty = atkinstance('atk.ui.atksmarty');
+        $smarty = Adapto_ClassLoader::getInstance('atk.ui.atksmarty');
 
         $oldVars = $smarty->get_template_vars();
         $oldSerials = $smarty->_cache_serials;

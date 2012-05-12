@@ -14,8 +14,6 @@
 
  */
 
-useattrib("atkattribute");
-
 /** flag(s) specific for the Adapto_Attribute_File */
 
 /**
@@ -182,7 +180,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
         $dirHandle = dir($this->m_dir);
         $file_arr = array();
         if (!$dirHandle) {
-            atkerror("Unable to open directory {$this->m_dir}");
+            throw new Adapto_Exception("Unable to open directory {$this->m_dir}");
             return array();
         }
 
@@ -299,17 +297,17 @@ class Adapto_Attribute_File extends Adapto_Attribute
             if ($this->hasFlag(AF_FILE_PHYSICAL_DELETE)) {
                 $file = "";
                 if (isset($rec[$this->fieldName()]["postdel"]) && $rec[$this->fieldName()]["postdel"] != "") {
-                    atkdebug("postdel set");
+                    Adapto_Util_Debugger::debug("postdel set");
                     $file = $rec[$this->fieldName()]["postdel"];
                 } else if (isset($rec[$this->fieldName()]["orgfilename"])) {
-                    atkdebug("postdel not set");
+                    Adapto_Util_Debugger::debug("postdel not set");
                     $file = $rec[$this->fieldName()]["orgfilename"];
                 }
-                atkdebug("file is now " . $file);
+                Adapto_Util_Debugger::debug("file is now " . $file);
                 if ($file != "" && file_exists($this->m_dir . $file)) {
                     unlink($this->m_dir . $file);
                 } else
-                    atkdebug("File doesn't exist anymore.");
+                    Adapto_Util_Debugger::debug("File doesn't exist anymore.");
             }
             //        echo ':::::return leeg::::';
             return '';
@@ -321,7 +319,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
                 if ($filename != "") {
                     $dirname = dirname($this->m_dir . $filename);
                     if (!$this->mkdir($dirname)) {
-                        atkerror("File could not be saved, unable to make directory '{$dirname}'");
+                        throw new Adapto_Exception("File could not be saved, unable to make directory '{$dirname}'");
                         return "";
                     }
 
@@ -329,7 +327,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
                         $this->processFile($this->m_dir, $filename);
                         return $this->escapeSQL($filename);
                     } else {
-                        atkerror(
+                        throw new Adapto_Exception(
                                 "File could not be saved, unable to copy file '{$rec[$this->fieldName()]["tmpfile"]}' to destination '{$this->m_dir}{$filename}'");
                         return "";
                     }
@@ -339,31 +337,6 @@ class Adapto_Attribute_File extends Adapto_Attribute
 
             return $this->escapeSQL($rec[$this->fieldName()]["orgfilename"]);
         }
-    }
-
-    /**
-     * Recursive mkdir.
-     *
-     * @see http://nl2.php.net/mkdir
-     *
-     * @param string $path path to create
-     * @return success/failure
-     *
-     * @static
-     */
-    function mkdir($path)
-    {
-        $path = preg_replace('/(\/){2,}|(\\\){1,}/', '/', $path); //only forward-slash
-        $dirs = explode("/", $path);
-
-        $path = "";
-        foreach ($dirs as $element) {
-            $path .= $element . "/";
-            if (!is_dir($path) && !mkdir($path))
-                return false;
-        }
-
-        return true;
     }
 
     /**
@@ -420,7 +393,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
     function setAllowedFileTypes($types)
     {
         if (!is_array($types)) {
-            atkerror('Adapto_Attribute_File::setAllowedFileTypes() Invalid types (types is not an array!');
+            throw new Adapto_Exception('Adapto_Attribute_File::setAllowedFileTypes() Invalid types (types is not an array!');
             return false;
         }
         $this->m_allowedFileTypes = $types;
@@ -570,7 +543,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
  elseif (count($_FILES) == 0 || $_FILES[$postfiles_basename]["tmp_name"] == "none" || $_FILES[$postfiles_basename]["tmp_name"] == "") {
                 // No file to upload, then check if the select box is filled
                 if ($fileselected) {
-                    atkdebug("file selected!");
+                    Adapto_Util_Debugger::debug("file selected!");
                     $filename = $rec[$this->fieldName()]["select"];
                     $orgfilename = $filename;
                     $postdel = '';
@@ -649,7 +622,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
         $randval = mt_rand();
 
         $filename = isset($record[$this->fieldName()]["filename"]) ? $record[$this->fieldName()]["filename"] : null;
-        atkdebug($this->fieldname() . " - File: $filename");
+        Adapto_Util_Debugger::debug($this->fieldname() . " - File: $filename");
         $prev_type = Array("jpg", "jpeg", "gif", "tif", "png", "bmp", "htm", "html", "txt"); // file types for preview
         $imgtype_prev = Array("jpg", "jpeg", "gif", "png"); // types which are supported by GetImageSize
         if ($filename != "") {
@@ -770,7 +743,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
     function _filenameUnique($rec, $filename)
     {
         // check if there's another record using this same name. If so, (re)number the filename.
-        atkdebug("Adapto_Attribute_File::_filenameUnique() -> unique check");
+        Adapto_Util_Debugger::debug("Adapto_Attribute_File::_filenameUnique() -> unique check");
 
         if ($dotPos = strrpos($filename, '.')) {
             $name = substr($filename, 0, strrpos($filename, '.'));
@@ -807,7 +780,7 @@ class Adapto_Attribute_File extends Adapto_Attribute
             // file name exists, so mangle it with a number.
             $filename = $name . "-" . ($max_count + 1) . $ext;
         }
-        atkdebug("Adapto_Attribute_File::_filenameUnique() -> New filename = " . $filename);
+        Adapto_Util_Debugger::debug("Adapto_Attribute_File::_filenameUnique() -> New filename = " . $filename);
         return $filename;
     }
 

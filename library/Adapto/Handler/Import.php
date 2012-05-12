@@ -283,7 +283,7 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
         </div>';
 
         $page = &$this->m_entity->getPage();
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_style($theme->stylePath("recordlist.css"));
         $this->invoke('importPage', 'analyze', $content);
     }
@@ -1074,13 +1074,13 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
         static $mb_converting_exists = null;
         if (!isset($mb_converting_exists)) {
             $mb_converting_exists = function_exists("mb_convert_encoding");
-            atkdebug('Checking function_exists("mb_convert_encoding")');
+            Adapto_Util_Debugger::debug('Checking function_exists("mb_convert_encoding")');
         }
 
         static $atkCharset = null;
         if (!isset($atkCharset)) {
             $atkCharset = atkGetCharset();
-            atkdebug('setting atkcharset static!');
+            Adapto_Util_Debugger::debug('setting atkcharset static!');
         }
 
         //copy the csv in a record and add it to the db
@@ -1088,7 +1088,7 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
         if ($skipfirstrow == "1")
             $line = fgets($fp);
         for ($line = fgets($fp), $counter = 1; $line !== false; $line = fgets($fp), $counter++) {
-            atkdebug("Validating record nr. $counter");
+            Adapto_Util_Debugger::debug("Validating record nr. $counter");
             //if we have an empty line, pass it
             if (trim($line) == "")
                 continue;
@@ -1096,7 +1096,7 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
             //large import are a problem for the maximum execution time, so we want to set for each
             //loop of the for-loop an maximum execution time
             set_time_limit(60);
-            atkdebug('set_time_limit(60)');
+            Adapto_Util_Debugger::debug('set_time_limit(60)');
 
             if ($atkCharset != '' && $mb_converting_exists)
                 $line = mb_convert_encoding($line, $atkCharset);
@@ -1159,7 +1159,7 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
                 static $searchresults = array();
                 if (!array_key_exists($attributename, $searchresults)
                         || (array_key_exists($attributename, $searchresults) && !array_key_exists($value, $searchresults[$attributename]))) {
-                    atkdebug("Caching attributeValue result for $attributename ($value)");
+                    Adapto_Util_Debugger::debug("Caching attributeValue result for $attributename ($value)");
                     $searchresults[$attributename][$value] = $attr->m_destInstance->searchDb($value);
                 }
 
@@ -1219,7 +1219,7 @@ class Adapto_Handler_Import extends Adapto_ActionHandler
         foreach ($validatedrecs as $action => $validrecs) {
             foreach ($validrecs as $validrec) {
                 $counter++;
-                atkdebug("Doing $action for record nr $counter");
+                Adapto_Util_Debugger::debug("Doing $action for record nr $counter");
 
                 $this->$action($validrec);
                 if (!empty($validrec['atkerror'])) {

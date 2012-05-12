@@ -120,7 +120,7 @@ class Adapto_Handler_Search extends Adapto_AbstractSearchHandler
 
         $attr = &$this->m_entity->getAttribute($attribute);
         if ($attr == NULL) {
-            atkerror("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
+            throw new Adapto_Exception("Unknown / invalid attribute '$attribute' for entity '" . $this->m_entity->atkEntityType() . "'");
             return '';
         }
 
@@ -169,7 +169,7 @@ class Adapto_Handler_Search extends Adapto_AbstractSearchHandler
 
             return $total;
         } else {
-            atkerror("ui object failure");
+            throw new Adapto_Exception("ui object failure");
         }
     }
 
@@ -207,7 +207,7 @@ class Adapto_Handler_Search extends Adapto_AbstractSearchHandler
             }
             return $ui->render($entity->getTemplate("search", $record), $params);
         } else
-            atkerror("ui object error");
+            throw new Adapto_Exception("ui object error");
     }
 
     /**

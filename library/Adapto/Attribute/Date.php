@@ -683,7 +683,7 @@ class Adapto_Attribute_Date extends Adapto_Attribute
 
     public static function registerScriptsAndStyles($useCalendar = true)
     {
-        $page = atkinstance('atk.ui.atkpage');
+        $page = Adapto_ClassLoader::getInstance('atk.ui.atkpage');
 
         // make sure we register the script code with translations for the months etc. only once!
         if (!self::$s_baseScriptsRegistered) {
@@ -725,7 +725,7 @@ class Adapto_Attribute_Date extends Adapto_Attribute
             $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/calendar/calendar-runner.js");
             $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/calendar/lang/calendar-" . Adapto_Config::getGlobal("language") . ".js");
 
-            $theme = atkinstance("atk.ui.atktheme");
+            $theme = Adapto_ClassLoader::getInstance("Atk_Ui_Theme");
             $page->register_style($theme->stylePath("atkdateattribute.css"));
         }
     }

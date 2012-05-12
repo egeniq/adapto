@@ -106,7 +106,7 @@ class Adapto_Db_MsSql extends Adapto_MysqlDb
      */
     function disconnect()
     {
-        atkdebug("Disconnecting from database...");
+        Adapto_Util_Debugger::debug("Disconnecting from database...");
         mssql_close($this->m_link_id);
     }
 
@@ -121,7 +121,7 @@ class Adapto_Db_MsSql extends Adapto_MysqlDb
     {
         // <- implement limit support here
 
-        atkdebug("atkmssqldb.query(): " . $query);
+        Adapto_Util_Debugger::debug("atkmssqldb.query(): " . $query);
 
         /* connect to database */
         if ($this->connect() == DB_SUCCESS) {
@@ -315,12 +315,12 @@ $id = @mssql_query($query,$this->m_link_id);
             $ddl = &atkDDL::create("mssql");
 
             /* list fields */
-            atkdebug("Retrieving metadata for $table");
+            Adapto_Util_Debugger::debug("Retrieving metadata for $table");
             /* get meta data */
  $id = @mssql_query("SELECT TOP 1 * FROM [$table]", $this->m_link_id);
        if (!$id)
  {
-                atkdebug("Metadata query failed.");
+                Adapto_Util_Debugger::debug("Metadata query failed.");
                 return array();
             }
             $i = 0;
@@ -346,7 +346,7 @@ $id = @mssql_query($query,$this->m_link_id);
 
             $result["num_fields"] = $i;
  mssql_free_result($id);
-            atkdebug("Metadata for $table complete");
+            Adapto_Util_Debugger::debug("Metadata for $table complete");
             return $result;
         }
         return array();
@@ -379,7 +379,7 @@ $id = @mssql_query($query,$this->m_link_id);
     function commit()
     {
         if ($this->m_link_id) {
-            atkdebug("Commit");
+            Adapto_Util_Debugger::debug("Commit");
             mssql_query("COMMIT TRANSACTION;", $this->m_link_id);
         }
         return true;
@@ -393,7 +393,7 @@ $id = @mssql_query($query,$this->m_link_id);
     function rollback()
     {
         if ($this->m_link_id) {
-            atkdebug("Rollback");
+            Adapto_Util_Debugger::debug("Rollback");
             mssql_query("ROLLBACK TRANSACTION;", $this->m_link_id);
         }
         return true;

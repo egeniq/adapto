@@ -103,7 +103,7 @@ class Adapto_Attribute_MultiSelect extends Adapto_ListAttribute
      */
     function value2db($rec)
     {
-        //atkdebug("multiselectattribute::value2db()");
+        //Adapto_Util_Debugger::debug("multiselectattribute::value2db()");
         if (is_array($rec[$this->fieldName()]) && count($rec[$this->fieldName()] >= 1)) {
             return $this->escapeSQL(implode($this->m_fieldSeparator, $rec[$this->fieldName()]));
         } else

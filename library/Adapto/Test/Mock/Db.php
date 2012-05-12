@@ -231,7 +231,7 @@ class Adapto_Test_Mock_Db extends Adapto_Db
      */
     function createQuery()
     {
-        $query = atknew("atk.test.mocks.atkmockquery");
+        $query = Adapto_ClassLoader::create("atk.test.mocks.atkmockquery");
         $query->m_db = $this;
         return $query;
     }
