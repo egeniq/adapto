@@ -167,7 +167,7 @@ class Adapto_Test_CacheCase extends Adapto_TestCase
     public function test_set_Object()
     {
 
-        $data = atknew("atk.atklanguage");
+        $data = Adapto_ClassLoader::create("atk.atklanguage");
 
     }
 

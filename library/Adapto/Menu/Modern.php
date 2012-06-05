@@ -45,13 +45,13 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
      */
     function render()
     {
-        $page = &atkinstance('atk.ui.atkpage');
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = Adapto_ClassLoader::getInstance('atk.ui.atkpage');
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         if ($theme->getAttribute('modern_menu_compat')) {
             $page->addContent($this->getMenu());
             return $page->render("Menu", true);
         } else {
-            $oldmenu = &atknew('atk.menu.atkplainmenu');
+            $oldmenu = &Adapto_ClassLoader::create('atk.menu.atkplainmenu');
             return $oldmenu->render();
         }
     }
@@ -63,7 +63,7 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
      */
     function getMenu()
     {
-        $theme = &atkinstance("atk.ui.atktheme");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         if ($theme->getAttribute('modern_menu_compat')) {
             global $g_menu;
             $atkmenutop = (isset($_REQUEST['atkmenutop']) ? $_REQUEST['atkmenutop'] : sessionLoad('atkmenutop'));
@@ -71,12 +71,12 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
 
             $menuitems = $this->getMenuItems($g_menu, 'main');
 
-            $page = &atkInstance("atk.ui.atkpage");
+            $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
             $page->register_style($theme->stylePath("style.css"));
             $page->register_style($theme->stylePath("menu.css"));
             $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/menuload.js");
 
-            $ui = &atkinstance("atk.ui.atkui");
+            $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
             $atkmenutop = (isset($_REQUEST['atkmenutop']) ? $_REQUEST['atkmenutop'] : $atkmenutop);
 
             $box = $ui
@@ -87,7 +87,7 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
 
             return $box;
         } else {
-            $oldmenu = &atknew('atk.menu.atkplainmenu');
+            $oldmenu = &Adapto_ClassLoader::create('atk.menu.atkplainmenu');
             return $oldmenu->getMenu();
         }
     }
@@ -130,7 +130,7 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
                     $menuitem['name'] = $this->getMenuTranslation($menuitem['name'], $menuitem['module']);
                 }
 
-                $theme = &atkinstance("atk.ui.atktheme");
+                $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
                 $menu_icon = $theme->iconPath($menutop . '_' . $menuitem['id'], "menu", $menuitem['module']);
                 if ($menu_icon) {
                     $menuitem['image'] = $menu_icon;
@@ -176,7 +176,7 @@ class Adapto_Menu_Modern extends Adapto_PlainMenu
                         && $this->isEnabled($menuitem['submenu'][$submenukey]);
                 $menuitem['submenu'][$submenukey]['url'] = session_url($url, SESSION_NEW);
             }
-            $theme = &atkinstance("atk.ui.atktheme");
+            $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
             $menu_icon = $theme->iconPath($menuitem['id'] . '_' . $submenuitem['name'], "menu", $submenuitem['module']);
             if ($menu_icon) {
                 $menuitem['submenu'][$submenukey]['image'] = $menu_icon;

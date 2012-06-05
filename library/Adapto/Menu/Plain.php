@@ -43,8 +43,8 @@ class Adapto_Menu_Plain extends Adapto_menuinterface
      */
     function render()
     {
-        $page = &atkinstance("atk.ui.atkpage");
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->addContent($this->getMenu());
 
         return $page->render("Menu", true);
@@ -59,8 +59,8 @@ class Adapto_Menu_Plain extends Adapto_menuinterface
     {
         global $Adapto_VARS, $g_menu, $g_menu_parent;
         $atkmenutop = atkArrayNvl($Adapto_VARS, "atkmenutop", "main");
-        $theme = &atkinstance('atk.ui.atktheme');
-        $page = &atkinstance('atk.atkpage');
+        $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
+        $page = Adapto_ClassLoader::getInstance('atk.atkpage');
 
         $menu = $this->getHeader($atkmenutop);
         if (is_array($g_menu[$atkmenutop])) {
@@ -110,7 +110,7 @@ class Adapto_Menu_Plain extends Adapto_menuinterface
         $menu .= $this->getFooter($atkmenutop);
         $page->register_style($theme->stylePath("style.css"));
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/menuload.js");
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
 
         return $ui
                 ->renderBox(

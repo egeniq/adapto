@@ -33,7 +33,7 @@
   atksession();
   atksecure();
 
-  $debugger = &atkinstance("atk.utils.atkdebugger");
+  $debugger = Adapto_ClassLoader::getInstance("atk.utils.Adapto_Util_Debugger::debugger");
 
   $output = &atkOutput::getInstance();
 

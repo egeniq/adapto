@@ -39,7 +39,7 @@
   
   
   $menu = &atkMenu::getMenu();
-  $theme = &atkinstance('atk.ui.atktheme');
+  $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
   
   $position = $menu->getPosition();
   $scrolling = ($menu->getScrollable()==MENU_SCROLLABLE?FRAME_SCROLL_AUTO:FRAME_SCROLL_NO);

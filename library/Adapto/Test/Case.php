@@ -164,7 +164,7 @@ abstract class Adapto_Test_Case extends PHPUnit_Framework_TestCase
      */
     function addFixtures($names, $database = "default")
     {
-        atkdebug("Load fixtures into test database...");
+        Adapto_Util_Debugger::debug("Load fixtures into test database...");
 
         $db = $this->_getTestDb($database);
         $db->toggleForeignKeys(false);

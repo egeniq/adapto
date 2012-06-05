@@ -50,7 +50,7 @@ class Adapto_Util_Zip
         $this->m_zip_bin = Adapto_Config::getGlobal("ziplocation", "zip");
         $this->m_unzip_bin = Adapto_Config::getGlobal("unziplocation", "unzip");
         if (!$this->test())
-            atkError("Adapto_Util_Zip: Error while testing");
+            throw new Adapto_Exception("Adapto_Util_Zip: Error while testing");
     }
 
     /**
@@ -82,10 +82,10 @@ class Adapto_Util_Zip
     {
         $command = $this->getInfozipCommand($type, $params);
         $output = array();
-        atkdebug("Adapto_Util_Zip->runInfozipCommand: Executing command: $command");
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->runInfozipCommand: Executing command: $command");
         $returncode = NULL; //var for catching returncode fro exec.
         exec($command, $output, $returncode);
-        atkdebug("Adapto_Util_Zip->runInfozipCommand: Return code was: " . $returncode);
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->runInfozipCommand: Return code was: " . $returncode);
         Adapto_var_dump($output, "Adapto_Util_Zip->runInfozipCommand: Console output");
         return $returncode;
     }
@@ -144,19 +144,19 @@ class Adapto_Util_Zip
         if ($this->m_testok)
             return true;
 
-        atkdebug("Adapto_Util_Zip->test: Testing systems zip abilities");
-        atkdebug("Adapto_Util_Zip->test: Zipmode = " . $this->m_zipmode);
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: Testing systems zip abilities");
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: Zipmode = " . $this->m_zipmode);
 
         // If the php version is 5.2 or newer and the zip extension is loaded, we can use the
         // ziparchive class
         if (in_array($this->m_zipmode, array("auto", "internal"))) {
-            atkdebug("Adapto_Util_Zip->test: Testing for php 5.2 and zip extension");
+            Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: Testing for php 5.2 and zip extension");
             $phpversion = phpversion();
             $zipextensionloaded = @extension_loaded("zip");
-            atkdebug("Adapto_Util_Zip->test: PHP Version = " . $phpversion);
-            atkdebug("Adapto_Util_Zip->test: extension_loaded('zip') = " . ($zipextensionloaded ? "true" : "false"));
+            Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: PHP Version = " . $phpversion);
+            Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: extension_loaded('zip') = " . ($zipextensionloaded ? "true" : "false"));
             if (version_compare($phpversion, '5.2') > 0 && $zipextensionloaded) {
-                atkdebug("Adapto_Util_Zip->test: PHP 5.2 or newer and the ZIP extension are present, TEST SUCCESFULL!");
+                Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: PHP 5.2 or newer and the ZIP extension are present, TEST SUCCESFULL!");
                 if ($this->m_zipmode == "auto")
                     $this->m_zipmode = "internal";
                 $this->m_testok = true;
@@ -169,9 +169,9 @@ class Adapto_Util_Zip
         if (in_array($this->m_zipmode, array("auto", "infozip"))) {
             $zipoutput = shell_exec($this->getInfozipCommand(ATKZIP_ZIP, "-h"));
             $unzipoutput = shell_exec($this->getInfozipCommand(ATKZIP_UNZIP, "-h"));
-            atkdebug("Adapto_Util_Zip->test: php 5.2 or zip extension not found, now testing for infozip binaries");
+            Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: php 5.2 or zip extension not found, now testing for infozip binaries");
             if ((strlen($zipoutput) > 0) && (strlen($unzipoutput) > 0)) {
-                atkdebug("Adapto_Util_Zip->test: zip and unzip command responded, TEST SUCCESFULL!");
+                Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: zip and unzip command responded, TEST SUCCESFULL!");
                 if ($this->m_zipmode == "auto")
                     $this->m_zipmode = "infozip";
                 $this->m_testok = true;
@@ -179,8 +179,8 @@ class Adapto_Util_Zip
             }
         }
 
-        atkdebug("Adapto_Util_Zip->test: This system has no zip abilities, TEST FAILED!");
-        atkdebug("Adapto_Util_Zip->test: Try upgrading to PHP 5.2 and installing the php zip extension");
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: This system has no zip abilities, TEST FAILED!");
+        Adapto_Util_Debugger::debug("Adapto_Util_Zip->test: Try upgrading to PHP 5.2 and installing the php zip extension");
         return false;
     }
 
@@ -195,7 +195,7 @@ class Adapto_Util_Zip
     function extract($archive, $destination, $entries = null)
     {
         if (!$this->test())
-            atkError("Adapto_Util_Zip->extract: Could not extract, system is not capable of extracting from a ZIP archive");
+            throw new Adapto_Exception("Adapto_Util_Zip->extract: Could not extract, system is not capable of extracting from a ZIP archive");
 
         if ($this->m_zipmode == "internal") {
             $zip = new ZipArchive;
@@ -208,7 +208,7 @@ class Adapto_Util_Zip
                 $zip->close();
                 return true;
             } else {
-                atkError("Adapto_Util_Zip->extract: Error while opening the zip archive ($archive)");
+                throw new Adapto_Exception("Adapto_Util_Zip->extract: Error while opening the zip archive ($archive)");
                 return false;
             }
         }
@@ -220,7 +220,7 @@ class Adapto_Util_Zip
             if ($returncode <= 0) {
                 return true;
             } else {
-                atkError(
+                throw new Adapto_Exception(
                         sprintf("Adapto_Util_Zip->extract: Infozip returned an error: %s (return code %d)", $this->getInfozipError(ATKZIP_UNZIP, $returncode),
                                 $returncode));
                 return false;
@@ -241,17 +241,17 @@ class Adapto_Util_Zip
     function add($archive, $filename, $filepath = "")
     {
         if (!$this->test())
-            atkError("Adapto_Util_Zip->add: Could not add, system is not capable of add to a ZIP archive");
+            throw new Adapto_Exception("Adapto_Util_Zip->add: Could not add, system is not capable of add to a ZIP archive");
 
         if ($this->m_zipmode == "internal") {
             $zip = new ZipArchive;
             if ($zip->open($archive) === TRUE) {
-                atkdebug("AtkZip::add|adding " . $filepath . basename($filename) . " to $archive");
+                Adapto_Util_Debugger::debug("AtkZip::add|adding " . $filepath . basename($filename) . " to $archive");
                 $zip->addFile($filename, $filepath . basename($filename));
                 $zip->close();
                 return true;
             } else {
-                atkError("Adapto_Util_Zip->add: Error while opening the zip archive ($archive)");
+                throw new Adapto_Exception("Adapto_Util_Zip->add: Error while opening the zip archive ($archive)");
                 return false;
             }
         }
@@ -262,7 +262,7 @@ class Adapto_Util_Zip
             if ($returncode <= 0) {
                 return true;
             } else {
-                atkError(
+                throw new Adapto_Exception(
                         sprintf("Adapto_Util_Zip->add: Infozip returned an error: %s (return code %d)", $this->getInfozipError(ATKZIP_ZIP, $returncode),
                                 $returncode));
                 return false;

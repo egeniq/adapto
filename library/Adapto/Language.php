@@ -7,10 +7,6 @@
  *
  * @package adapto
  *
- * @copyright (c)2000-2004 Ibuildings.nl BV
- * @license http://www.achievo.org/atk/licensing ATK Open Source License
- *
-
  */
 
 /**
@@ -27,62 +23,8 @@
  */
 class Adapto_Language
 {
-    /**
-     * Instance.
-     * 
-     * @var Adapto_Language
-     */
-    private static $s_instance = null;
-
-    /**
-     * Supported languages.
-     * 
-     * @var array
-     */
-    private static $s_supportedLanguages = null;
-
-    /**
-     * Directory where language files are stored.
-     * @access private
-     * @var String
-     */
-    public $LANGDIR = "languages/"; // defaulted to public
-
-    /**
-     * Contains all currently loaded language strings.
-     * @access private
-     * @var array
-     */
-    public $m_cachedlang = array(); // defaulted to public
-
-    /**
-     * List of currently loaded language files
-     * @access private
-     * @var array
-     */
-    public $m_cachedlangfiles = array(); // defaulted to public
-
-    /**
-     * List of fallback modules
-     * @access private
-     * @var array
-     */
-    public $m_fallbackmodules = array(); // defaulted to public
-
-    /**
-     * List of override modules
-     * @access private
-     * @var array
-     */
-    public $m_overridemodules = array("langoverrides"); // defaulted to public
-
-    /**
-     * List of custum language string overrides
-     * @access private
-     * @var array
-     */
-    public $m_customStrings = array(); // defaulted to public
-
+    private $_zendTranslate = NULL;
+    
     /**
      * Default Constructor
      * @access private
@@ -90,89 +32,24 @@ class Adapto_Language
 
     public function __construct()
     {
-        atkdebug("New instance made of Adapto_Language");
+        Adapto_Util_Debugger::debug("New instance made of Adapto_Language");
+    
     }
-
-    /**
-     * Gets an instance of the Adapto_Language class
-     *
-     * Using this function will ensure that only 1 instance ever exists
-     * (singleton).
-     *
-     * @return Adapto_Language Instance of the Adapto_Language class
-     */
-
-    public static function getInstance()
+    
+    public static function _($string, $module="adapto", $entity = NULL, $lng = NULL)
     {
-        if (self::$s_instance == null) {
-            self::$s_instance = new self();
-        }
-
-        return self::$s_instance;
-    }
-
-    /**
-     * Add a module that serves as an override for language strings.
-     *
-     * @param String $module Name of the module to add.
-     */
-
-    public function addOverrideModule($module)
-    {
-        array_unshift($this->m_overridemodules, $module);
-    }
-
-    /**
-     * Add a module that servers as a fallback for language strings.
-     *
-     * @param String $module Name of the module to add.
-     */
-
-    public function addFallbackModule($module)
-    {
-        $this->m_fallbackmodules[] = $module;
-    }
-
-    /**
-     * Calculate the list of fallbackmodules.
-     * 
-     * @access protected
-     * @param bool $modulefallback  Wether or not to use all the modules of the application in the fallback,
-     *                              when looking for strings
-     * @return array Array of fallback modules
-     */
-
-    protected function _getFallbackModules($modulefallback)
-    {
-        static $s_fallbackmodules = array();
-        $key = $modulefallback ? 1 : 0; // we can be called with true or false, cache both results
-
-        if (!array_key_exists($key, $s_fallbackmodules)) {
-            global $g_modules;
-
-            $modules = array();
-            if (is_array($g_modules) && ($modulefallback || Adapto_Config::getGlobal("language_modulefallback", false))) {
-                foreach ($g_modules as $modname => $modpath) {
-                    $modules[] = $modname;
-                }
-            }
-            $modules[] = "atk";
-
-            $s_fallbackmodules[$key] = array_merge($this->m_fallbackmodules, $modules);
-        }
-
-        return $s_fallbackmodules[$key];
+        $instance = Zend_Registry::get("Adapto_Language");
+        return $instance->text($string, $module, $entity, $lng);
     }
 
     /**
      * Text function, retrieves a translation for a certain string.
-     *
-     * @static
+     * 
      * @param mixed $string           string or array of strings containing the name(s) of the string to return
      *                                when an array of strings is passed, the second will be the fallback if
      *                                the first one isn't found, and so forth
      * @param String $module          module in which the language file should be looked for,
-     *                                defaults to core module with fallback to ATK
+     *                                defaults to core module with fallback to Adapto
      * @param String $entity            the entity to which the string belongs
      * @param String $lng             ISO 639-1 language code, defaults to config variable
      * @param String $firstfallback   the first module to check as part of the fallback
@@ -182,24 +59,27 @@ class Adapto_Language
      * @return String the string from the languagefile
      */
 
-    public static function text($string, $module, $entity = "", $lng = "", $firstfallback = "", $entityfaulttext = false, $modulefallback = false)
+    public function text($string, $module="adapto", $entity = NULL, $lng = NULL)
     {
         // We don't translate nothing
-        if ($string == '')
+        if ($string == '') {
             return '';
-        if ($lng == "")
-            $lng = Adapto_Language::getLanguage();
+        }
+            
+        if ($lng == "") {
+            $lng = $this->getLanguage();
+        }
+        
         $lng = strtolower($lng);
-        $atklanguage = Adapto_Language::getInstance();
-
-        // If only one string given, process it immediatly
+        
+        // If only one string given, process it immediately
         if (!is_array($string))
-            return $atklanguage->_getString($string, $module, $lng, $entity, $entityfaulttext, $firstfallback, $modulefallback);
+            return $this->_getString($string, $module, $lng, $entity);
 
         // If multiple strings given, iterate through all strings and return the translation if found
         for ($i = 0, $_i = count($string); $i < $_i; $i++) {
             // Try to get the translation
-            $translation = $atklanguage->_getString($string[$i], $module, $lng, $entity, $entityfaulttext || ($i < ($_i - 1)), $firstfallback, $modulefallback);
+            $translation = $this->_getString($string[$i], $module, $lng, $entity, ($i < ($_i - 1)));
 
             // Return the translation if found
             if ($translation != "")
@@ -209,33 +89,9 @@ class Adapto_Language
 
     }
 
-    /**
-     * Returns all strings for the given modulename.
-     *
-     * The returned struct will contain key-value pairs for the translation 
-     * keys, and their respective translation.
-     *  
-     * @param String $module  Module in which the language file should be 
-     * @param String $lng     ISO 639-1 language code, defaults to config 
-     * @return array Translations 
-     */
-
-    public static function getStringsForModule($module, $lng = "")
+    public function getSupportedLanguages()
     {
-
-        if ($lng == "")
-            $lng = Adapto_Language::getLanguage();
-        $atklanguage = Adapto_Language::getInstance();
-
-        $text = $atklanguage->_getStringFromFile($key, $module, $lng);
-        $atklanguage->_includeLanguage($module, $lng);
-
-        if (isset($atklanguage->m_cachedlang[$module]) && is_array($atklanguage->m_cachedlang[$module][$lng])) {
-            return $atklanguage->m_cachedlang[$module][$lng];
-        }
-
-        return array();
-
+        return Adapto_Config::get('adapto', 'language.supported_languages', array('en'));
     }
 
     /**
@@ -244,34 +100,23 @@ class Adapto_Language
      * @return String current language.
      */
 
-    public static function getLanguage()
+    public function getLanguage()
     {
-        global $Adapto_VARS;
-
-        if (isset($Adapto_VARS["atklng"])
-                && (in_array($Adapto_VARS["atklng"], Adapto_Language::getSupportedLanguages())
-                        || in_array($Adapto_VARS["atklng"], Adapto_Config::getGlobal('supported_languages')))) {
-            $lng = $Adapto_VARS["atklng"];
-        } // we first check for an atklng variable
- else {
-            $lng = Adapto_Language::getUserLanguage();
+        $session = Zend_Registry::get('Session_Adapto');
+        
+        if (isset($session->language)
+                && in_array($session->language, $this->getSupportedLanguages())) {
+            $lng = $session->language;
+        } else {
+            $lng = $this->getUserLanguage();
+            
+            // Remember it
+            $session->language = $lng;
         }
         return strtolower($lng);
     }
 
-    /**
-     * Change the current language.
-     * Note that his only remains set for the current request, it's not
-     * session based.
-     * @static
-     * @param String $lng The language to set
-     */
 
-    public static function setLanguage($lng)
-    {
-        global $Adapto_VARS;
-        $Adapto_VARS["atklng"] = $lng;
-    }
 
     /**
      * Get the selected language of the current user if he/she set one,
@@ -282,30 +127,32 @@ class Adapto_Language
      * @return unknown
      */
 
-    public static function getUserLanguage()
+    public function getUserLanguage()
     {
-        $supported = Adapto_Language::getSupportedLanguages();
+        $supported = $this->getSupportedLanguages();
+            
+        /** @todo this is what it did in ATK; must be rewritten to Zend_Auth etc.
         $sessionmanager = null;
         if (function_exists('atkGetSessionManager'))
             $sessionmanager = &atkGetSessionManager();
         if (!empty($sessionmanager)) {
             if (function_exists("getUser")) {
                 $userinfo = getUser();
-                $fieldname = Adapto_Config::getGlobal('auth_languagefield');
+                $fieldname = Adapto_Config::get('adapto', 'auth_languagefield');
                 if (isset($userinfo[$fieldname]) && in_array($userinfo[$fieldname], $supported))
                     return $userinfo[$fieldname];
             }
-        }
+        } */
 
         // Otherwise we check the headers
-        if (Adapto_Config::getGlobal('use_browser_language', false)) {
-            $headerlng = Adapto_Language::getLanguageFromHeaders();
+        if (Adapto_Config::get('adapto', 'language.use_browser_language', false)) {
+            $headerlng = $this->getLanguageFromHeaders();
             if ($headerlng && in_array($headerlng, $supported))
                 return $headerlng;
         }
 
         // We give up and just return the default language
-        return Adapto_Config::getGlobal('language');
+        return Adapto_Config::get('adapto', 'language', 'en'); 
     }
 
     /**
@@ -326,67 +173,58 @@ class Adapto_Language
         }
         return $autolng;
     }
-
-    /**
-     * Explicitly sets the supported languages.
-     * 
-     * @param array $languages supported languages
-     */
-
-    public static function setSupportedLanguages(array $languages)
+    
+    protected function _loadString($key, $module, $lng)
     {
-        self::$s_supportedLanguages = $languages;
+        if ($this->_zendTranslate == NULL) {
+            
+            $strings = $this->_loadLanguage($module, $lng);
+            $this->_zendTranslate = new Zend_Translate(
+                array(
+                    'adapter' => 'array',
+                    'content' => $strings,
+                    'locale' => $lng)
+                );
+        } else {
+            
+            if (!$this->_zendTranslate->isAvailable($lng)) {
+                
+                $strings = $this->_loadLanguage($module, $lng);
+                $this->_zendTranslate->addTranslation(
+                    array(
+                        'content' => $strings,
+                        'locale' => $lng)
+                    );
+                
+            }
+        }    
+        
+        return $this->_zendTranslate->_($key);
     }
-
-    /**
-     * Get the languages supported by the application
-     *
-     * @static
-     * @return Array An array with the languages supported by the application.
-     */
-
-    public static function getSupportedLanguages()
+    
+    protected function _loadLanguage($module, $lng)
     {
-        $supportedlanguagesmodule = Adapto_Config::getGlobal('supported_languages_module');
-        if (self::$s_supportedLanguages == null && $supportedlanguagesmodule) {
-            $supportedlanguagesdir = Adapto_Language::getLanguageDirForModule($supportedlanguagesmodule);
-
-            $supportedlanguagescollector = new getSupportedLanguagesCollector();
-            $traverser = new Adapto_DirectoryTraverser();
-            $traverser->addCallbackObject($supportedlanguagescollector);
-            $traverser->traverse($supportedlanguagesdir);
-            self::$s_supportedLanguages = $supportedlanguagescollector->getLanguages();
+        $strings = array();
+        
+        if ($module == "adapto") {
+            $path = APPLICATION_PATH . '/../library/Adapto/Language/';
+        } else {
+            $path = APPLICATION_PATH . '/modules/' . $module . '/';
         }
-
-        return (array) self::$s_supportedLanguages;
+        
+        $path .= $lng . '.php';
+        
+        if (!file_exists($path)) {
+            throw new Adapto_Exception("Language '$lng' not available in module '$module'");
+        } else {
+            
+            include($path);
+            return $$lng;
+           
+        }
+        
     }
-
-    /**
-     * Determine the list of modules we need to go through to check
-     * language strings. Overrides have precedence, then the
-     * passed module is considered, finally if no string is found
-     * the fallbacks are checked.
-     *
-     * @access protected
-     * @param String $module manually passed module
-     * @param String $firstfallback an additional module in which the
-     *        translation will be searched first, if not found in the
-     *        module itself.
-     * @param Boolean $modulefallback If true, *all* modules are checked.
-     * @return array List of modules to use to find the translations
-     */
-
-    protected function _getModules($module, $firstfallback = "", $modulefallback = false)
-    {
-        $arr = array();
-        if ($module)
-            $arr[] = $module;
-        if ($firstfallback != "")
-            $arr[] = $firstfallback;
-        $modules = array_merge($this->m_overridemodules, $arr, $this->_getFallbackModules($modulefallback));
-        return $modules;
-    }
-
+    
     /**
      * This function takes care of the fallbacks when retrieving a string ids.
      * It is as following:
@@ -396,10 +234,10 @@ class Adapto_Language
      * And if all that fails we look for a general string in the module.
      *
      * @access protected
-     * 
+     *
      * @param string $key             the name of the string to return
      * @param string $module          module in which the language file should be looked for,
-     *                                defaults to core module with fallback to ATK
+     *                                defaults to core module with fallback to Adapto
      * @param string $lng             ISO 639-1 language code, defaults to config variable
      * @param string $entity            the entity to which the string belongs
      * @param bool   $entityfaulttext   wether or not to pass a default text back
@@ -409,174 +247,35 @@ class Adapto_Language
      * @return string the name with which to call the string we want from the languagefile
      */
 
-    protected function _getString($key, $module, $lng, $entity = "", $entityfaulttext = false, $firstfallback = "", $modulefallback = false)
+    protected function _getString($key, $module, $lng, $entity = "", $failSilently = false)
     {
-        // First find entity specific string.
-        $modules = $this->_getModules($module, $firstfallback, $modulefallback);
-
-        // Second check custom Strings
-        if (isset($this->m_customStrings[$lng]) && isset($this->m_customStrings[$lng][$key]))
-            return $this->m_customStrings[$lng][$key];
 
         if ($entity != "") {
-            foreach ($modules as $modname) {
-                $text = $this->_getStringFromFile($module . "_" . $entity . "_" . $key, $modname, $lng);
-                if ($text != "")
-                    return $text;
-            }
-
-            foreach ($modules as $modname) {
-                $text = $this->_getStringFromFile($entity . "_" . $key, $modname, $lng);
-                if ($text != "")
-                    return $text;
-            }
-        }
-
-        // find generic module string
-        foreach ($modules as $modname) {
-            $text = $this->_getStringFromFile($key, $modname, $lng);
-            if ($text != "")
+            $text = $this->_loadString($module . "_" . $entity . "_" . $key, $module, $lng);
+            if ($text != "") {
                 return $text;
-        }
-
-        if (!$entityfaulttext) {
-            if (Adapto_Config::getGlobal("debug_translations", false))
-                atkdebug(
-                        "Adapto_Language: translation for '$key' with module: '$module' and entity: '$entity' and language: '$lng' not found, returning default text");
-
-            // Still nothing found. return default string
-            return $this->defaultText($key);
-        }
-        return "";
-
-    }
-
-    /**
-     * Checks wether the language is set or not
-     *
-     * If set, it does nothing and return true
-     * otherwise it sets it
-     *
-     * @access protected
-     * @param string $module  the module to import the language file from
-     * @param string $lng     language of file to import
-     * @return bool true if everything went okay
-     */
-
-    protected function _includeLanguage($module, $lng)
-    {
-        if (!isset($this->m_cachedlangfiles[$module][$lng]) || $this->m_cachedlangfiles[$module][$lng] != 1) {
-            $this->m_cachedlangfiles[$module][$lng] = 1;
-            $path = $this->getLanguageDirForModule($module);
-
-            $file = $path . $lng . ".lng";
-
-            if (file_exists($file)) {
-                include($file);
-                $this->m_cachedlang[$module][$lng] = $$lng;
-                return true;
+            } else {
+                $text = $this->_loadString($entity . "_" . $key, $module, $lng);
+                if ($text != "") {
+                    return $text;
+                }
             }
-            return false;
         }
-        return true;
-    }
 
-    /**
-     * Method for getting the relative path to the languagedirectory
-     * of a module.
-     * Supports 2 special modules:
-     * - atk (returns the path of the atk languagedir)
-     * - langoverrides (returns the path of the languageoverrides dir)
-     *
-     * Special method in that it can run both in static and non-static
-     * mode.
-     *
-     * @param String $module The module to get the languagedir for
-     * @return String The relative path to the languagedir
-     */
+        $text = $this->_loadString($key, $module, $lng);
 
-    public function getLanguageDirForModule($module)
-    {
-        if ($module == "atk") {
-            $path = Adapto_Config::getGlobal("atkroot") . "atk/" . (isset($this) ? $this->LANGDIR : 'languages/');
-        } else if ($module == "langoverrides") {
-            $path = Adapto_Config::getGlobal("language_basedir", (isset($this) ? $this->LANGDIR : 'languages/'));
-        } else {
-            $path = moduleDir($module) . (isset($this) ? $this->LANGDIR : 'languages/');
+        if ($text != "") {
+            return $text;
         }
-        return $path;
-    }
-
-    /**
-     * A function to change the original "$something_text" string to
-     * "Something text"
-     * This is only used when we really can't find the "$something_text" anywhere
-     * @param string $string the name of the string to return
-     * @return string the changed string
-     */
-
-    public function defaultText($string)
-    {
-        return ucfirst(str_replace("_", " ", str_replace('title_', '', $string)));
-    }
-
-    /**
-     * Gets the string from the languagefile or, if we failed, returns ""
-     *
-     * @access protected
-     * @param string $key           the name which was given when the text function was called
-     * @param string $module        the name of the module to which the text function belongs
-     * @param string $lng           the current language
-     * @return var the true name by which the txt is called or "" if we can't find any entry
-     */
-
-    protected function _getStringFromFile($key, $module, $lng)
-    {
-        $this->_includeLanguage($module, $lng);
-
-        if (isset($this->m_cachedlang[$module]) && is_array($this->m_cachedlang[$module][$lng]) && isset($this->m_cachedlang[$module][$lng][$key])) {
-            return $this->m_cachedlang[$module][$lng][$key];
+        
+        if (!$failSilently) {
+			throw new Adapto_Exception("Adapto_Language: translation for '$key' with module: '$module' and entity: '$entity' and language: '$lng' not found");
         }
+        
         return "";
+
     }
 
-    /**
-     * Set a custom language string
-     *
-     * @param string $code The code of the custom string
-     * @param string $text Text
-     * @param string $lng Language
-     */
-
-    public function setText($code, $text, $lng)
-    {
-        if (!isset($this->m_customStrings[$lng]))
-            $this->m_customStrings[$lng] = array();
-        $this->m_customStrings[$lng][$code] = $text;
-    }
 }
 
-/**
- * A collector for supported languages
- * @author Boy Baukema <boy@ibuildings.nl>
- * @package adapto
- */
-class getSupportedLanguagesCollector
-{
-    public $m_languages = array(); // defaulted to public
 
-    function visitFile($fullpath)
-    {
-        if (substr($fullpath, strlen($fullpath) - 4) === '.lng') {
-            $exploded = explode('/', $fullpath);
-            $lng = array_pop($exploded);
-            $this->m_languages[] = substr($lng, 0, 2);
-        }
-    }
-
-    public function getLanguages()
-    {
-        return $this->m_languages;
-    }
-}
-?>

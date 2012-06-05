@@ -23,7 +23,7 @@ if (empty($config_identifier))
 
 if (Adapto_Config::getGlobal('session_init', true) && atksession_init()) {
     // backwardscompatibility hacks. g_sessionData and g_sessionData are obsolete actually.
-    // You can use $session = &Adapto_Session_Manager::getSession() now, and you'll have a
+    // You can use $session = Adapto_Session_Manager::getSession() now, and you'll have a
     // session enabled, multi-app array in which you can store whatever you like.
     // There are old applications however that still use $g_sessionData, so I'll
     // leave it in place for now.
@@ -97,7 +97,7 @@ class Adapto_Session_Manager
         $this->m_usestack = $usestack;
         // added in 5.3 but not working
         // session_regenerate_id();
-        atkdebug("creating sessionManager (namespace: $namespace)");
+        Adapto_Util_Debugger::debug("creating sessionManager (namespace: $namespace)");
     }
 
     /**
@@ -304,7 +304,7 @@ class Adapto_Session_Manager
 
             if ($value == "") {
                 if (isset($_REQUEST[$var])) {
-                    atkdebug("Setting current item");
+                    Adapto_Util_Debugger::debug("Setting current item");
                     $currentitem[$var] = $_REQUEST[$var];
                 }
             } else {
@@ -390,7 +390,7 @@ class Adapto_Session_Manager
             $age = $now - $stamp;
 
             if ($age > $maxAge) {
-                atkdebug(__METHOD__ . ': removing expired stack "' . $stackId . '" (age ' . $age . 's)');
+                Adapto_Util_Debugger::debug(__METHOD__ . ': removing expired stack "' . $stackId . '" (age ' . $age . 's)');
                 unset($stacks[$stackId]);
                 unset($stackStamps[$stackId]);
                 $removed = true;
@@ -398,7 +398,7 @@ class Adapto_Session_Manager
         }
 
         if (!$removed) {
-            atkdebug(__METHOD__ . ': no expired stacks, nothing removed');
+            Adapto_Util_Debugger::debug(__METHOD__ . ': no expired stacks, nothing removed');
         }
     }
 
@@ -434,7 +434,7 @@ class Adapto_Session_Manager
         if (!isset($atklevel) || $atklevel == "")
             $atklevel = 0;
 
-        atkdebug("ATKLevel: " . $atklevel);
+        Adapto_Util_Debugger::debug("ATKLevel: " . $atklevel);
 
         if ($this->_verifyStackIntegrity() && $atklevel == -1) {
             // New stack, new stackid, if level = -1.
@@ -453,17 +453,17 @@ class Adapto_Session_Manager
         // causes a new stackitem to be pushed onto the stack at the wrong
         // location.
         if ($atklevel > count($stack)) {
-            atkdebug("Requested ATKLevel (" . $atklevel . ") too high for stack, lowering to " . count($stack));
+            Adapto_Util_Debugger::debug("Requested ATKLevel (" . $atklevel . ") too high for stack, lowering to " . count($stack));
             $atklevel = count($stack);
         }
 
         if (isset($postvars["atkescape"]) && $postvars["atkescape"] != "") {
             $this->m_escapemode = true;
-            atkdebug("ATK session escapemode");
+            Adapto_Util_Debugger::debug("ATK session escapemode");
 
             $currentitem = &$stack[count($stack) - 1];
 
-            atkdebug("Saving formdata in session");
+            Adapto_Util_Debugger::debug("Saving formdata in session");
 
             unset($currentitem['atkreject']); // clear old reject info
 
@@ -498,7 +498,7 @@ class Adapto_Session_Manager
 
             if ($atklevel == -1 || !is_array($stack)) // SESSION_NEW
  {
-                atkdebug("Cleaning stack");
+                Adapto_Util_Debugger::debug("Cleaning stack");
                 $stack = array();
                 $atklevel = 0;
             } else if ($atklevel == -2) // SESSION_REPLACE
@@ -524,7 +524,7 @@ class Adapto_Session_Manager
                 $currentitem = $stack[$atklevel];
 
             if (!isset($currentitem) || $currentitem == "") {
-                atkdebug("New level on session stack");
+                Adapto_Util_Debugger::debug("New level on session stack");
                 // Initialise
                 $currentitem = array();
                 // new level.. always based on the previous level
@@ -568,7 +568,7 @@ class Adapto_Session_Manager
                 // If we are getting back from a higher level, we may now delete everything above
                 $deletecount = (count($stack) - 1) - $atklevel;
                 for ($i = 0; $i < $deletecount; $i++) {
-                    atkdebug("popped an item out of the stack");
+                    Adapto_Util_Debugger::debug("popped an item out of the stack");
                     array_pop($stack);
                 }
 
@@ -597,7 +597,7 @@ class Adapto_Session_Manager
             }
 
             if (isset($currentitem["atkformdata"]) && is_array($currentitem["atkformdata"])) {
-                atkdebug("Session formdata present");
+                Adapto_Util_Debugger::debug("Session formdata present");
                 foreach ($currentitem['atkformdata'] as $var => $value) {
 
                     // don't override what was passed in the url.
@@ -640,7 +640,7 @@ class Adapto_Session_Manager
     {
         global $g_sessionData;
 
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
 
         $res = array();
         $stack = $g_sessionData[$this->m_namespace]["stack"][atkStackID()];
@@ -696,7 +696,7 @@ class Adapto_Session_Manager
                 }
 
                 if (is_object($entity)) {
-                    $ui = &atkinstance("atk.ui.atkui");
+                    $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
                     $txt = $ui->title($module, $entityname);
                 } else {
                     $txt = atktext($entityname, $module);
@@ -741,7 +741,7 @@ class Adapto_Session_Manager
             // is different. Let's fork the stack.
             // @TODO: If an error occurs and forking is required, the rejection info is not forked right, since it is currently stored
             //        in session['atkreject'] and not directly in the stack. See also atk/handlers/class.atkactionhandler.inc.
-            atkdebug("Multiple windows detected: levelstack forked (atkprevlevel=$atkprevlevel, real: $prevlevelfromstack)");
+            Adapto_Util_Debugger::debug("Multiple windows detected: levelstack forked (atkprevlevel=$atkprevlevel, real: $prevlevelfromstack)");
             $newid = atkStackID(true);
 
             // We must also make this stack 'ok' with the atkprevlevel.
@@ -750,7 +750,7 @@ class Adapto_Session_Manager
             // stack level).
             $deletecount = (count($stack) - 1) - $atkprevlevel;
             for ($i = 0; $i < $deletecount; $i++) {
-                atkdebug("popped an item out of the forked stack");
+                Adapto_Util_Debugger::debug("popped an item out of the forked stack");
                 array_pop($stack);
             }
 
@@ -1016,7 +1016,7 @@ function atksession_init()
     if (function_exists("session_cache_expire"))
         session_cache_expire(Adapto_Config::getGlobal("session_cache_expire"));
     else
-        atkdebug("session_cache_expire function does not exist, please upgrade to the latest stable php version (at least 4.2.x)", DEBUG_WARNING);
+        Adapto_Util_Debugger::debug("session_cache_expire function does not exist, please upgrade to the latest stable php version (at least 4.2.x)", DEBUG_WARNING);
 
     // set the cache limiter (used for caching)
     session_cache_limiter(Adapto_Config::getGlobal("session_cache_limiter"));
@@ -1057,7 +1057,7 @@ function atksession($namespace = "default", $usestack = true)
 {
     global $Adapto_VARS, $g_sessionManager, $g_sessionData, $atkprevlevel;
 
-    $g_sessionManager = atknew('atk.session.atksessionmanager', $namespace, $usestack);
+    $g_sessionManager = Adapto_ClassLoader::create('atk.session.atksessionmanager', $namespace, $usestack);
 
     atkDataDecode($_REQUEST);
     $Adapto_VARS = array_merge($_GET, $_POST);

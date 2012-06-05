@@ -60,7 +60,7 @@ class Adapto_Util_Mailer extends PHPMailer
      */
     function error_handler($msg)
     {
-        atkerror($msg);
+        throw new Adapto_Exception($msg);
     }
 
     /**

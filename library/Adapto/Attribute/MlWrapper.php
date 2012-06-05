@@ -76,7 +76,7 @@ class Adapto_Attribute_MlWrapper extends Adapto_Attribute
     function isEmpty($record)
     {
         // @todo
-        atkdebug("mlwrap isempty");
+        Adapto_Util_Debugger::debug("mlwrap isempty");
         return false;
     }
 
@@ -274,7 +274,7 @@ class Adapto_Attribute_MlWrapper extends Adapto_Attribute
      */
     function validate(&$record, $mode)
     {
-        atkdebug("mlwrap validate");
+        Adapto_Util_Debugger::debug("mlwrap validate");
     }
 
     /**
@@ -353,7 +353,7 @@ class Adapto_Attribute_MlWrapper extends Adapto_Attribute
      */
     function dbFieldType()
     {
-        atkdebug("mlwrap dbfieldtype");
+        Adapto_Util_Debugger::debug("mlwrap dbfieldtype");
     }
 
     /**
@@ -375,7 +375,7 @@ class Adapto_Attribute_MlWrapper extends Adapto_Attribute
      */
     function dbFieldSize()
     {
-        atkdebug("mlwrap dbfieldsize");
+        Adapto_Util_Debugger::debug("mlwrap dbfieldsize");
     }
 
     /**

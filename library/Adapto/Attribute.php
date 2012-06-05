@@ -1032,7 +1032,7 @@ class Adapto_Attribute
                     . htmlspecialchars($record[$this->fieldName()]) . '">';
             return $result;
         } else
-            atkdebug("Warning attribute " . $this->m_name . " has no proper hide method!");
+            Adapto_Util_Debugger::debug("Warning attribute " . $this->m_name . " has no proper hide method!");
     }
 
     /**
@@ -1661,7 +1661,7 @@ class Adapto_Attribute
         if (method_exists($query, $func) && ($value || ($value == 0))) {
             return $query->$func($table . "." . $this->fieldName(), $this->escapeSQL($value), $this->dbFieldType());
         } elseif (!method_exists($query, $func)) {
-            atkdebug("Database doesn't support searchmode '$searchmode' for " . $this->fieldName() . ", ignoring condition.");
+            Adapto_Util_Debugger::debug("Database doesn't support searchmode '$searchmode' for " . $this->fieldName() . ", ignoring condition.");
         }
         return false;
     }

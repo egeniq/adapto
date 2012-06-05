@@ -108,7 +108,7 @@
       if($mode != "")
         $this->setMode($mode);
 
-       atkdebug("validate() with mode ".$this->m_mode." for entity ".$this->m_entityObj->atkEntityType());
+       Adapto_Util_Debugger::debug("validate() with mode ".$this->m_mode." for entity ".$this->m_entityObj->atkEntityType());
 
       // set the record
       $record = &$this->m_record;
@@ -240,7 +240,7 @@
             }
           }
           else
-            atkerror("Field $field is mentioned in uniquefieldset but does not exist in ".$this->m_entityObj->atkentitytype());
+            throw new Adapto_Exception("Field $field is mentioned in uniquefieldset but does not exist in ".$this->m_entityObj->atkentitytype());
         }
 
         if ($this->m_mode != 'add')

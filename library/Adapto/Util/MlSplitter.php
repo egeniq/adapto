@@ -48,7 +48,7 @@ class Adapto_Util_MlSplitter
         static $s_mlsplitter = NULL;
         if (!is_object($s_mlsplitter)) {
             $s_mlsplitter = new Adapto_Util_mlsplitter();
-            atkdebug("Created a new Adapto_Util_mlsplitter instance");
+            Adapto_Util_Debugger::debug("Created a new Adapto_Util_mlsplitter instance");
         }
         return $s_mlsplitter;
     }
@@ -97,7 +97,7 @@ class Adapto_Util_MlSplitter
      */
     function updateMlRecords($entity, $record, $mode = "add", $excludes = '', $includes = '')
     {
-        atkdebug("Adapto_Util_mlsplitter::updateMlRecords() for mode $mode");
+        Adapto_Util_Debugger::debug("Adapto_Util_mlsplitter::updateMlRecords() for mode $mode");
 
         $excludelist = array();
         $relations = array();
@@ -290,7 +290,7 @@ class Adapto_Util_MlSplitter
     {
         $newrecordset = Array();
         $languages = $this->getLanguages($entity);
-        atkdebug("Adapto_Util_mlsplitter adding missings lngrecord for " . $entity->m_type . "!");
+        Adapto_Util_Debugger::debug("Adapto_Util_mlsplitter adding missings lngrecord for " . $entity->m_type . "!");
         for ($i = 0, $max = count($languages); $i < $max; $i++) {
             $index = NULL;
             if (!$this->hasLngRecord($entity, $recordset, $languages[$i], $index)) {

@@ -264,7 +264,7 @@ class Adapto_Util_TmpFile
 
     public function getPath()
     {
-        return $this->getBasedir() . $this->m_filename;
+        return $this->getBasedir() . "/" . $this->m_filename;
     }
 
     /**
@@ -280,8 +280,7 @@ class Adapto_Util_TmpFile
         if (!is_dir($dir) || !is_writable($dir)) {
             $err = 'Adapto_Util_TmpFile:: Unable to set ' . $dir . 'as basedir. Directory does not exists or isnot writable';
 
-            atkwarning($err);
-            return false;
+            throw new Adapto_Exception($err);
         }
         $this->m_basedir = $dir;
         return true;
@@ -296,7 +295,7 @@ class Adapto_Util_TmpFile
     public function getBasedir()
     {
         if (!$this->m_basedir) {
-            $this->m_basedir = Adapto_Config::getGlobal('atktempdir');
+            $this->m_basedir = Adapto_Config::get('adapto', 'system.tempDir');
         }
         return $this->m_basedir;
     }
@@ -368,8 +367,7 @@ class Adapto_Util_TmpFile
 
     public function createDirectoryStructure()
     {
-        useattrib('atkfileattribute');
-        return atkFileAttribute::mkdir(dirname($this->getPath()));
+        // @todo this shouldn't rely on the file attribute
+        return Adapto_Util_Files::mkdirRecursive(dirname($this->getPath()));
     }
 }
-?>

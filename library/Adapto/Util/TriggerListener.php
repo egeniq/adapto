@@ -79,7 +79,7 @@ class Adapto_Util_TriggerListener
     function notify($trigger, &$record, $mode = NULL)
     {
         if (method_exists($this, $trigger)) {
-            atkdebug("Call listener " . get_class($this) . " for trigger $trigger on " . $this->m_entity->atkEntityType() . " ("
+            Adapto_Util_Debugger::debug("Call listener " . get_class($this) . " for trigger $trigger on " . $this->m_entity->atkEntityType() . " ("
                     . $this->m_entity->primaryKey($record) . ")");
             return $this->$trigger($record, $mode);
         } else {

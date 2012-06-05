@@ -63,7 +63,7 @@ class Adapto_Front_ControllerBridge
 
     public function registerStyleSheet($file, $media = 'all')
     {
-        atkinstance('atk.ui.atkpage')->register_style($file, $media);
+        Adapto_ClassLoader::getInstance('atk.ui.atkpage')->register_style($file, $media);
     }
 
     /**
@@ -74,7 +74,7 @@ class Adapto_Front_ControllerBridge
 
     public function registerStyleCode($code)
     {
-        atkinstance('atk.ui.atkpage')->register_stylecode($code);
+        Adapto_ClassLoader::getInstance('atk.ui.atkpage')->register_stylecode($code);
     }
 
     /**
@@ -85,7 +85,7 @@ class Adapto_Front_ControllerBridge
 
     public function registerScriptFile($file)
     {
-        atkinstance('atk.ui.atkpage')->register_script($file);
+        Adapto_ClassLoader::getInstance('atk.ui.atkpage')->register_script($file);
     }
 
     /**
@@ -96,7 +96,7 @@ class Adapto_Front_ControllerBridge
 
     public function registerScriptCode($code)
     {
-        atkinstance('atk.ui.atkpage')->register_scriptcode($code);
+        Adapto_ClassLoader::getInstance('atk.ui.atkpage')->register_scriptcode($code);
     }
 
     /**

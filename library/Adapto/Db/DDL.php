@@ -80,7 +80,7 @@ class Adapto_Db_DDL
             $ddlobject = new $classname;
             return $ddlobject;
         } else {
-            atkerror("atkddl::create: No support for $database!");
+            throw new Adapto_Exception("atkddl::create: No support for $database!");
         }
         return NULL;
     }
@@ -466,7 +466,7 @@ class Adapto_Db_DDL
         if ($query != "") {
             return $this->m_db->query($query);
         } else {
-            atkdebug("atkddl::executeCreate: nothing to do!");
+            Adapto_Util_Debugger::debug("atkddl::executeCreate: nothing to do!");
         }
         return false;
     }
@@ -497,7 +497,7 @@ class Adapto_Db_DDL
             }
             return true;
         } else {
-            atkdebug("atkddl::executeCreate: nothing to do!");
+            Adapto_Util_Debugger::debug("atkddl::executeCreate: nothing to do!");
         }
         return false;
     }
@@ -517,7 +517,7 @@ class Adapto_Db_DDL
         if ($query != "") {
             return $this->m_db->query($query);
         } else {
-            atkdebug("atkddl::executeDrop: nothing to do!");
+            Adapto_Util_Debugger::debug("atkddl::executeDrop: nothing to do!");
         }
         return false;
     }
@@ -540,7 +540,7 @@ class Adapto_Db_DDL
         if ($query != "") {
             return $this->m_db->query($query);
         } else {
-            atkdebug("atkddl::executeCreateView: nothing to do!");
+            Adapto_Util_Debugger::debug("atkddl::executeCreateView: nothing to do!");
         }
         return false;
     }
@@ -555,7 +555,7 @@ class Adapto_Db_DDL
      */
     function buildView($name, $select, $with_check_option)
     {
-        atkerror("buildView don't support by this db or by this db driver");
+        throw new Adapto_Exception("buildView don't support by this db or by this db driver");
         return "";
     }
 
@@ -575,7 +575,7 @@ class Adapto_Db_DDL
         if ($query != "") {
             return $this->m_db->query($query);
         } else {
-            atkdebug("atkddl::executeDropView: nothing to do!");
+            Adapto_Util_Debugger::debug("atkddl::executeDropView: nothing to do!");
         }
         return false;
     }
@@ -588,7 +588,7 @@ class Adapto_Db_DDL
      */
     function dropView($name)
     {
-        atkerror("dropView don't support by this db or by this db driver");
+        throw new Adapto_Exception("dropView don't support by this db or by this db driver");
         return "";
     }
 

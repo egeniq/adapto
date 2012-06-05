@@ -120,7 +120,7 @@ class Adapto_Controller
                 $g_sessionManager->stackVar("atkcontroller", $class);
             }
 
-            $s_object = atknew($class);
+            $s_object = Adapto_ClassLoader::create($class);
         }
         return $s_object;
     }
@@ -144,7 +144,7 @@ class Adapto_Controller
      */
     function &createInstance($controller)
     {
-        atkdebug("atkcontroller::createInstance() " . $controller);
+        Adapto_Util_Debugger::debug("atkcontroller::createInstance() " . $controller);
         //First check if another controller is active. If so make sure this
         //controller will use atkOutput to return output
         $currentController = Adapto_Controller::getInstance();
@@ -152,7 +152,7 @@ class Adapto_Controller
             $currentController->setReturnOutput(true);
 
         //Now create new controller
-        $controller = &Adapto_Controller::_instance($controller, true);
+        $controller = Adapto_Controller::_instance($controller, true);
         return $controller;
     }
 
@@ -206,7 +206,7 @@ class Adapto_Controller
         $db = &$entity->getDb();
         if (is_object($db))
             $db->disconnect();
-        atkdebug("disconnected from the database");
+        Adapto_Util_Debugger::debug("disconnected from the database");
 
         if ($this->m_return_output) {
             return $screen;
@@ -268,7 +268,7 @@ class Adapto_Controller
                     return $this->m_entity;
                 } else {
                     global $Adapto_VARS;
-                    atkError("No object '" . $Adapto_VARS["atkentitytype"] . "' created!!?!");
+                    throw new Adapto_Exception("No object '" . $Adapto_VARS["atkentitytype"] . "' created!!?!");
                 }
             }
         }
@@ -675,7 +675,7 @@ class Adapto_Controller
      */
     function getPhpFile()
     {
-        $theme = &atkinstance('atk.ui.atktheme');
+        $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
 
         if ($this->m_php_file != "")
             return $this->m_php_file;
@@ -725,7 +725,7 @@ class Adapto_Controller
      */
     function &getPage()
     {
-        $page = &atkinstance("atk.ui.atkpage");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
         return $page;
     }
 
@@ -736,7 +736,7 @@ class Adapto_Controller
      */
     function &getUi()
     {
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
         return $ui;
     }
 
@@ -780,15 +780,15 @@ class Adapto_Controller
         array_shift($arguments);
         $entity = &$this->getEntity();
         if ($entity !== NULL && method_exists($entity, $methodname)) {
-            atkdebug("atkcontroller::invoke() Invoking '$methodname' override on entity");
+            Adapto_Util_Debugger::debug("atkcontroller::invoke() Invoking '$methodname' override on entity");
             // We pass the original object as last parameter to the override.
             array_push($arguments, $this);
             return call_user_func_array(array(&$entity, $methodname), $arguments);
         } else if (method_exists($this, $methodname)) {
-            atkdebug("atkcontroller::invoke() Invoking '$methodname' on controller");
+            Adapto_Util_Debugger::debug("atkcontroller::invoke() Invoking '$methodname' on controller");
             return call_user_func_array(array(&$this, $methodname), $arguments);
         }
-        atkerror("atkcontroller::invoke() Undefined method '$methodname' in Adapto_Controller");
+        throw new Adapto_Exception("atkcontroller::invoke() Undefined method '$methodname' in Adapto_Controller");
     }
 
     /**

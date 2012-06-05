@@ -83,7 +83,7 @@ class Adapto_Fixture_Manager
 
         if (!isset($this->m_loaders[$class])) {
 
-            $this->m_loaders[$class] = &atknew($class);
+            $this->m_loaders[$class] = &Adapto_ClassLoader::create($class);
         }
 
         return $this->m_loaders[$class];
@@ -166,7 +166,7 @@ class Adapto_Fixture_Manager
         // get the fixture path
         $path = $this->getPath($fullname, $searchPath);
         if ($path == NULL) {
-            atkdebug("No fixture data file found for fixture '{$fullname}'!");
+            Adapto_Util_Debugger::debug("No fixture data file found for fixture '{$fullname}'!");
             return false;
         }
 
@@ -176,7 +176,7 @@ class Adapto_Fixture_Manager
         // based on the type get the loader instance
         $loader = &$this->getLoader($type);
         if ($loader == NULL) {
-            atkdebug("Don't know how to load fixture data of type '{$type}' for fixture '{$fullname}'!");
+            Adapto_Util_Debugger::debug("Don't know how to load fixture data of type '{$type}' for fixture '{$fullname}'!");
             return false;
         }
 
@@ -186,13 +186,13 @@ class Adapto_Fixture_Manager
         // check if the fixture's table exists
         $table = $this->getTable($fullname);
         if (!$database->tableExists($table)) {
-            atkdebug("Table '{$table}' not found in database for fixture '$fullname'!");
+            Adapto_Util_Debugger::debug("Table '{$table}' not found in database for fixture '$fullname'!");
             return false;
         }
 
         // finally save the fixture data in the database
         if (!$this->save($database, $table, $data)) {
-            atkdebug("Could not save (all) fixture data for fixture '$fullname'!");
+            Adapto_Util_Debugger::debug("Could not save (all) fixture data for fixture '$fullname'!");
             return false;
         }
 
@@ -229,7 +229,7 @@ class Adapto_Fixture_Manager
             }
 
             if (!$query->executeInsert()) {
-                atkerror("Could not insert fixture '{$item}' into table {$table}");
+                throw new Adapto_Exception("Could not insert fixture '{$item}' into table {$table}");
                 Adapto_var_dump($record, "Invalid fixture");
                 $database->rollback($savepoint);
                 return false;
@@ -252,7 +252,7 @@ class Adapto_Fixture_Manager
 }
 
 // register ATK default loaders
-$manager = &Adapto_Fixture_Manager::getInstance();
+$manager = Adapto_Fixture_Manager::getInstance();
 $manager->registerLoader('atk.fixture.atkyamlfixtureloader', array('yml', 'yaml'));
 $manager->registerLoader('atk.fixture.atkphpfixtureloader', array('php'));
 ?>

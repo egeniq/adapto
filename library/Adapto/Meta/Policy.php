@@ -177,7 +177,7 @@ class Adapto_Meta_Policy
       $class = Adapto_Config::getGlobal("meta_policy", "atk.meta.atkmetapolicy");
     }
 
-    return atknew($class, $entity);
+    return Adapto_ClassLoader::create($class, $entity);
   }
 
   /**
@@ -707,7 +707,7 @@ class Adapto_Meta_Policy
   {
     if (!is_array($attrs))
       $attrs = func_get_args();
-    return atknew('atk.meta.atkmetaattributemodifier', $this, $attrs);
+    return Adapto_ClassLoader::create('atk.meta.atkmetaattributemodifier', $this, $attrs);
   }
   
   /**
@@ -1667,7 +1667,7 @@ class Adapto_Meta_Policy
     
     $this->sortAttributes();
     
-    return atknew('atk.meta.atkmetaattributemodifier', $this, $names);
+    return Adapto_ClassLoader::create('atk.meta.atkmetaattributemodifier', $this, $names);
   }
   
   /**

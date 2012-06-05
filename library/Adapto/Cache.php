@@ -75,14 +75,14 @@ abstract class Adapto_Cache implements ArrayAccess
 
             try {
                 if (!$force && array_key_exists($type, self::$m_instances) && is_object(self::$m_instances[$type])) {
-                    atkdebug("atkcache::getInstance -> Using cached instance of $type cache");
+                    Adapto_Util_Debugger::debug("atkcache::getInstance -> Using cached instance of $type cache");
                     return self::$m_instances[$type];
                 } else {
-                    self::$m_instances[$type] = atknew($classname);
+                    self::$m_instances[$type] = Adapto_ClassLoader::create($classname);
                     self::$m_instances[$type]->setNamespace(Adapto_Config::getGlobal('cache_namespace', 'default'));
                     self::$m_instances[$type]->setLifetime(self::$m_instances[$type]->getCacheConfig('lifetime', 3600));
                     self::$m_instances[$type]->setActive(Adapto_Config::getGlobal('cache_active', true));
-                    atkdebug("atkcache::getInstance() -> Using $type cache");
+                    Adapto_Util_Debugger::debug("atkcache::getInstance() -> Using $type cache");
 
                     return self::$m_instances[$type];
                 }
@@ -96,7 +96,7 @@ abstract class Adapto_Cache implements ArrayAccess
         }
 
         // Default return var cache
-        atkdebug("atkcache::getInstance() -> Using var cache");
+        Adapto_Util_Debugger::debug("atkcache::getInstance() -> Using var cache");
         return self::getInstance('var', false, $force);
     }
 

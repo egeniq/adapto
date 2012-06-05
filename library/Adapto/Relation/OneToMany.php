@@ -423,7 +423,7 @@ class Adapto_Relation_OneToMany extends Adapto_Relation
 
     public function edit($record = "", $fieldprefix = "", $mode = '')
     {
-        $page = &atkinstance('atk.ui.atkpage');
+        $page = Adapto_ClassLoader::getInstance('atk.ui.atkpage');
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/tools.js");
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/class.atkonetomanyrelation.js");
 

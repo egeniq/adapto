@@ -52,15 +52,15 @@ class Adapto_Menu_cookmenu extends Adapto_ModernMenu
         $atkmenutop = "main";
 
         $menuitems = $this->getMenuItems($g_menu, $atkmenutop);
-        $theme = &atkinstance("atk.ui.atktheme");
-        $page = &atkinstance("atk.ui.atkpage");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
         $page->register_style($theme->stylePath("style.css"));
         $page->register_style($theme->stylePath("cookmenu.css"));
         $page->register_scriptcode("var myThemePanelBase='" . str_replace('arrow.gif', '', $theme->imgPath("arrow.gif")) . "';", true);
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/jscookmenu/JSCookMenu.js");
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/jscookmenu/effect.js");
         $page->register_script(Adapto_Config::getGlobal("atkroot") . "atk/javascript/jscookmenu/theme.js");
-        $ui = &atkinstance("atk.ui.atkui");
+        $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
 
         $menu_javascript = '<script language="JavaScript" type="text/javascript">
                           public atkCookMenu = // defaulted to public

@@ -38,8 +38,8 @@
   {
     // no entitytype passed, or session expired
 
-    $page = &atknew("atk.ui.atkpage");
-    $ui = &atkinstance("atk.ui.atkui");
+    $page = &Adapto_ClassLoader::create("atk.ui.atkpage");
+    $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
     $theme = &atkTheme::getInstance();
     
 
@@ -74,7 +74,7 @@
     $flags = array_key_exists("atkpartial", $Adapto_VARS) ? HTML_PARTIAL : HTML_STRICT;
 
     //Handle http request   
-    $controller = &atkinstance("atk.atkcontroller");
+    $controller = Adapto_ClassLoader::getInstance("atk.atkcontroller");
     $controller->dispatch($Adapto_VARS, $flags);
   }
   $output->outputFlush();

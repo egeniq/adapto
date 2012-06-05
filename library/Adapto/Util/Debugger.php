@@ -74,7 +74,7 @@ class Adapto_Util_Debugger
      * @return bool Indication if statement is added
      */
 
-    public static function addStatement($txt)
+    public static function debug($txt)
     {
         if (function_exists('atkGetSessionManager') && atkGetSessionManager()) {
             $instance = Adapto_Util_Debugger::getInstance();
@@ -107,7 +107,7 @@ class Adapto_Util_Debugger
                 }
             }
         } else {
-            atkdebug(Adapto_htmlentities($query));
+            Adapto_Util_Debugger::debug(Adapto_htmlentities($query));
             return true;
         }
         return false;
@@ -149,7 +149,7 @@ class Adapto_Util_Debugger
 
             $data["queries"][] = array("query" => $query, "trace" => Adapto_get_trace());
 
-            atkdebug("[" . $this->consoleLink("query&nbsp;details", "query", array("query_id" => count($data["queries"]) - 1), true) . "] "
+            Adapto_Util_Debugger::debug("[" . $this->consoleLink("query&nbsp;details", "query", array("query_id" => count($data["queries"]) - 1), true) . "] "
                     . Adapto_htmlentities($query));
 
             return true;
@@ -218,8 +218,8 @@ class Adapto_Util_Debugger
 
     public function renderConsole()
     {
-        $page = &atkinstance("atk.ui.atkpage");
-        $theme = &atkinstance("atk.ui.atktheme");
+        $page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
+        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
         $page->register_style($theme->stylePath("debugger.css"));
         $data = &$this->getDebuggerData(false, $_REQUEST['atkstackid']);
         $res = $this->consoleControls() . '<br/><br/>';
@@ -481,13 +481,13 @@ class Adapto_Util_Debugger
         $label = "[{$time}h / {$duration}s / {$usage}MB / " . self::$s_queryCount . " Queries / " . self::$s_systemQueryCount . " System Queries] $method $url";
 
         $output = '
-        <div class="atkDebugBlock' . (count($g_error_msg) > 0 ? " atkDebugBlockContainsErrors" : "") . ' atkDebug' . ($expanded ? 'Expanded' : 'Collapsed')
+        <div class="Adapto_Util_Debugger::debugBlock' . (count($g_error_msg) > 0 ? " Adapto_Util_Debugger::debugBlockContainsErrors" : "") . ' Adapto_Util_Debugger::debug' . ($expanded ? 'Expanded' : 'Collapsed')
                 . '">
-          <div class="atkDebugToggle" onclick="ATK.Debug.toggle(this)">
+          <div class="Adapto_Util_Debugger::debugToggle" onclick="ATK.Debug.toggle(this)">
            ' . $label . '
           </div>
-          <div class="atkDebugData">
-            ' . (count($g_debug_msg) > 0 ? '<div class="atkDebugLine">' . implode($g_debug_msg, '</div><div class="atkDebugLine">') . '</div>' : '')
+          <div class="Adapto_Util_Debugger::debugData">
+            ' . (count($g_debug_msg) > 0 ? '<div class="Adapto_Util_Debugger::debugLine">' . implode($g_debug_msg, '</div><div class="Adapto_Util_Debugger::debugLine">') . '</div>' : '')
                 . '
           </div>
         </div>';
@@ -521,7 +521,7 @@ class Adapto_Util_Debugger
             return '';
 
         $output = '
-        <div class="atkDebugRedirect">
+        <div class="Adapto_Util_Debugger::debugRedirect">
            Non-debug version would have redirected to <a href="' . $this->m_redirectUrl . '">' . $this->m_redirectUrl . '</a>
         </div>';
 
@@ -551,7 +551,7 @@ class Adapto_Util_Debugger
         }
 
         $expanded = !$isPartial;
-        if ($expanded && array_key_exists('atkdebugstate', $_COOKIE) && @$_COOKIE['atkdebugstate'] == 'collapsed') {
+        if ($expanded && array_key_exists('Adapto_Util_Debugger::debugstate', $_COOKIE) && @$_COOKIE['Adapto_Util_Debugger::debugstate'] == 'collapsed') {
             $expanded = false;
         }
 
@@ -564,9 +564,9 @@ class Adapto_Util_Debugger
             ATK.Debug.addContent(' . atkJSON::encode($block) . ');
            </script>';
         } else {
-            $ui = &atkinstance('atk.ui.atkui');
-            $stylesheet = $ui->stylePath('atkdebug.css');
-            $script = Adapto_Config::getGlobal('atkroot') . 'atk/javascript/class.atkdebug.js';
+            $ui = Adapto_ClassLoader::getInstance('atk.ui.atkui');
+            $stylesheet = $ui->stylePath('Adapto_Util_Debugger::debug.css');
+            $script = Adapto_Config::getGlobal('atkroot') . 'atk/javascript/class.Adapto_Util_Debugger::debug.js';
 
             $redirect = $this->renderRedirectLink();
 

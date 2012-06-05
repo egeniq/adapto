@@ -60,17 +60,17 @@ class Adapto_Db_i5db extends Adapto_db2db
 
         // get current librarylist
         if (!i5_command("rtvjoba", array(), array("usrlibl" => "curlibl"), $this->m_link_id))
-            return atkdebug("Could not retrieve current librarylist:" . i5_errormsg($this->m_link_id));
+            return Adapto_Util_Debugger::debug("Could not retrieve current librarylist:" . i5_errormsg($this->m_link_id));
 
-        atkdebug("Current librarylist is $curlibl");
+        Adapto_Util_Debugger::debug("Current librarylist is $curlibl");
 
         // add our libraries to the librarylist
         $curlibl .= " " . implode(" ", $libraries);
 
         if (!i5_command("chglibl", array("libl" => $curlibl), array(), $this->m_link_id))
-            return atkdebug("Could not change current librarylist:" . i5_errormsg($this->m_link_id));
+            return Adapto_Util_Debugger::debug("Could not change current librarylist:" . i5_errormsg($this->m_link_id));
 
-        atkdebug("Changed librarylist to: $curlibl");
+        Adapto_Util_Debugger::debug("Changed librarylist to: $curlibl");
     }
 
     /**
@@ -99,7 +99,7 @@ class Adapto_Db_i5db extends Adapto_db2db
     function disconnect()
     {
         if ($this->m_link_id) {
-            atkdebug("Disconnecting from database...");
+            Adapto_Util_Debugger::debug("Disconnecting from database...");
             @i5_close($this->m_link_id);
             $this->m_link_id = 0;
         }
@@ -115,7 +115,7 @@ class Adapto_Db_i5db extends Adapto_db2db
     function query($query, $offset = -1, $limit = -1)
     {
 
-        atkdebug("Query:" . $query);
+        Adapto_Util_Debugger::debug("Query:" . $query);
 
         /* connect to database */
         if ($this->connect($mode) == DB_SUCCESS) {
@@ -141,7 +141,7 @@ class Adapto_Db_i5db extends Adapto_db2db
             $this->m_row = 0;
 
             /* return query id */
-            atkdebug("Adapto_Db_i5db::return true<br>");
+            Adapto_Util_Debugger::debug("Adapto_Db_i5db::return true<br>");
             return true;
         }
         return false;
@@ -281,7 +281,7 @@ class Adapto_Db_i5db extends Adapto_db2db
                 if (!is_array($result)) {
                     $query = "INSERT INTO " . $this->m_seq_table . " VALUES('$sequence', 1)";
                     $id = @i5_query($query, $this->m_link_id);
-                    atkdebug("<b>Ran query $query, result is : $id</b>");
+                    Adapto_Util_Debugger::debug("<b>Ran query $query, result is : $id</b>");
                     $this->unlock();
                     return 1;
                 } /* enter next value */
@@ -313,7 +313,7 @@ class Adapto_Db_i5db extends Adapto_db2db
         if ($this->connect("w") == DB_SUCCESS) {
             // In i5, the table will remain locked until the next commit or rollback. As
             // we never use rollback in ATK, lets just commit() to release all locks
-            atkdebug("Query: commit");
+            Adapto_Util_Debugger::debug("Query: commit");
             $result = i5_query("COMMIT", $this->m_link_id);
             Adapto_var_dump($result, "<h2>RESULT:</h2>");
             if (!$result)

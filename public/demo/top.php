@@ -31,8 +31,8 @@
   atksession();
   atksecure();
 
-  $page = &atknew("atk.ui.atkpage");
-  $ui = &atkinstance("atk.ui.atkui");
+  $page = &Adapto_ClassLoader::create("atk.ui.atkpage");
+  $ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
   $theme = &atkTheme::getInstance();
   $output = &atkOutput::getInstance();
 

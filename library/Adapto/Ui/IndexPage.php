@@ -73,10 +73,10 @@ class Adapto_Ui_IndexPage
     public function __construct()
     {
         global $Adapto_VARS;
-        $this->m_page = &atkinstance("atk.ui.atkpage");
-        $this->m_ui = &atkinstance("atk.ui.atkui");
-        $this->m_theme = &atkinstance('atk.ui.atktheme');
-        $this->m_output = &atkinstance('atk.ui.atkoutput');
+        $this->m_page = Adapto_ClassLoader::getInstance("atk.ui.atkpage");
+        $this->m_ui = Adapto_ClassLoader::getInstance("atk.ui.atkui");
+        $this->m_theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
+        $this->m_output = Adapto_ClassLoader::getInstance('atk.ui.atkoutput');
         $this->m_user = getUser();
         $this->m_flags = array_key_exists("atkpartial", $Adapto_VARS) ? HTML_PARTIAL : HTML_STRICT;
         $this->m_noNav = isset($Adapto_VARS['atknonav']);
@@ -129,7 +129,7 @@ class Adapto_Ui_IndexPage
         if (is_object($menu))
             $this->m_page->addContent($menu->getMenu());
         else
-            atkerror("no menu object created!");
+            throw new Adapto_Exception("no menu object created!");
     }
 
     /**
@@ -256,15 +256,15 @@ class Adapto_Ui_IndexPage
                 $obj = &getEntity($Adapto_VARS['atkentitytype']);
 
                 if (is_object($obj)) {
-                    $controller = &atkinstance("atk.atkcontroller");
+                    $controller = Adapto_ClassLoader::getInstance("atk.atkcontroller");
                     $controller->invoke("loadDispatchPage", $Adapto_VARS);
                 } else {
-                    atkdebug("No object created!!?!");
+                    Adapto_Util_Debugger::debug("No object created!!?!");
                 }
             } else {
 
                 if (is_array($this->m_defaultDestination)) {
-                    $controller = &atkinstance("atk.atkcontroller");
+                    $controller = Adapto_ClassLoader::getInstance("atk.atkcontroller");
                     $controller->invoke("loadDispatchPage", $this->m_defaultDestination);
                 } else {
                     $this->m_page->register_style($this->m_theme->stylePath("style.css"));

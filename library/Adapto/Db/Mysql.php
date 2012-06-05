@@ -43,7 +43,7 @@ class Adapto_Db_Mysql extends Adapto_Db
     public function __construct()
     {
         if (!function_exists('mysql_connect')) {
-            atkerror('MySQL not supported by your PHP version');
+            throw new Adapto_Exception('MySQL not supported by your PHP version');
             die('MySQL not supported by your PHP version');
         }
 
@@ -78,7 +78,7 @@ class Adapto_Db_Mysql extends Adapto_Db
 
             /* set character set */
             if (!empty($charset)) {
-                atkdebug("Set database character set to: {$charset}");
+                Adapto_Util_Debugger::debug("Set database character set to: {$charset}");
                 @mysql_query("SET NAMES '{$charset}'", $this->m_link_id);
             }
         }
@@ -125,7 +125,7 @@ class Adapto_Db_Mysql extends Adapto_Db
         case 2005:
             return DB_UNKNOWNHOST;
         default:
-            atkdebug("mysqldb::translateError -> MySQL Error: " . $this->m_errno . " -> " . $this->m_error);
+            Adapto_Util_Debugger::debug("mysqldb::translateError -> MySQL Error: " . $this->m_errno . " -> " . $this->m_error);
             return DB_UNKNOWNERROR;
         }
     }
@@ -151,7 +151,7 @@ class Adapto_Db_Mysql extends Adapto_Db
     function disconnect()
     {
         if ($this->m_link_id) {
-            atkdebug("Disconnecting from database...");
+            Adapto_Util_Debugger::debug("Disconnecting from database...");
             @mysql_close($this->m_link_id);
             $this->m_link_id = 0;
         }
@@ -187,7 +187,7 @@ class Adapto_Db_Mysql extends Adapto_Db
 
         if (Adapto_Config::getGlobal("debug") >= 0) {
 
-            atkDebugger::addQuery($query);
+            Adapto_Util_Debugger::debugger::addQuery($query);
         }
 
         $mode = $this->getQueryMode($query);
@@ -247,7 +247,7 @@ class Adapto_Db_Mysql extends Adapto_Db
         preg_match("/\'(.*)\'/U", $error, $matches);
 
         if (is_array($matches) && sizeof($matches) == 2) {
-            atkdebug(
+            Adapto_Util_Debugger::debug(
                     "<b>Fallback feature called because error '1100' occured during the last query. Running query again using table lock for table '{$matches[1]}' ("
                             . $this->m_link_id . ").</b>");
             $table = $matches[1];
@@ -318,7 +318,7 @@ class Adapto_Db_Mysql extends Adapto_Db
 
             if (Adapto_Config::getGlobal("debug") >= 0) {
 
-                atkDebugger::addQuery($query);
+                Adapto_Util_Debugger::debugger::addQuery($query);
             }
 
             /* lock */
@@ -458,7 +458,7 @@ class Adapto_Db_Mysql extends Adapto_Db
             $ddl = &atkDDL::create("mysql");
 
             /* list fields */
-            atkdebug("Retrieving metadata for $table");
+            Adapto_Util_Debugger::debug("Retrieving metadata for $table");
 
             // table type
             $tableType = $this->_getTableType($table);
@@ -471,7 +471,7 @@ class Adapto_Db_Mysql extends Adapto_Db
                 $id = @mysql_list_fields($this->m_database, $table);
             }
             if (!$id) {
-                atkdebug("Metadata query failed.");
+                Adapto_Util_Debugger::debug("Metadata query failed.");
                 return array();
             }
 
@@ -510,7 +510,7 @@ class Adapto_Db_Mysql extends Adapto_Db
 
             /* free result */
             @mysql_free_result($id);
-            atkdebug("Metadata for $table complete");
+            Adapto_Util_Debugger::debug("Metadata for $table complete");
             return $result;
         }
         return array();
