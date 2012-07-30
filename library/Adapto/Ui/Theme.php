@@ -116,7 +116,7 @@ class Adapto_Ui_Theme
      */
     function getAttribute($attribname, $default = "")
     {
-        return (isset($this->m_theme["attributes"][$attribname]) ? $this->m_theme["attributes"][$attribname] : $default);
+        return (isset($this->m_theme["parameters"][$attribname]) ? $this->m_theme["parameters"][$attribname] : $default);
     }
 
     /**
@@ -167,6 +167,21 @@ class Adapto_Ui_Theme
         }
 
         return null;
+    }
+    
+    /**
+     * Returns a theme's main stylesheet
+     */
+    function pageStyle()
+    {
+        if (isset($this->m_theme['parameters']['style'])) {
+            $sheet = $this->m_theme['parameters']['style'];
+        } else {
+            // Classic behaviour is to rely on style.css
+            $sheet = 'style.css';
+        }
+        
+        return $this->stylePath($sheet);
     }
 
     /**

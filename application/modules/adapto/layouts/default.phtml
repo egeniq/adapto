@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <?php echo $this->headTitle(); ?>
 <?php echo $this->headLink(); ?>
@@ -7,7 +8,34 @@
 
 </head>
 
-<body>
-<?php echo $this->layout()->content; ?>
+<body style="padding: 45px"><!--  todo move this to an extra stylesheet -->
+    <div class="navbar navbar-fixed-top"> <!--  todo move this to a menu helper -->
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">
+                    Adapto
+                </a>
+                <ul class="nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Account
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            ...
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row-fluid">
+            <div class="span12">
+                <?php echo $this->layout()->content; ?>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

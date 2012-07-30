@@ -71,7 +71,7 @@ class Adapto_Ui_ThemeCompiler
      * done recursively so themes can derive from any number of base themes.
      *
      * All themes are implicitly derived from the 'default' theme unless they
-     * specify otherwise in their themedef.inc file.
+     * specify otherwise in their Config.php file.
      *
      * @param String $name The name of the theme
      * @param String $location The location of the theme ("atk", "app" or "auto")
@@ -96,33 +96,36 @@ class Adapto_Ui_ThemeCompiler
         }
 
         // First parse the themedef file for attributes
-        if ($path != "" && file_exists($path . "themedef.inc")) {
-            include($path . "themedef.inc");
+        if ($path != "" && file_exists($path . "Config.php")) {
+            
+            $className = 'Adapto_Theme_'.ucfirst($name).'_Config';
+            
+            $theme = new $className();
 
-            if (isset($theme["basetheme"])) // If theme is derived from another theme, use that other theme as basis
- {
-                $basethemelocation = isset($theme["basethemelocation"]) ? $theme["basethemelocation"] : "auto";
-                $data = $this->readStructure($theme["basetheme"], $basethemelocation);
-            } else if ($name != "default") // If basetheme is not explicitly defined, use default as base theme
- {
+            if (isset($theme->baseTheme)) { // If theme is derived from another theme, use that other theme as basis
+ 
+                $basethemelocation = isset($theme->baseThemeLocation) ? $theme->baseThemeLocation : "auto";
+                $data = $this->readStructure($theme->baseTheme, $basethemelocation);
+            } else if ($name != "default") { // If basetheme is not explicitly defined, use default as base theme
+
                 $data = $this->readStructure("default", "auto");
-            } else if ($name == "default" && $location == "app") // if this theme is the app's default theme, use atk default as base
- {
-                $data = $this->readStructure("default", "atk");
+            } else if ($name == "default" && $location == "app") { // if this theme is the app's default theme, use atk default as base
+ 
+                $data = $this->readStructure("default", "adapto");
             } else {
                 // end of the pipeline
             }
 
-            if (isset($theme)) {
-                foreach ($theme as $key => $value)
-                    $data["attributes"][$key] = $value;
+            if (isset($theme->parameters)) {
+                foreach ($theme->parameters as $key => $value)
+                    $data["parameters"][$key] = $value;
             }
 
             // Second scan all files in the theme path
             $this->_scanThemePath($name, $path, $data);
             $this->scanModulePath($name, $data);
 
-            $data["attributes"]["basepath"] = $path;
+            $data["parameters"]["basepath"] = $path;
         }
         return $data;
     }
@@ -131,26 +134,24 @@ class Adapto_Ui_ThemeCompiler
      * Find the location on disk of a theme with a certain name.
      *
      * @param String $name Name of the theme
-     * @param String $location The location of the theme ("atk", "app" or "auto")
+     * @param String $location The location of the theme ("adapto", "app" or "auto")
      *                         If set to auto, the method changes the $location
      *                         value to the actual location.
-     * @return String The path relative to atk root, where the theme is located
      */
     function findTheme($name, &$location)
     {        
+        $pathBase = ucfirst($name);
+        
         if (strpos($name, ".") !== false) {
             list($module, $name) = explode(".", $name);
-            $path = Adapto_Module::pathForModule($module) . "themes/" . $name . "/";
-            if (file_exists($path . "themedef.inc")) {
+            $path = Adapto_Module::pathForModule($module) . "themes/" . $pathBase . "/";
+            if (file_exists($path . "Config.php")) {
                 $location = "module";
-                return "module/$module/themes/$name/";
+                return "module/$module/themes/$pathBase/";
             }
-        } else if ($location != "adapto" && file_exists(APPLICATION_PATH . "/themes/$name/themedef.inc")) {
-            $location = "app";
-            return "themes/$name/";
-        } else if ($location != "app" && file_exists(APPLICATION_PATH . "/../library/Adapto/Theme/$name/themedef.inc")) {
+        } else if ($location != "app" && file_exists(APPLICATION_PATH . "/../library/Adapto/Theme/$pathBase/Config.php")) {
             $location = "adapto";
-            return APPLICATION_PATH . "/../library/Adapto/Theme/$name/";
+            return APPLICATION_PATH . "/../library/Adapto/Theme/$pathBase/";
         }
         throw new Adapto_Exception("Theme $name not found");
         $location = "";
@@ -172,12 +173,12 @@ class Adapto_Ui_ThemeCompiler
         $subitems = $traverser->getDirContents($abspath);
         foreach ($subitems as $name) {
             // images, styles and templates are compiled the same
-            if (in_array($name, array("images", "styles", "templates"))) {
+            if (in_array($name, array("images", "img", "styles", "templates", "js"))) {
                 $files = $this->_dirContents($abspath . $name);
                 foreach ($files as $file) {
                     $key = $file;
                     
-                    if (in_array($name, array("images", "styles"))) {
+                    if (in_array($name, array("images", "img", "styles", "js"))) {
                         
                         if (!file_exists("adapto_static/".$themeName."/".$name)) {
                             if (!Adapto_Util_Files::mkdirRecursive("adapto_static/".$themeName.'/'.$name)) {

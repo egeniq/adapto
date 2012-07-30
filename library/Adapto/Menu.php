@@ -64,7 +64,7 @@ class Adapto_Menu
     function getMenuClass()
     {
         // Get the configured layout class
-        $classname = Adapto_Menu::layoutToClass(Adapto_Config::getGlobal("menu_layout"));
+        $classname = Adapto_Menu::layoutToClass(Adapto_Config::get('adapto' , 'menu_layout', 'Adapto_Menu_Dropdown'));
         Adapto_Util_Debugger::debug("Configured menu layout class: $classname");
 
         // Check if the class is compatible with the current theme, if not use a compatible menu.
@@ -102,18 +102,9 @@ class Adapto_Menu
                 $s_instance = Adapto_ClassLoader::create($classname);
             else {
                 throw new Adapto_Exception('Failed to get menu object (' . $filename . ' / ' . $classname . ')!');
-                atkwarning('Please check your compatible_menus in themedef.inc and config_menu_layout in config.inc.php.');
-                $s_instance = Adapto_ClassLoader::create('atk.menu.atkplainmenu');
             }
 
-            // Set the dispatchfile for this menu based on the theme setting, or to the default if not set.
-            // This makes sure that all calls to dispatch_url will generate a url for the main frame and not
-            // within the menu itself.
-            $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
-            $dispatcher = $theme->getAttribute('dispatcher', Adapto_Config::getGlobal("dispatcher", "dispatch.php")); // do not use atkSelf here!
-            $c = Adapto_ClassLoader::getInstance("atk.atkcontroller");
-            $c->setPhpFile($dispatcher);
-
+ 
             atkHarvestModules("getMenuItems");
         }
 
