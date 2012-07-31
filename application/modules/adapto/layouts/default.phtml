@@ -5,30 +5,13 @@
 <?php echo $this->headLink(); ?>
 <?php echo $this->headStyle(); ?>
 <?php echo $this->headMeta(); ?>
+<?php echo $this->headScript(); ?>
 
 </head>
 
-<body style="padding: 45px"><!--  todo move this to an extra stylesheet -->
-    <div class="navbar navbar-fixed-top"> <!--  todo move this to a menu helper -->
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="brand" href="#">
-                    Adapto
-                </a>
-                <ul class="nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Account
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            ...
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<body>
+    
+    <?php echo $this->menu(); ?>
 
     <div class="container">
         <div class="row-fluid">

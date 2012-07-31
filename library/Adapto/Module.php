@@ -68,12 +68,10 @@ class Adapto_Module
     }
 
     /**
-     * This method returns an array with menu items that need to be available
-     * in the main ATK menu. This function returns the array created with
-     * the menuitem() method, and does not have to be extended!
-     * @return array with menu items for this module
+     * This method is called on a module to initalize the menu.
+     * @param Adapto_Menu $menu
      */
-    function getMenuItems()
+    public function initMenu(Adapto_Menu $menu)
     {
     }
 

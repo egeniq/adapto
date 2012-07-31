@@ -15,7 +15,7 @@ class Adapto_Theme_Bootstrap_Config extends Adapto_Theme_Config
 {
     public $baseTheme = 'default';
     
-    public $parameters = array('style' => 'bootstrap.css');
+    public $parameters = array('stylesheets' => array('bootstrap.css', 'style.css'));
 }
 
 

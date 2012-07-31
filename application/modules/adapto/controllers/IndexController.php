@@ -12,9 +12,7 @@ class Adapto_IndexController extends Adapto_Controller_Action
     {
         $page = new Adapto_Ui_Page($this);
         $ui = Adapto_Ui::getInstance();
-        $theme = Adapto_Ui_Theme::getInstance();
 
-        $page->register_style($theme->pageStyle());
         $box = $ui
                 ->renderBox(
                         array("title" => Adapto_Language::_("app_shorttitle"), "content" => "<br><br>" . Adapto_Language::_("app_description")

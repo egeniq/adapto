@@ -1,6 +1,6 @@
 <?php 
 
-class Adapto_Ui_View_Helper_ThemeImage extends Zend_View_Helper_Abstract
+class Adapto_View_Helper_ThemeImage extends Zend_View_Helper_Abstract
 {
     public function themeImage($image)
     {

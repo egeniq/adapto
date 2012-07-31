@@ -9,108 +9,52 @@
  * @package adapto
  * @subpackage menu
  *
- * @copyright (c)2000-2004 Ibuildings.nl BV
- * @license http://www.achievo.org/atk/licensing ATK Open Source License
+ * @copyright (c)2012 Egeniq BV
  *
 
  */
 
 /**
- * Some defines
- */
-define("MENU_TOP", 1);
-define("MENU_LEFT", 2);
-define("MENU_BOTTOM", 3);
-define("MENU_RIGHT", 4);
-define("MENU_SCROLLABLE", 1);
-define("MENU_UNSCROLLABLE", 2);
-define("MENU_MULTILEVEL", 1); //More then 2 levels supported
-define("MENU_NOMULTILEVEL", 2);
-
-include_once(Adapto_Config::getGlobal("atkroot") . "atk/atkmenutools.inc");
-
-/**
- * Menu utility class.
- *
- * This class is used to retrieve the instance of an atkMenuInterface-based
- * class, as defined in the configuration file.
- *
- * @author Ber Dohmen <ber@ibuildings.nl>
- * @author Sandy Pleyte <sandy@ibuildings.nl>
+ * Menu class
  * @package adapto
  * @subpackage menu
  */
 class Adapto_Menu
 {
-
-    /**
-     * Convert the layout name to a classname
-     *
-     * @param string $layout The layout name
-     * @return string The classname
-     */
-    function layoutToClass($layout)
+    private $_subMenus = array();
+    private $_items = array();
+    private $_title;
+    
+    public function __construct($title)
     {
-        $classname = $layout;
-        
-        return $classname;
+        $this->_title = $title;
     }
-
-    /**
-     * Get the menu class
-     *
-     * @return string The menu classname
-     */
-    function getMenuClass()
+    
+    public function addSubMenu(Adapto_Menu $menu)
     {
-        // Get the configured layout class
-        $classname = Adapto_Menu::layoutToClass(Adapto_Config::get('adapto' , 'menu_layout', 'Adapto_Menu_Dropdown'));
-        Adapto_Util_Debugger::debug("Configured menu layout class: $classname");
-
-        // Check if the class is compatible with the current theme, if not use a compatible menu.
-        $theme = Adapto_ClassLoader::getInstance("Adapto_Ui_Theme");
-        $compatiblemenus = $theme->getAttribute('compatible_menus');
-        // If this attribute exists then retreive them
-        if (is_array($compatiblemenus)) {
-            for ($i = 0, $_i = count($compatiblemenus); $i < $_i; $i++)
-                $compatiblemenus[$i] = Adapto_Menu::layoutToClass($compatiblemenus[$i]);
-        }
-
-        if (!empty($compatiblemenus) && is_array($compatiblemenus) && !in_array($classname, $compatiblemenus)) {
-            $classname = $compatiblemenus[0];
-            Adapto_Util_Debugger::debug("Falling back to menu layout class: $classname");
-        }
-
-        // Return the layout class name
-        return $classname;
+        $this->_subMenus[] = $menu;
     }
-
-    /**
-     * Get new menu object
-     *
-     * @return object Menu class object
-     */
-    function &getMenu()
+    
+    public function addItem(Adapto_Menu_Item_Abstract $item)
     {
-        static $s_instance = NULL;
-        if ($s_instance == NULL) {
-            Adapto_Util_Debugger::debug("Creating a new menu instance");
-            $classname = Adapto_Menu::getMenuClass();
-
-            $filename = getClassPath($classname);
-            if (file_exists($filename))
-                $s_instance = Adapto_ClassLoader::create($classname);
-            else {
-                throw new Adapto_Exception('Failed to get menu object (' . $filename . ' / ' . $classname . ')!');
-            }
-
- 
-            atkHarvestModules("getMenuItems");
-        }
-
-        return $s_instance;
+        $this->_items[] = $item;
     }
-
+    
+    public function getSubMenus()
+    {
+        return $this->_subMenus;
+    }
+    
+    public function getItems()
+    {
+        return $this->_items;
+    }
+    
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+    
 }
 
 ?>

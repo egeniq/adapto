@@ -172,16 +172,22 @@ class Adapto_Ui_Theme
     /**
      * Returns a theme's main stylesheet
      */
-    function pageStyle()
+    public function pageStyles()
     {
-        if (isset($this->m_theme['parameters']['style'])) {
-            $sheet = $this->m_theme['parameters']['style'];
+        $result = array();
+        
+        if (isset($this->m_theme['parameters']['stylesheets'])) {
+            $sheets = $this->m_theme['parameters']['stylesheets'];
         } else {
             // Classic behaviour is to rely on style.css
-            $sheet = 'style.css';
+            $sheets = array('style.css');
         }
         
-        return $this->stylePath($sheet);
+        foreach ($sheets as $sheet) {
+            $result[] = $this->stylePath($sheet);
+        }
+        
+        return $result;
     }
 
     /**

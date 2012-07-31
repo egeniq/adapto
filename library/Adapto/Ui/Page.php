@@ -157,7 +157,7 @@ class Adapto_Ui_Page
      *                       avoid conflicts. Usually, this parameter is not
      *                       needed.
      */
-    function register_script($file, $before = "")
+    public function registerScript($file, $before = "")
     {
         if (!in_array($file, $this->m_scriptfiles)) {
             if ($before == "") {
@@ -181,6 +181,7 @@ class Adapto_Ui_Page
                 $this->m_scriptfiles = $result;
             }
         }
+        
     }
 
     /**
@@ -277,7 +278,7 @@ class Adapto_Ui_Page
      * @param String $file  The (relative path and) filename of the stylesheet.
      * @param String $media The stylesheet media (defaults to 'all').
      */
-    function register_style($file, $media = 'all')
+    function registerStyle($file, $media = 'all')
     {
         if (empty($media)) {
             $media = 'all';
@@ -293,7 +294,7 @@ class Adapto_Ui_Page
      *
      * @param String $file  The (relative path and) filename of the stylesheet.
      */
-    function unregister_style($file)
+    public function unregisterStyle($file)
     {
         if (array_key_exists($file, $this->m_stylesheets)) {
             unset($this->m_stylesheets[$file]);
@@ -363,9 +364,9 @@ class Adapto_Ui_Page
         if ($extra_header != "")
             $res .= $extra_header . "\n";
 
-        $this->addMeta($res);
-        $this->addScripts($res);
-        $this->addStyles($res);
+        $this->_applyMeta($res);
+        $this->_applyScripts();
+        $this->_applyStyles();
 
         $favico = Adapto_Config::get('adapto', 'ui.favico', '');
         if ($favico != '') {
@@ -380,19 +381,15 @@ class Adapto_Ui_Page
      * @param String $res Reference to the HTML output
      * @param Bool $partial Is this a partial request or a complete request
      */
-    function addScripts(&$res, $partial = false)
+    protected function _applyScripts($partial = false)
     {
-        $count_scriptcode = count($this->m_scriptcode['before']);
-        if ($count_scriptcode > 0)
-            $res .= '  <script type="text/javascript">' . "\n";
-        $res .= $this->renderScriptCode("before");
-
-        if ($count_scriptcode > 0)
-            $res .= "  </script>\n";
+        // Todo: re-support injecting code here
+        // $res .= $this->renderScriptCode("before");
 
         if (!$partial) {
-            for ($i = 0; $i < count($this->m_scriptfiles); $i++)
-                $res .= '  <script type="text/javascript" src="' . $this->m_scriptfiles[$i] . '"></script>' . "\n";
+            for ($i = 0; $i < count($this->m_scriptfiles); $i++) {
+                $this->_controller->view->headScript()->appendFile($this->m_scriptfiles[$i]);
+            }     
         } else {
             $files = '';
             for ($i = 0; $i < count($this->m_scriptfiles); $i++) {
@@ -401,19 +398,16 @@ class Adapto_Ui_Page
 
             if (!empty($files)) {
                 // prepend script files
-                $res = '<script type="text/javascript">' . $files . '</script>' . $res;
+                $this->_controller->view->headScript()->prependScript($files);
             }
         }
 
-        $res .= '  <script type="text/javascript">';
+        // Todo: re-support injecting code here 
+        // $res .= $this->renderScriptCode("after");
 
-        // javascript code.
-        $res .= $this->renderScriptCode("after");
-
-        $res .= $this->_getGlobalSubmitScriptCode($partial);
-        $res .= $this->_getGlobalLoadScriptCode($partial);
-
-        $res .= "  </script>\n\n";
+        // Todo: decide what to do with these global submit thingees.
+        // $res .= $this->_getGlobalSubmitScriptCode($partial);
+        // $res .= $this->_getGlobalLoadScriptCode($partial);
     }
 
     /**
@@ -494,7 +488,7 @@ class Adapto_Ui_Page
      * @param String $res Reference to the HTML output
      * @param Bool $partial Is this a partial request or a complete request
      */
-    function addStyles(&$res, $partial = false)
+    protected function _applyStyles($partial = false)
     {
         if (!$partial) {
             foreach ($this->m_stylesheets as $file => $media) {
@@ -521,7 +515,7 @@ class Adapto_Ui_Page
      * Add content to the page.
      * @param String $content The content to add to the page.
      */
-    function addContent($content)
+    public function addContent($content)
     {
         $this->m_content .= $content;
     }
@@ -570,6 +564,19 @@ class Adapto_Ui_Page
     {
         $this->m_title = $title;
     }
+    
+    protected function _applyTheme()
+    {
+        $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
+        foreach ($theme->pageStyles() as $style) {
+            $this->registerStyle($style);
+        }
+    }
+    
+    protected function _applyBaseJs()
+    {
+        $this->registerScript('adapto_static/default/js/jquery-1.7.2.min.js');
+    }
 
     /**
      * Render the complete page, including head and body.
@@ -584,8 +591,11 @@ class Adapto_Ui_Page
      * @param string $extra_header HTML code of extra headers to add to the head section
      * @return String The HTML page, including <html> and </html> tags.
      */
-    function render($title = null, $flags = HTML_STRICT, $extrabodyprops = "", $extra_header = "")
+    public function render($title = null, $flags = HTML_STRICT, $extrabodyprops = "", $extra_header = "")
     {
+        $this->_applyTheme();
+        $this->_applyBaseJs();
+        
         if ($title == null) {
             $title = $this->m_title;
         }
@@ -620,12 +630,12 @@ class Adapto_Ui_Page
     /**
      * Render partial.
      */
-    function renderPartial()
+    public function renderPartial()
     {
         $result = $this->m_content;
-        $this->addMeta($result, true);
-        $this->addScripts($result, true);
-        $this->addStyles($result, true);
+        $this->_applyMeta($result, true);
+        $this->_applyScripts(true);
+        $this->_applyStyles(true);
         return $result;
     }
 
@@ -654,7 +664,7 @@ class Adapto_Ui_Page
      *
      * @return boolean true if there is no content in the page, false if there is
      */
-    function isEmpty()
+    public function isEmpty()
     {
         return ($this->m_content == "");
     }
@@ -664,7 +674,7 @@ class Adapto_Ui_Page
      * 
      * @param string $code 
      */
-    function register_metacode($code)
+    public function registerMetacode($code)
     {
         $this->m_metacode[] = $code;
     }
@@ -674,7 +684,7 @@ class Adapto_Ui_Page
      * @param String $res Reference to the HTML output
      * @param Bool $partial Is this a partial request or a complete request
      */
-    function addMeta(&$res, $partial = false)
+    protected function _applyMeta(&$res, $partial = false)
     {
         if (!$partial) {
             foreach ($this->m_metacode as $line) {
