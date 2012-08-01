@@ -15,15 +15,6 @@
 
  */
 
-/**
- * Rendering flags.
- */
-define("HTML_BODY", 1); // Add body tags to page
-define("HTML_HEADER", 2); // Add header to page
-define("HTML_DOCTYPE", 4); // Add doctype to page
-define("HTML_ALL", HTML_BODY | HTML_HEADER); // Shortcut
-define("HTML_STRICT", HTML_ALL | HTML_DOCTYPE); // Shortcut
-define("HTML_PARTIAL", 8); // Partial (only content, this flag can't be ANDed!)
 
 /**
  * Page renderer.
@@ -353,7 +344,7 @@ class Adapto_Ui_Page
      * @param String $extra_header HTML code of extra headers to add to the head section
      * @return String The HTML pageheader, including <head> and </head> tags.
      */
-    function head($title, $extra_header = "")
+    protected function _applyHead($title)
     {
         $this->_controller->view->headTitle($title);
 
@@ -361,19 +352,9 @@ class Adapto_Ui_Page
        
         $this->_controller->view->headMeta()->appendName('adapto_version', $version);
 
-        if ($extra_header != "")
-            $res .= $extra_header . "\n";
-
         $this->_applyMeta($res);
         $this->_applyScripts();
         $this->_applyStyles();
-
-        $favico = Adapto_Config::get('adapto', 'ui.favico', '');
-        if ($favico != '') {
-            $res .= '  <link rel="icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
-            $res .= '  <link rel="shortcut icon" href="' . $favico . '" type="image/x-icon" />' . "\n";
-        }
-
     }
 
     /**
@@ -492,7 +473,7 @@ class Adapto_Ui_Page
     {
         if (!$partial) {
             foreach ($this->m_stylesheets as $file => $media) {
-                $this->_controller->view->headLink()->appendStylesheet("adapto_static/".$file, $media);
+                $this->_controller->view->headLink()->appendStylesheet("/adapto_static/".$file, $media);
             }
 
             for ($i = 0; $i < count($this->m_stylecode); $i++) {
@@ -540,19 +521,7 @@ class Adapto_Ui_Page
         $this->m_content = $content;
     }
 
-    /**
-     * Generate the HTML body (<body></body>) statement for the page.
-     * @param String $extraprops Extra attributes to add to the <body> tag.
-     * @return String The HTML body, including <body> and </body> tags.
-     */
-    function body($extraprops = "")
-    {
-        global $Adapto_VARS;
-
-        $res = '<body ';
-        $res .= $extraprops . ">\n";
-        return $res;
-    }
+ 
 
     /**
      * Sets the page title.
@@ -575,11 +544,11 @@ class Adapto_Ui_Page
     
     protected function _applyBaseJs()
     {
-        $this->registerScript('adapto_static/default/js/jquery-1.7.2.min.js');
+        $this->registerScript('/adapto_static/default/js/jquery-1.7.2.min.js');
     }
 
     /**
-     * Render the complete page, including head and body.
+     * finalize the complete page, including head and body.
      * @param String $title Title of the HTML page.
      * @param bool|int $flags (bool) Set to true to generate <body> tags. It is useful
      *                      	to set this to false only when rendering content
@@ -587,44 +556,18 @@ class Adapto_Ui_Page
      *                      	statement, or content that needs no body
      *                      	statements, like a frameset. (DEPRICATED !!)
      * 											  (int) Flags for the render function
-     * @param string $extrabodyprops  Extra attributes to add to the <body> tag.
-     * @param string $extra_header HTML code of extra headers to add to the head section
      * @return String The HTML page, including <html> and </html> tags.
      */
-    public function render($title = null, $flags = HTML_STRICT, $extrabodyprops = "", $extra_header = "")
+    public function finalize($title = null)
     {
         $this->_applyTheme();
         $this->_applyBaseJs();
         
-        if ($title == null) {
-            $title = $this->m_title;
-        }
-
         $ui = Adapto_ClassLoader::getInstance('Adapto_Ui');
         $theme = Adapto_ClassLoader::getInstance('Adapto_Ui_Theme');
+      
+        $this->_applyHead($title);
 
-        if (is_bool($flags) && $flags == true) {
-            $flags = HTML_STRICT;
-        } elseif (is_bool($flags) && $flags == false) {
-            $flags = HTML_HEADER | HTML_DOCTYPE;
-        } elseif (hasFlag($flags, HTML_PARTIAL)) {
-            return $this->renderPartial();
-        }
-        
-        if ($theme->tplPath('page.tpl'))
-            $this->m_content = $ui->render('page.tpl', array('content' => $this->m_content));
-
-        $page = '';
-
-        if ($flags & HTML_HEADER)
-            $this->head($title, $extra_header);
-        if ($flags & HTML_BODY)
-            $this->body($extrabodyprops);
-
-        $page .= $this->m_content . "\n";
-        $page .= $this->renderHiddenVars();
-     
-        return $page;
     }
 
     /**

@@ -19,6 +19,20 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Set up session management
         $session = new Zend_Session_Namespace("Adapto");
         Zend_Registry::set("Session_Adapto", $session);
+        
+        // Routing
+        $router = $front->getRouter();
+
+        $router->addRoute(
+            'adapto_actions',
+             new Zend_Controller_Router_Route('adapto/:submodule/:entity/:controller',
+             array('module' => 'adapto',
+                   'controller' => 'index',
+                   'action' => 'index'))
+        );
+        
+        
+       
        
         
     }
