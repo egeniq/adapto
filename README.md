@@ -5,15 +5,15 @@ Adapto is a small PHP framework targeted at creating data management application
 
 It has the following major features:
 
-* Compatible with Zend Framework (integrates nicely into ZF applications)
-* Basic CRUD functionality for relational databases with only a few lines of code
+* Compatible with Zend Framework 2 (integrates nicely into ZF applications)
+* Basic CRUD functionality for relational databases and other data sources with only a few lines of code
 
 Adapto is suitable for a number of use cases:
 
 * Micro CMS systems
 * Data management applications
 
-Adapto is essentially a Zend Framework port of the classic (and by now outdated) ATK framework (http://atk-framework.com). 
+Adapto is essentially a Zend Framework 2 port of the classic (and by now outdated) ATK framework (http://atk-framework.com). 
 
 License & Copyright
 ===================
@@ -22,14 +22,19 @@ Adapto is distributed under a BSD license.
 Large portions of the codebase stem from the ATK framework and are copyright 2000-2011 Ibuildings & Ivo Jansch.
 New portions of the codebase are copyright 2012 Egeniq.
 
+Getting Started
+===============
+The Adapto repository contains a demo application. To get started, perform the following steps:
+
+1. Clone the repository, e.g. `git clone git://github.com/egeniq/adapto.git`
+2. Make sure you have all required dependencies, by executing `git submodule update --init --recursive`
+3. Configure your webserver so that adapto/public serves as the document root.
+4. Browse the site. You should now see a default welcome page and a set of menu items demonstrating the framework capabilities.
+
 FAQ
 ===
 
 ## What does the name adapto mean?
 
 Adapto is short for ADvanced APlication TOolkit. It's also highly adaptable. 
-
-## Why are all the classes prefixed with Atk?
-
-The prefix 'Atk' used in classes is short for Adapto Tool Kit, but is also a reference to the origin of the framework, the 'Achievo ToolKit' or ATK, the framework that formed the basis of Adapto.
 
