@@ -9,6 +9,8 @@
  *
  */
 
+namespace Adapto;
+
 /**
  * Class that handles userinterface internationalization.
  *
@@ -16,12 +18,16 @@
  * displayed in the userinterface. It includes only those language files
  * that are actually used, and has several fallback systems to find
  * translations if they can be find in the correct module.
+ * 
+ * TODO: move Adapto specific key/string handling to Adapto/I18n/Translator and
+ * use Zend/I18n/Translator for all the hard work. Also find a way
+ * to have Adapto strings and application level strings happily co-exist.
  *
  * @author Boy Baukema <boy@ibuildings.nl>
  * @package adapto
  *
  */
-class Adapto_Language
+class Language
 {
     private $_zendTranslate = NULL;
     
@@ -32,14 +38,13 @@ class Adapto_Language
 
     public function __construct()
     {
-        Adapto_Util_Debugger::debug("New instance made of Adapto_Language");
+        Util\Debugger::debug("New instance made of Adapto\Language");
     
     }
     
-    public static function _($string, $module="adapto", $entity = NULL, $lng = NULL)
+    public function _($string, $module="adapto", $entity = NULL, $lng = NULL)
     {
-        $instance = Zend_Registry::get("Adapto_Language");
-        return $instance->text($string, $module, $entity, $lng);
+        return $this->text($string, $module, $entity, $lng);
     }
 
     /**
@@ -91,7 +96,7 @@ class Adapto_Language
 
     public function getSupportedLanguages()
     {
-        return Adapto_Config::get('adapto', 'language.supported_languages', array('en'));
+        return \Adapto\Config::get('adapto', 'language.supported_languages', array('en'));
     }
 
     /**
@@ -102,7 +107,7 @@ class Adapto_Language
 
     public function getLanguage()
     {
-        $session = Zend_Registry::get('Session_Adapto');
+        $session = new \stdClass(); // todo, inject proper session into the language handler. Zend_Registry::get('Session_Adapto');
         
         if (isset($session->language)
                 && in_array($session->language, $this->getSupportedLanguages())) {
@@ -138,21 +143,21 @@ class Adapto_Language
         if (!empty($sessionmanager)) {
             if (function_exists("getUser")) {
                 $userinfo = getUser();
-                $fieldname = Adapto_Config::get('adapto', 'auth_languagefield');
+                $fieldname = Adapto\Config::get('adapto', 'auth_languagefield');
                 if (isset($userinfo[$fieldname]) && in_array($userinfo[$fieldname], $supported))
                     return $userinfo[$fieldname];
             }
         } */
 
         // Otherwise we check the headers
-        if (Adapto_Config::get('adapto', 'language.use_browser_language', false)) {
+        if (\Adapto\Config::get('adapto', 'language.use_browser_language', false)) {
             $headerlng = $this->getLanguageFromHeaders();
             if ($headerlng && in_array($headerlng, $supported))
                 return $headerlng;
         }
 
         // We give up and just return the default language
-        return Adapto_Config::get('adapto', 'language', 'en'); 
+        return \Adapto\Config::get('adapto', 'language', 'en'); 
     }
 
     /**
@@ -176,30 +181,9 @@ class Adapto_Language
     
     protected function _loadString($key, $module, $lng)
     {
-        if ($this->_zendTranslate == NULL) {
-            
-            $strings = $this->_loadLanguage($module, $lng);
-            $this->_zendTranslate = new Zend_Translate(
-                array(
-                    'adapter' => 'array',
-                    'content' => $strings,
-                    'locale' => $lng)
-                );
-        } else {
-            
-            if (!$this->_zendTranslate->isAvailable($lng)) {
-                
-                $strings = $this->_loadLanguage($module, $lng);
-                $this->_zendTranslate->addTranslation(
-                    array(
-                        'content' => $strings,
-                        'locale' => $lng)
-                    );
-                
-            }
-        }    
-        
-        return $this->_zendTranslate->_($key);
+        $strings = $this->_loadLanguage($module, $lng);
+           
+        return (isset($strings[$key])?$strings[$key]:$key);        
     }
     
     protected function _loadLanguage($module, $lng)
@@ -207,15 +191,15 @@ class Adapto_Language
         $strings = array();
         
         if ($module == "adapto") {
-            $path = APPLICATION_PATH . '/../library/Adapto/Language/';
+            $path = 'vendor/Adapto/language/';
         } else {
-            $path = APPLICATION_PATH . '/modules/' . $module . '/';
+            $path = 'module/' . ucfirst($module) . '/language/';
         }
         
         $path .= $lng . '.php';
         
         if (!file_exists($path)) {
-            throw new Adapto_Exception("Language '$lng' not available in module '$module'");
+            throw new \Adapto\Exception("Language '$lng' not available in module '$module'");
         } else {
             
             include($path);
@@ -269,7 +253,7 @@ class Adapto_Language
         }
         
         if (!$failSilently) {
-			throw new Adapto_Exception("Adapto_Language: translation for '$key' with module: '$module' and entity: '$entity' and language: '$lng' not found");
+			throw new \Adapto\Exception("Adapto\Language: translation for '$key' with module: '$module' and entity: '$entity' and language: '$lng' not found");
         }
         
         return "";

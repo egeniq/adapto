@@ -1,9 +1,11 @@
 <?php 
 
-class Adapto_View_Helper_ThemeImage extends Zend_View_Helper_Abstract
+namespace Adapto\View\Helper;
+
+class ThemeImage extends \Zend\View\Helper\AbstractHelper
 {
-    public function themeImage($image)
+    public function __invoke($image)
     {
-        return "adapto_static/".Adapto_Ui_Theme::getInstance()->getFileLocation("images", $image);
+        return "adapto_static/".\Adapto\Ui\Theme::getInstance()->getFileLocation("images", $image);
     }
 }

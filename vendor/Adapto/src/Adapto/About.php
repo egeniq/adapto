@@ -1,9 +1,13 @@
 <?php 
 
-class Adapto_About
+namespace Adapto;
+
+class About
 {
+    const VERSION = "0.1";
+    
     public static function getVersion()
     {
-        return "0.1";
+        return self::VERSION;
     }
 }

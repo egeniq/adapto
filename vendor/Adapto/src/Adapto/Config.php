@@ -80,7 +80,7 @@ class Config
         }
         
         $value = NULL;
-        if ($root != NULL) {
+        if ($root != NULL && isset($root[$elems[0]])) {
             $value = $root[$elems[0]];
         }
         

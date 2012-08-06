@@ -156,8 +156,9 @@ class Ui
      */
     public function render($name, $vars=array(), $module="")
     {
-        $renderer = new PhpRenderer();
         
+        $renderer = new PhpRenderer();
+       
         $map = new Resolver\TemplateMapResolver(array(
                 $name => $this->templatePath($name, $module),
         ));
@@ -169,10 +170,12 @@ class Ui
         $model->setVariables($vars);
         $model->setTemplate($name);
         
-        return $renderer->render($model);
+        $output = $renderer->render($model);
+        
+        return $output;
         
  //       $view->addHelperPath('Adapto/Ui/View/Helper', 'Adapto_Ui_View_Helper_'); //Change as per your path and class
-           
+          
     }
 
     /**

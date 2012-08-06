@@ -131,11 +131,19 @@ class Theme
      */
     function getFileLocation($type, $name, $module = "")
     {
+        if (in_array($type, array("images", "styles"))) {
+            // These are served from their public copies
+            $base = "/adapto_static/";
+        } else {
+            // These are used from their original location
+            $base = "vendor/Adapto/src/Adapto/Theme/";
+        }
+        
         if ($module != "" && isset($this->m_theme["modulefiles"][$module][$type][$name])) {
             // Todo, used to be moduleDir, need to convert this to some ZF2 module dir fetch.
-            return "vendor/Adapto/src/Adapto/Theme/" . $this->m_theme["modulefiles"][$module][$type][$name];
+            return $base . $this->m_theme["modulefiles"][$module][$type][$name];
         } else if (isset($this->m_theme["files"][$type][$name])) {
-            return "vendor/Adapto/src/Adapto/Theme/" . $this->m_theme["files"][$type][$name];
+            return $base . $this->m_theme["files"][$type][$name];
         }
         return "";
     }
