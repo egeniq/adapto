@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<?php $this->adaptoTheme(); ?>
+<?php echo $this->headTitle(); ?>
+<?php echo $this->headLink(); ?>
+<?php echo $this->headStyle(); ?>
+<?php echo $this->headMeta(); ?>
+<?php echo $this->headScript(); ?>
+
+</head>
+
+<body>
+    
+    <?php echo $this->adaptoMenu(); ?>
+
+    <div class="container">
+        <div class="row-fluid">
+            <div class="span12">
+                <?php echo $this->content; ?>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

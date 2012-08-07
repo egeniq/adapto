@@ -1,0 +1,43 @@
+<script src="/adapto_static/bootstrap/js/bootstrap-dropdown.js"></script>
+
+<div class="navbar navbar-fixed-top"> <!--  todo move this to a menu helper -->
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">
+                    Adapto
+                </a>
+                <ul class="nav">
+                <?php foreach ($this->menu->getSubMenus() as $subMenu): ?>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <?php echo $subMenu->getTitle(); ?>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">              
+                        <?php foreach ($subMenu->getItems() as $item): ?>
+                        <?php 
+                            $title = $item->getTitle();
+                            if ($title == NULL):  
+                            ?>
+                            <li class="divider"></li>
+                            <?php else: ?>
+                            <li><a href="<?php echo $item->getLink(); ?>"><?php echo $item->getTitle(); ?></a></li>
+                            <?php endif;?>
+                        <?php endforeach; ?>    
+                        </ul>
+                    </li>
+                <?php endforeach; ?>
+                <?php foreach ($this->menu->getItems() as $item): ?>
+                    <?php 
+                        $title = $item->getTitle();
+                        if ($title == NULL):  
+                    ?>
+                        <li class="divider"></li>
+                    <?php else: ?>
+                        <li class="active"><a href="<?php echo $item->getLink(); ?>"><?php echo $title; ?></a></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
