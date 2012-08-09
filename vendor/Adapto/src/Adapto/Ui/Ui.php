@@ -13,7 +13,10 @@
  *
  */
 
-namespace Adapto;
+namespace Adapto\Ui;
+
+use \Adapto\Util\Debugger;
+use \Adapto\ClassLoader;
 
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -54,7 +57,7 @@ class Ui
 
         if ($s_instance==NULL)
         {
-            Util\Debugger::debug("Creating a new Adapto_Ui instance");
+            Debugger::debug("Creating a new Adapto_Ui instance");
             $s_instance = new Ui();
         }
 
