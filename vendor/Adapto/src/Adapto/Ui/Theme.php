@@ -237,7 +237,7 @@ class Theme
 
         if ($useDefault) {
             // Check the default theme for default icon
-            $iconfile = $this->getIconFileFromTheme('standard', $type, $this->m_theme['files'], $ext);
+            $iconfile = $this->getIconFileFromTheme('Standard', $type, $this->m_theme['files'], $ext);
             if ($iconfile)
                 return self::absPath($iconfile);
         }

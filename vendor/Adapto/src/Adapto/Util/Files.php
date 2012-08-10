@@ -102,40 +102,6 @@ class Files
     }
 
     /**
-     * This function checks if the root of the destination is writeable.
-     * The difference with php native function is that this functions accepts
-     * non-existing directories.
-     *
-     * @static
-     * @param string $orgdest document parh
-     * @return bool returns true if the destination is writeable.
-     */
-    function is_writable($orgdest)
-    {
-        if ($orgdest{0} == '/') {
-            if (count($orgdest) == 1)
-                $testdest = $orgdest;
-            else
-                $testdest = substr($orgdest, 0, strpos($orgdest, '/', 1));
-        } else {
-            if ($orgdest{strlen($orgdest) - 1} != '/' && !is_file($orgdest))
-                $orgdest .= '/';
-
-            $testdest = $orgdest;
-
-            if (!is_dir($orgdest)) {
-                $orgdestArray = explode('/', $orgdest);
-
-                $testdest = $orgdestArray[0] . '/';
-            }
-        }
-
-        Debugger::debug("Checking with: " . $testdest);
-
-        return is_writable($testdest);
-    }
-
-    /**
      * This function creates recursively a destination. This fuction accepts
      * a full path ../dir/subdir/subdir2/subdir3 etc. It checks if the path is writeable
      * and replace mis typed slashes with forward slashes.
@@ -150,11 +116,6 @@ class Files
     {
         $dir = preg_replace('/(\/){2,}|(\\\){1,}/', '/', $dir); //only forward-slash
 
-        if (!self::is_writable($dir)) {
-            Debugger::debug("Error no write permission!");
-            return false;
-        }
-
         Debugger::debug("Permission granted to write.");
 
         if (is_null($dir) || $dir === "") {
@@ -164,6 +125,12 @@ class Files
             return TRUE;
         }
         if (self::mkdirRecursive(dirname($dir), $privileges, $recursive)) {
+
+            if (!is_writable(dirname($dir))) {
+                Debugger::debug("Error no write permission!");
+                return false;
+            }
+
             return mkdir($dir, $privileges);
         }
         return FALSE;
