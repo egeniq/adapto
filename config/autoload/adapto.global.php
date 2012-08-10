@@ -7,7 +7,7 @@
                     "password" => "demo",
                     "name" => "adapto_demo"),
                  "theme" => array(
-                     "name" => "bootstrap"),
+                     "name" => "Bootstrap"),
                  "system" => array(
                      "tempDir" => "/tmp")
             )

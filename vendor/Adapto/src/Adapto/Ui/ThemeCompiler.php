@@ -71,7 +71,7 @@ class ThemeCompiler
      * from another theme, the info for said theme is included too. This is
      * done recursively so themes can derive from any number of base themes.
      *
-     * All themes are implicitly derived from the 'standard' theme unless they
+     * All themes are implicitly derived from the 'Standard' theme unless they
      * specify otherwise in their Config.php file.
      *
      * @param String $name The name of the theme
@@ -92,14 +92,14 @@ class ThemeCompiler
                 return $this->readStructure($defaulttheme, "auto");
             } else {
                 // this is the default theme, set in the config. If this doesn't exist, fallback to default.
-                return $this->readStructure("standard", "adapto");
+                return $this->readStructure("Standard", "adapto");
             }
         }
 
         // First parse the themedef file for attributes
         if ($path != "" && file_exists($path . "Config.php")) {
             
-            $className = '\\Adapto\\Theme\\'.ucfirst($name).'\\Config';
+            $className = '\\Adapto\\Theme\\'.$name.'\\Config';
             
             $theme = new $className();
 
@@ -107,12 +107,12 @@ class ThemeCompiler
  
                 $basethemelocation = isset($theme->baseThemeLocation) ? $theme->baseThemeLocation : "auto";
                 $data = $this->readStructure($theme->baseTheme, $basethemelocation);
-            } else if ($name != "standard") { // If basetheme is not explicitly defined, use default as base theme
+            } else if ($name != "Standard") { // If basetheme is not explicitly defined, use default as base theme
 
-                $data = $this->readStructure("standard", "auto");
-            } else if ($name == "standard" && $location == "app") { // if this theme is the app's default theme, use atk default as base
+                $data = $this->readStructure("Standard", "auto");
+            } else if ($name == "Standard" && $location == "app") { // if this theme is the app's default theme, use atk default as base
  
-                $data = $this->readStructure("standard", "adapto");
+                $data = $this->readStructure("Standard", "adapto");
             } else {
                 // end of the pipeline
             }
@@ -141,7 +141,7 @@ class ThemeCompiler
      */
     function findTheme($name, &$location)
     {        
-        $pathBase = ucfirst($name);
+        $pathBase = $name;
         
         if (strpos($name, ".") !== false) {
             list($module, $name) = explode(".", $name);

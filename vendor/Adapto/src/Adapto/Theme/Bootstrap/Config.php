@@ -15,7 +15,7 @@ namespace Adapto\Theme\Bootstrap;
 
 class Config extends \Adapto\Theme\Config
 {
-    public $baseTheme = 'standard';
+    public $baseTheme = 'Standard';
     
     public $parameters = array('stylesheets' => array('bootstrap.css', 'style.css'));
 }
