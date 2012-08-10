@@ -3,6 +3,7 @@
 namespace Adapto\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
+use \Adapto\Ui\Ui;
 
 class Menu extends AbstractHelper 
 {
@@ -18,7 +19,7 @@ class Menu extends AbstractHelper
     
     public function __invoke()
     {        
-        $ui = \Adapto\Ui::getInstance();
+        $ui = Ui::getInstance();
         
         $menu = new \Adapto\Menu\Menu("Root");
         
