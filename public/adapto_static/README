@@ -1,0 +1,5 @@
+This is where Adapto will install some files that need to be publicly 
+browsable. Make this directory writable by your webserver using something 
+along the lines of:
+
+chown -R www-data adapto_static
