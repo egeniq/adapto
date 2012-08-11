@@ -2,7 +2,7 @@
 
 namespace \Adapto\Widget;
 
-class Date extends AbstractWidget
+class Date extends AbstractField
 {
     
 }
