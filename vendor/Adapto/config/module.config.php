@@ -1,5 +1,10 @@
 <?php
 return array(
+        'controllers' => array(
+                'invokables' => array(
+                        'Adapto\Controller\List' => 'Adapto\Controller\ListController'
+                )
+        ),
         'view_helpers' => array(
                 'factories' => array(
                         // generic view helpers

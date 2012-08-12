@@ -2,17 +2,15 @@
 
 namespace Lesson1\Controller;
 
-/**
- * Employee controller.
- */
-class EmployeeController extends Adapto\Mvc\Controller\BaseController
+class EmployeesController extends \Adapto\Mvc\Controller\CRUDController
 {
+    
     // basis configuratie van de controller, hier kun je acties registreren, overriden,
     // verwijderen, evt. de entityDef en/of form naam met een setter setten (ipv een property
     // zoals voorbeeld hierboven)
-    protected function init()
+    protected function _init()
     {
-        parent::init();
+        parent::_init();
         $this->removeAction('view');
         $this->addAction('edit', 'Adapto\Controller\Action\Edit', array('param' => 'value'));
     }
@@ -21,17 +19,17 @@ class EmployeeController extends Adapto\Mvc\Controller\BaseController
     // hier opbouwen, maar je kunt ook $_entityDefClass zetten met de class name of op basis van
     // een standaard locatie wordt het automatisch ontdekt, daarnaast als er geen gedefinieerd is
     // kan hij ook zelf op basis van de controller naam een wild guess doen
-    protected function createEntityDef()
+    protected function _createEntityDef()
     {
-        $def = parent::createEntityDef();
+        $def = parent::_createEntityDef();
         $def->remove('created_at');
         return $def;
     }
 
     // eventueel te overriden om action handlers last-minute te configuren
-    protected function createAction($name)
+    protected function _createActionController($name)
     {
-        $action = parent::createAction($name);
+        $action = parent::_createActionController($name);
         if ($name == 'edit') {
             $action->setX('y');
         }
@@ -43,7 +41,7 @@ class EmployeeController extends Adapto\Mvc\Controller\BaseController
     // doen, standaard implementatie doet het form instantieren op basis van de gespecificeerde
     // entity definition van de controller, of je kunt een expliciete benoemen in $_formClass, daarnaast
     // zouden we ook automatisch zoeken naar een form met een bepaalde naming scheme kunnen ondersteunen
-    protected function createUIDef()
+    protected function _createUIDef()
     {
         // form kan door verschillende acties worden gebruikt en is opvraagbaar door de acties
         // door controller->getUIDef aan te roepen deze doet evt. een createUIDef of geeft de bestaande
@@ -63,3 +61,4 @@ class EmployeeController extends Adapto\Mvc\Controller\BaseController
     // je get met een enkele widget of add doet krijg je direct de widget instantie terug en
     // roep je het daar op aan
 }
+

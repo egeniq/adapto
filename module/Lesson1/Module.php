@@ -12,8 +12,24 @@ class Module extends \Adapto\Module
         
         $lesson1Menu->addItem(new Menu\Item\Link("http://www.google.com", "Google"));
         $lesson1Menu->addItem(new Menu\Item\Separator());
-        $lesson1Menu->addItem(new Menu\Item\Entity("lesson1", "employee"));
+        $lesson1Menu->addItem(new Menu\Item\Controller("lesson1", "employees"));
         
         $menu->addSubMenu($lesson1Menu);
+    }
+    
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+    
+    public function getAutoloaderConfig()
+    {
+        return array(
+                'Zend\Loader\StandardAutoloader' => array(
+                        'namespaces' => array(
+                                __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                        ),
+                ),
+        );
     }
 }
