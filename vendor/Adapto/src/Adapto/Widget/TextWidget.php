@@ -16,7 +16,7 @@ class TextWidget extends AbstractWidget
      
     public function renderEdit($value = NULL)
     {
-        return $this->getUi()->render("widgetText.phtml", array("value" => $value));
+        return $this->getUi()->render("widget/text.phtml", array("value" => $value));
     }
     
     public function fetchSearchValue(\Zend\Http\Request $request)
@@ -26,7 +26,7 @@ class TextWidget extends AbstractWidget
     
     public function renderSearch($value = NULL)
     {
-        return $this->getUi()->render("widget/widgetText.phtml", array("value" => $value));
+        return $this->getUi()->render("widget/text.phtml", array("value" => $value));
     }
     
 
