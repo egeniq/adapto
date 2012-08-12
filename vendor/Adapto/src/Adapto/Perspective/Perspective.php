@@ -7,6 +7,14 @@ use \Adapto\Field;
 
 class Perspective
 {
+    const PERSPECTIVE_NONE =   0;
+    const PERSPECTIVE_LIST =   1;
+    const PERSPECTIVE_EDIT =   2;
+    const PERSPECTIVE_ADD  =   4;
+    const PERSPECTIVE_SEARCH = 8;
+    const PERSPECTIVE_VIEW =  16;
+    const PERSPECTIVE_ALL  =  31; 
+    
     /**
      * 
      * @var AbstractEntityDef
@@ -23,14 +31,13 @@ class Perspective
     
     protected function _initFromEntity()
     {
+        $policy = new \Adapto\Perspective\Policy($this); // todo, we need to inject this instead of calling constructor
+        
         foreach ($this->_entityDef->getAttributes() as $attribute)
         {
-           $fieldSuggestion = $attribute->getDefaultFieldSuggestion();
+           $this->add($policy->createFieldForAttribute($attribute));
            
-           if ($fieldSuggestion != NULL) {
-               $this->add(new $fieldSuggestion($attribute->getName()));
-           }
-            
+           $policy->configurePerspective($attribute)       ;     
         }
     }
     
