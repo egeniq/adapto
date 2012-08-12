@@ -92,7 +92,8 @@ class CRUDController extends \Zend\Mvc\Controller\AbstractActionController
                 // todo, here is where we do magic lookups. For now let's see if this works.
                 
                 // Forward the response to one of Adapto's standard action controllers.
-                $actionResponse = $this->forward()->dispatch('Adapto/Controller/List', array('action'=>'index', 'source' => $this));            
+                $e->setParam('parentController', $this);
+                $actionResponse = $this->forward()->dispatch('Adapto/Controller/'.ucfirst($action), array('action'=>'index'));            
                 $e->setResult($actionResponse);
                 return $actionResponse;
             } else {

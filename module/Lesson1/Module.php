@@ -10,9 +10,9 @@ class Module extends \Adapto\Module
     {
         $lesson1Menu = new Menu\Menu("Lesson1");
         
-        $lesson1Menu->addItem(new Menu\Item\Link("http://www.google.com", "Google"));
-        $lesson1Menu->addItem(new Menu\Item\Separator());
         $lesson1Menu->addItem(new Menu\Item\Controller("lesson1", "employees"));
+        $lesson1Menu->addItem(new Menu\Item\Controller("lesson1", "departments"));      
+        $lesson1Menu->addItem(new Menu\Item\Separator());
         
         $menu->addSubMenu($lesson1Menu);
     }

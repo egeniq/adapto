@@ -4,7 +4,8 @@ return array(
         
     'controllers' => array(
         'invokables' => array(
-            'Lesson1\Controller\Employees' => 'Lesson1\Controller\EmployeesController'
+            'Lesson1\Controller\Employees' => 'Lesson1\Controller\EmployeesController',
+            'Lesson1\Controller\Departments' => 'Lesson1\Controller\DepartmentsController', 
         )
     ),
     'router' => array(
