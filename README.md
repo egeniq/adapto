@@ -16,8 +16,6 @@ The Adapto developers mailing list is where the day-to-day development discussio
 * [SourceForge Project](http://www.sourceforge.net/projects/adapto) - Project Wiki, Blog, Downloads (releases), and Mail Lists.
 * [GitHub Project](https://github.com/egeniq/adapto/) - Code repo and issue tracker
 
-See the [http://www.sourceforge.net/projects/adapto Adapto project on SourceForge for more information].
-
 License & Copyright
 ===================
 Adapto is distributed under a BSD license.  Large portions of the codebase are copyright 2000-2011 Ibuildings & Ivo Jansch. New code is copyright 2012 Egeniq.
