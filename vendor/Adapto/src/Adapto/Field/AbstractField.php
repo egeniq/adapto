@@ -32,6 +32,17 @@ abstract class AbstractField implements FieldInterface
         $this->_name = $name;
     }
     
+    public function setName($name)
+    {
+        $this->_name = $name;
+        return $this;
+    }
+    
+    public function getName()
+    {
+        return $this->_name;
+    }
+    
     public function isEditable($perspective, $entity)
     {
         if (is_callable($this->_editablePerspectivesOrCallback)) {
@@ -161,16 +172,34 @@ abstract class AbstractField implements FieldInterface
         // ?
     }
     
+    /**
+     * Set the widget to use for this field.
+     * @param \Adapto\Widget\WidgetInterface|classname $widget
+     */
     public function setWidget($widget)
     {
-        $this->_widget = $widget;
+        if (is_object($widget)) {
+            $this->_widget = $widget;
+        } else if (is_string($widget))
+        {
+            $this->_widget = new $widget($this->_name);
+        }
+        return $this;
     }
     
+    /**
+     * Create the (default) widget for this field.
+     * @return \Adapto\Widget\WidgetInterface
+     */
     protected function _createWidget()
     {
         return NULL;
     }
     
+    /**
+     * Get the widget that represents this field.
+     * @return \Adapto\Widget\WidgetInterface
+     */
     public function getWidget()
     {
         if ($this->_widget == NULL) {
@@ -181,4 +210,5 @@ abstract class AbstractField implements FieldInterface
     
         return $this->_widget;
     }
+    
 }

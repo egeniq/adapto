@@ -1,23 +1,23 @@
 <?php
 
-class Adapto_ListController extends Adapto_Controller_Action_Entity
+namespace Adapto\Controller;
+
+/**
+ * This controller does the listview and its ajax actions
+ * 
+ *
+ */
+class ListController extends AbstractController
 {
-
-    public function init()
-    {
-        /* Initialize action controller here */
-    }
-
     public function indexAction()
     {
-        $page = new Adapto_Ui_Page($this);
-        $ui = Adapto_Ui::getInstance();
+        $view = new \Zend\View\Model\ViewModel();
         
-        $this->view->grid = "Here comes the recordlist enzo";
-        
-        $page->finalize("List Page");
-
+        $view->setTemplate('adapto.phtml');
+        $view->content = 'Here be an awesome recordlist';
+        return $view;
     }
+    
 
 }
 
