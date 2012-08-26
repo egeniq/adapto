@@ -7,7 +7,9 @@ Adapto is a small PHP framework for creating data management applications with m
 * Micro CMS systems
 * Data management applications, including glue and reporting
 
-Adapto takes original concepts first proven in the [ATK framework](http://www.atk-framework.com) created by [ibuldings](http://www.ibuildings.nl/) to the next level. The project is led by Ivo Jansch, former CTO at ibuildings and the 'inventor' of [ATK](http://www.atk-framework.com) and [Achievo](http://www.achievo.org) (a GPL resource management application based on ATK). Adapto concentrates on what makes it unique, and uses Zend Framework for caching, view rendering, database connectivity, etc.  
+Adapto takes original concepts first proven in the [ATK framework](http://www.atk-framework.com) (created by Ivo Jansch and [ibuildings](http://www.ibuildings.nl/)) to the next level. The project is led by Egeniq, the company that was founded by two ATK veterans Peter Verhage and Ivo Jansch. 
+
+Adapto concentrates on what makes it unique, and uses Zend Framework for caching, view rendering, database connectivity, etc.  
 
 What makes Adapto different is:
 
