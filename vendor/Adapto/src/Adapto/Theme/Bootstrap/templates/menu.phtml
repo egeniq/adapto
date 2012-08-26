@@ -1,4 +1,4 @@
-<script src="/adapto_static/bootstrap/js/bootstrap-dropdown.js"></script>
+<script src="/adapto_static/Bootstrap/js/bootstrap-dropdown.js"></script>
 
 <div class="navbar navbar-fixed-top"> <!--  todo move this to a menu helper -->
         <div class="navbar-inner">
@@ -13,24 +13,24 @@
                             <?php echo $subMenu->getTitle(); ?>
                             <b class="caret"></b>
                         </a>
-                        <ul class="dropdown-menu">              
+                        <ul class="dropdown-menu">
                         <?php foreach ($subMenu->getItems() as $item): ?>
-                        <?php 
+                        <?php
                             $title = $item->getTitle();
-                            if ($title == NULL):  
+                            if ($title == NULL):
                             ?>
                             <li class="divider"></li>
                             <?php else: ?>
                             <li><a href="<?php echo $item->getLink(); ?>"><?php echo $item->getTitle(); ?></a></li>
                             <?php endif;?>
-                        <?php endforeach; ?>    
+                        <?php endforeach; ?>
                         </ul>
                     </li>
                 <?php endforeach; ?>
                 <?php foreach ($this->menu->getItems() as $item): ?>
-                    <?php 
+                    <?php
                         $title = $item->getTitle();
-                        if ($title == NULL):  
+                        if ($title == NULL):
                     ?>
                         <li class="divider"></li>
                     <?php else: ?>
