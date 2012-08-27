@@ -39,14 +39,14 @@ class Theme extends \Zend\View\Helper\AbstractHelper
         $this->_applyBaseJs();
         $this->_applyStyles();
     }
-    
+
     protected function _applyMeta()
     {
         $version = \Adapto\About::getVersion();
-       
+
         $this->getView()->headMeta()->appendName('adapto_version', $version);
     }
-        
+
     protected function _applyStyles()
     {
         $theme = \Adapto\ClassLoader::getInstance('Adapto\Ui\Theme');
@@ -54,12 +54,12 @@ class Theme extends \Zend\View\Helper\AbstractHelper
             $this->getView()->headLink()->prependStylesheet($style);
         }
     }
-    
+
     protected function _applyBaseJs()
     {
-        $this->getView()->headScript()->prependFile('/adapto_static/standard/js/jquery-1.7.2.min.js');
+        $this->getView()->headScript()->prependFile('/adapto_static/Standard/js/jquery-1.7.2.min.js');
     }
-     
+
 }
 
 ?>
