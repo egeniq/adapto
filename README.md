@@ -1,5 +1,5 @@
-Adapto
-======
+Adapto 2012
+===========
 
 Adapto is a small PHP framework for creating data management applications with minimal code, and is especially suited to:
 
